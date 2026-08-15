@@ -52,16 +52,32 @@ function TechIcon({ name, color, svg }) {
   );
 }
 
+import Spline from '@splinetool/react-spline';
+
 export default function TechStack() {
   return (
-    <section className="tech-stack-section">
-      <div className="section" style={{ padding: '0', maxWidth: '1400px', margin: '0 auto', padding: '0 0' }}>
-        <p className="tech-stack-label">My stack</p>
-        <div className="tech-icons-row">
-          {SKILLS.map((s, i) => (
-            <TechIcon key={i} {...s} />
-          ))}
+    <section className="tech-stack-section" style={{ position: 'relative', zIndex: 10 }}>
+      <div className="section" style={{ padding: '40px 8vw', maxWidth: '1400px', margin: '0 auto', display: 'flex', gap: '40px', alignItems: 'center', flexWrap: 'wrap' }}>
+        
+        {/* Left side: Tech Stack */}
+        <div style={{ flex: '1 1 400px' }}>
+          <p className="tech-stack-label" style={{ marginBottom: '24px' }}>My stack</p>
+          <div className="tech-icons-row" style={{ justifyContent: 'flex-start' }}>
+            {SKILLS.map((s, i) => (
+              <TechIcon key={i} {...s} />
+            ))}
+          </div>
         </div>
+
+        {/* Right side: 3D Spline Asset */}
+        <div style={{ flex: '1 1 400px', height: '400px', position: 'relative', borderRadius: '24px', overflow: 'hidden', background: 'var(--bg-surface)' }}>
+          <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 10, pointerEvents: 'none' }}>
+            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '2px' }}>Interactive 3D</span>
+          </div>
+          {/* We use a high-quality placeholder Spline scene. You can replace the URL with any Spline scene you export! */}
+          <Spline scene="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode" />
+        </div>
+
       </div>
     </section>
   );

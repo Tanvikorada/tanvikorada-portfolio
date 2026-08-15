@@ -61,71 +61,83 @@ export default function Hero() {
 
       <motion.div 
         className="hero-content" 
-        style={{ opacity: opacityText, y: yText, zIndex: 10, position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 8vw' }}
+        style={{ opacity: opacityText, y: yText, zIndex: 10, position: 'relative', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 8vw' }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '24px' }}>
-          {/* Profile Photo */}
-          <motion.div 
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 20, delay: 0.1 }}
-            style={{
-              width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden',
-              border: '2px solid var(--border)', boxShadow: 'var(--shadow-md)',
-              position: 'relative'
-            }}
-          >
-            <img src="/images/profile.jpg" alt="Korada Tanvi" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          </motion.div>
-          
+        <div style={{ flex: 1, paddingTop: '80px' }}>
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="hero-badge" style={{ margin: 0 }}
+            className="hero-badge"
           >
             <span className="hero-badge-dot" />
             Chennai, India · Open to opportunities
           </motion.div>
+
+          {/* Giant Title */}
+          <h1 className="hero-title" style={{ fontSize: 'clamp(3rem, 7vw, 6.5rem)', lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.04em', fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>
+            <div style={{ overflow: 'hidden' }}>
+              <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}>
+                Full-Stack
+              </motion.div>
+            </div>
+            <div style={{ overflow: 'hidden', display: 'flex' }}>
+              <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}>
+                AI&nbsp;
+              </motion.div>
+              <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}>
+                <WordRoller />
+              </motion.div>
+            </div>
+          </h1>
+
+          {/* Subtitle */}
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="hero-subtitle" 
+            style={{ marginTop: '24px', maxWidth: '500px', fontSize: '1.1rem', color: 'var(--text-muted)', lineHeight: 1.6 }}
+          >
+            Building AI-native web products at the intersection of great engineering and real-world impact.
+            B.Tech CSE @ SRMIST.
+          </motion.p>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            style={{ marginTop: '32px', display: 'flex', gap: '16px' }}
+          >
+             <a href="#work" className="resume-btn" style={{ padding: '12px 24px', fontSize: '15px' }}>View Projects</a>
+             <a href="/resume.pdf" target="_blank" className="nav-link" style={{ padding: '12px 24px', fontSize: '15px', border: '1px solid var(--border)' }}>Read Resume</a>
+          </motion.div>
         </div>
 
-        {/* Giant Title */}
-        <h1 className="hero-title" style={{ fontSize: 'clamp(3rem, 8vw, 7rem)', lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.04em', fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>
-          <div style={{ overflow: 'hidden' }}>
-            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}>
-              Full-Stack
-            </motion.div>
-          </div>
-          <div style={{ overflow: 'hidden', display: 'flex' }}>
-            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}>
-              AI&nbsp;
-            </motion.div>
-            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}>
-              <WordRoller />
-            </motion.div>
-          </div>
-        </h1>
-
-        {/* Subtitle */}
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="hero-subtitle" 
-          style={{ marginTop: '24px', maxWidth: '600px', fontSize: '1.1rem', color: 'var(--text-muted)', lineHeight: 1.6 }}
+        {/* Profile Photo on the Right */}
+        <motion.div 
+          initial={{ scale: 0.8, opacity: 0, rotate: -5 }}
+          animate={{ scale: 1, opacity: 1, rotate: 0 }}
+          transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.5 }}
+          style={{
+            flex: 0.8,
+            display: 'flex',
+            justifyContent: 'flex-end',
+            paddingTop: '40px'
+          }}
         >
-          Building AI-native web products at the intersection of great engineering and real-world impact.
-          B.Tech CSE @ SRMIST.
-        </motion.p>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          style={{ marginTop: '32px', display: 'flex', gap: '16px' }}
-        >
-           <a href="#work" className="resume-btn" style={{ padding: '12px 24px', fontSize: '15px' }}>View Projects</a>
-           <a href="/resume.pdf" target="_blank" className="nav-link" style={{ padding: '12px 24px', fontSize: '15px', border: '1px solid var(--border)' }}>Read Resume</a>
+          <div style={{
+            width: 'clamp(250px, 30vw, 400px)',
+            aspectRatio: '3/4',
+            borderRadius: '24px',
+            overflow: 'hidden',
+            border: '8px solid rgba(255,255,255,0.1)',
+            boxShadow: 'var(--shadow-lg)',
+            transform: 'rotate(2deg)',
+            background: 'var(--bg-surface)'
+          }}>
+            <img src="/images/profile.jpg" alt="Korada Tanvi" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
         </motion.div>
       </motion.div>
 
