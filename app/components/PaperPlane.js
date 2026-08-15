@@ -30,6 +30,9 @@ export default function PaperPlane() {
     [45, 60, -20, 60, 45]
   );
 
+  // The plane follows vertical scroll with some swaying, matching the general path above
+  const planeOpacity = useTransform(scrollYProgress, [0, 0.02, 0.98, 1], [0, 1, 1, 0]);
+
   if (docHeight === 0) return null;
 
   return (
@@ -61,7 +64,7 @@ export default function PaperPlane() {
           y: planeY,
           x: planeX,
           rotate,
-          opacity: useTransform(scrollYProgress, [0, 0.02, 0.98, 1], [0, 1, 1, 0]),
+          opacity: planeOpacity,
           zIndex: 999
         }}
       >

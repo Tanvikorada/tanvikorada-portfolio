@@ -8,7 +8,7 @@ const SKILLS = [
   { name: 'TypeScript', color: '#3178C6', svg: 'typescript' },
   { name: 'OpenAI', color: '#412991', svg: 'openai' },
   { name: 'LangChain', color: '#1C3C3C', svg: 'langchain' },
-  { name: 'AWS', color: '#FF9900', svg: 'amazonaws' },
+  { name: 'AWS', color: '#FF9900' },
   { name: 'PostgreSQL', color: '#4169E1', svg: 'postgresql' },
   { name: 'Firebase', color: '#FFCA28', svg: 'firebase' },
   { name: 'Docker', color: '#2496ED', svg: 'docker' },
@@ -20,22 +20,26 @@ const SKILLS = [
 
 function TechIcon({ name, color, svg }) {
   // Using simple-icons CDN via img src with colored background circle
-  const iconUrl = `https://cdn.simpleicons.org/${svg}/${color.replace('#', '')}`;
+  const iconUrl = svg ? `https://cdn.simpleicons.org/${svg}/${color.replace('#', '')}` : null;
 
   return (
     <div className="tech-icon-wrap">
-      <img
-        src={iconUrl}
-        alt={name}
-        className="tech-icon-img"
-        onError={(e) => {
-          // Fallback: show first 2 letters
-          e.target.style.display = 'none';
-          e.target.nextSibling.style.display = 'flex';
-        }}
-      />
+      {iconUrl ? (
+        <img
+          src={iconUrl}
+          alt={name}
+          className="tech-icon-img"
+          onError={(e) => {
+            // Fallback: show first 2 letters
+            e.target.style.display = 'none';
+            e.target.nextSibling.style.display = 'flex';
+          }}
+        />
+      ) : (
+        <div style={{ display: 'none' }} />
+      )}
       <span style={{
-        display: 'none',
+        display: iconUrl ? 'none' : 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         width: '22px',
@@ -74,8 +78,8 @@ export default function TechStack() {
           <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 10, pointerEvents: 'none' }}>
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '2px' }}>Interactive 3D</span>
           </div>
-          {/* Student/Boy 3D Asset from Spline */}
-          <Spline scene="https://prod.spline.design/qW5z-c-2R-16Qp3c/scene.splinecode" />
+          {/* Interactive 3D Asset from Spline */}
+          <Spline scene="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode" />
         </div>
 
       </div>
