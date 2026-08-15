@@ -74,8 +74,8 @@ export default function TechStack() {
           <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 10, pointerEvents: 'none' }}>
             <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '2px' }}>Interactive 3D</span>
           </div>
-          {/* We use a high-quality placeholder Spline scene. You can replace the URL with any Spline scene you export! */}
-          <Spline scene="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode" />
+          {/* Student/Boy 3D Asset from Spline */}
+          <Spline scene="https://prod.spline.design/qW5z-c-2R-16Qp3c/scene.splinecode" />
         </div>
 
       </div>

@@ -60,21 +60,13 @@ const PROJECTS = [
 function ProjectCard({ project, i, progress, range, targetScale }) {
   const containerRef = useRef(null);
   
-  // Scale down the card when it gets pushed to the back
   const scale = useTransform(progress, range, [1, targetScale]);
-  // Darken the card when it gets pushed back
-  const opacity = useTransform(progress, range, [1, 0.5]);
   
   return (
     <div ref={containerRef} style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'sticky', top: 0 }}>
       <motion.div 
         className="project-card"
-        style={{ 
-          scale, 
-          opacity,
-          top: `calc(10vh + ${i * 20}px)`,
-          boxShadow: '0 -20px 40px rgba(0,0,0,0.2)' 
-        }}
+        style={{ scale, top: `calc(-10% + ${i * 25}px)` }}
       >
         {/* Content Side */}
         <div className="project-content-side">
@@ -122,7 +114,7 @@ export default function Projects() {
   });
 
   return (
-    <section id="work" ref={container} style={{ position: 'relative', marginTop: '10vh' }}>
+    <section id="work" ref={container} style={{ marginTop: '10vh' }}>
       <div className="section" style={{ position: 'sticky', top: 0, height: '100px', display: 'flex', alignItems: 'center', zIndex: 10 }}>
         <p className="section-eyebrow" style={{ fontSize: '2rem', margin: 0, paddingLeft: '8vw' }}>Selected Work</p>
       </div>

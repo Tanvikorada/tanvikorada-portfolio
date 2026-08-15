@@ -81,11 +81,22 @@ export default function About() {
           </div>
         </div>
 
-        {/* Cloud skills */}
+        {/* Clubs & Roles */}
         <div className="bento-card bento-fun">
-          <p className="bento-label">Cloud & Tools</p>
-          <div>
-            {CLOUD.map(s => <span key={s} className="skill-pill">{s}</span>)}
+          <p className="bento-label">Clubs & Roles</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div>
+              <div style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-heading)' }}>📸 Camogenics</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Photographer, Film Society (Winner: 'Saving Nature')</div>
+            </div>
+            <div>
+              <div style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-heading)' }}>📰 Andropedia</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Media Team Member</div>
+            </div>
+            <div>
+              <div style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-heading)' }}>🔌 SlugNPlug</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Hardware & Systems Club</div>
+            </div>
           </div>
         </div>
       </div>

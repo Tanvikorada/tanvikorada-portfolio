@@ -61,9 +61,9 @@ export default function Hero() {
 
       <motion.div 
         className="hero-content" 
-        style={{ opacity: opacityText, y: yText, zIndex: 10, position: 'relative', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 8vw' }}
+        style={{ opacity: opacityText, y: yText, zIndex: 10, position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 8vw' }}
       >
-        <div style={{ flex: 1, paddingTop: '80px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -75,7 +75,7 @@ export default function Hero() {
           </motion.div>
 
           {/* Giant Title */}
-          <h1 className="hero-title" style={{ fontSize: 'clamp(3rem, 7vw, 6.5rem)', lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.04em', fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>
+          <h1 className="hero-title" style={{ fontSize: 'clamp(3rem, 8vw, 7rem)', lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.04em', fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>
             <div style={{ overflow: 'hidden' }}>
               <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}>
                 Full-Stack
@@ -97,7 +97,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
             className="hero-subtitle" 
-            style={{ marginTop: '24px', maxWidth: '500px', fontSize: '1.1rem', color: 'var(--text-muted)', lineHeight: 1.6 }}
+            style={{ marginTop: '24px', maxWidth: '600px', fontSize: '1.1rem', color: 'var(--text-muted)', lineHeight: 1.6 }}
           >
             Building AI-native web products at the intersection of great engineering and real-world impact.
             B.Tech CSE @ SRMIST.
@@ -114,26 +114,28 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        {/* Profile Photo on the Right */}
+        {/* Profile Photo Floating on the Right */}
         <motion.div 
           initial={{ scale: 0.8, opacity: 0, rotate: -5 }}
           animate={{ scale: 1, opacity: 1, rotate: 0 }}
           transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.5 }}
           style={{
-            flex: 0.8,
+            position: 'absolute',
+            right: '8vw',
+            top: '50%',
+            transform: 'translateY(-50%) rotate(2deg)',
             display: 'flex',
             justifyContent: 'flex-end',
-            paddingTop: '40px'
+            zIndex: -1
           }}
         >
           <div style={{
-            width: 'clamp(250px, 30vw, 400px)',
+            width: 'clamp(200px, 25vw, 350px)',
             aspectRatio: '3/4',
             borderRadius: '24px',
             overflow: 'hidden',
             border: '8px solid rgba(255,255,255,0.1)',
             boxShadow: 'var(--shadow-lg)',
-            transform: 'rotate(2deg)',
             background: 'var(--bg-surface)'
           }}>
             <img src="/images/profile.jpg" alt="Korada Tanvi" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

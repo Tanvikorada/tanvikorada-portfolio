@@ -3,6 +3,8 @@ import Hero from './components/Hero';
 import SkyBand from './components/SkyBand';
 import TechStack from './components/TechStack';
 import Projects from './components/Projects';
+import MoreProjects from './components/MoreProjects';
+import Experience from './components/Experience';
 import Certs from './components/Certs';
 import About from './components/About';
 import CursorFX from './components/CursorFX';
@@ -35,7 +37,13 @@ export default function Home() {
         {/* 3. Projects — scroll stacking cards */}
         <Projects />
 
-        {/* 4. Certifications + Achievements */}
+        {/* 4. More Projects - horizontal row */}
+        <MoreProjects />
+
+        {/* 5. Experience Timeline */}
+        <Experience />
+
+        {/* 6. Certifications + Achievements */}
         <Certs />
 
         {/* 5. About bento */}
