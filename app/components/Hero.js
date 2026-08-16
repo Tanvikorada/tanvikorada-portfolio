@@ -116,17 +116,16 @@ export default function Hero() {
 
         {/* Profile Photo Floating on the Right */}
         <motion.div 
-          initial={{ scale: 0.8, opacity: 0, rotate: -5 }}
-          animate={{ scale: 1, opacity: 1, rotate: 0 }}
+          initial={{ scale: 0.8, opacity: 0, y: '-40%', rotate: -5 }}
+          animate={{ scale: 1, opacity: 1, y: '-50%', rotate: 2 }}
           transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.5 }}
           style={{
             position: 'absolute',
             right: '8vw',
-            top: '50%',
-            transform: 'translateY(-50%) rotate(2deg)',
+            top: '35%',
             display: 'flex',
             justifyContent: 'flex-end',
-            zIndex: -1
+            zIndex: 5
           }}
         >
           <div style={{

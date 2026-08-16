@@ -76,7 +76,7 @@ export default function TechStack() {
         {/* Right side: 3D Spline Asset */}
         <div style={{ flex: '1 1 400px', height: '400px', position: 'relative', borderRadius: '24px', overflow: 'hidden', background: 'var(--bg-surface)' }}>
           <div style={{ position: 'absolute', top: '16px', left: '16px', zIndex: 10, pointerEvents: 'none' }}>
-            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '2px' }}>Interactive 3D</span>
+            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '2px' }}>Interactive 3D Keyboard (Add your avatar link in code!)</span>
           </div>
           {/* Interactive 3D Asset from Spline */}
           <Spline scene="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode" />

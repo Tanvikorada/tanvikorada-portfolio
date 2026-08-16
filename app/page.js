@@ -10,6 +10,7 @@ import About from './components/About';
 import CursorFX from './components/CursorFX';
 import Contact from './components/Contact';
 import PaperPlane from './components/PaperPlane';
+import Education from './components/Education';
 
 export default function Home() {
   return (
@@ -43,7 +44,10 @@ export default function Home() {
         {/* 5. Experience Timeline */}
         <Experience />
 
-        {/* 6. Certifications + Achievements */}
+        {/* 6. Education */}
+        <Education />
+
+        {/* 7. Certifications + Achievements */}
         <Certs />
 
         {/* 5. About bento */}

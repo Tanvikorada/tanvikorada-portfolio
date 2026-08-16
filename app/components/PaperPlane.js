@@ -36,7 +36,7 @@ export default function PaperPlane() {
   if (docHeight === 0) return null;
 
   return (
-    <div style={{ position: 'absolute', top: 0, left: 0, width: '100vw', height: `${docHeight}px`, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
+    <div style={{ position: 'absolute', top: 0, left: 0, width: '100vw', height: `${docHeight}px`, pointerEvents: 'none', zIndex: 9999, overflow: 'hidden' }}>
       
       {/* Dashed line tracking down the entire page */}
       <svg width="100%" height="100%" preserveAspectRatio="none" style={{ position: 'absolute', top: 0, left: 0 }}>
