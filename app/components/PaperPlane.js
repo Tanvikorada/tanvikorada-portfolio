@@ -19,18 +19,17 @@ export default function PaperPlane() {
   // Plane follows exact Y scroll
   const planeY = useTransform(scrollYProgress, [0, 1], [0, docHeight - (typeof window !== 'undefined' ? window.innerHeight : 0)]);
   
-  // Plane follows horizontal zig-zag (matching the SVG path below)
+  // A beautiful, wide, twisting path that goes back and forth
   const planeX = useTransform(scrollYProgress, 
-    [0, 0.25, 0.5, 0.75, 1], 
-    ['50vw', '80vw', '20vw', '70vw', '50vw']
+    [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1], 
+    ['50vw', '80vw', '15vw', '85vw', '20vw', '75vw', '50vw']
   );
 
   const rotate = useTransform(scrollYProgress,
-    [0, 0.25, 0.5, 0.75, 1],
-    [45, 60, -20, 60, 45]
+    [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1],
+    [45, 75, -25, 70, -20, 60, 45]
   );
 
-  // The plane follows vertical scroll with some swaying, matching the general path above
   const planeOpacity = useTransform(scrollYProgress, [0, 0.02, 0.98, 1], [0, 1, 1, 0]);
 
   if (docHeight === 0) return null;
@@ -38,24 +37,29 @@ export default function PaperPlane() {
   return (
     <div style={{ position: 'absolute', top: 0, left: 0, width: '100vw', height: `${docHeight}px`, pointerEvents: 'none', zIndex: 9999, overflow: 'hidden' }}>
       
-      {/* Dashed line tracking down the entire page */}
-      <svg width="100%" height="100%" preserveAspectRatio="none" style={{ position: 'absolute', top: 0, left: 0 }}>
-        {/* We use exact pixels for height, but since we want X to be responsive we can use percentages using a viewBox trick, 
-            but SVG doesn't mix well. We can just draw it using pixel approximations or just viewBox="0 0 100 100" */}
-      </svg>
-
+      {/* The beautifully curving path that draws dynamically as you scroll */}
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', top: 0, left: 0 }}>
         <motion.path 
-          d="M 50,0 Q 90,12.5 80,25 T 20,50 T 70,75 T 50,100"
+          d="M 50,0 Q 120,10 80,20 T 15,35 T 85,55 T 20,75 T 75,90 T 50,100"
+          fill="none" 
+          stroke="var(--accent)" 
+          strokeWidth="0.15" 
+          /* Framer Motion animates pathLength under the hood */
+          style={{ pathLength: scrollYProgress, opacity: 0.4 }} 
+        />
+        
+        {/* Faint background track for context (optional, makes it look like a real path) */}
+        <path 
+          d="M 50,0 Q 120,10 80,20 T 15,35 T 85,55 T 20,75 T 75,90 T 50,100"
           fill="none" 
           stroke="var(--text-muted)" 
-          strokeWidth="0.1" 
-          strokeDasharray="0.5 0.5"
-          style={{ pathLength: scrollYProgress, opacity: 0.2 }} 
+          strokeWidth="0.05" 
+          strokeDasharray="0.5 1"
+          style={{ opacity: 0.1 }} 
         />
       </svg>
       
-      {/* The plane follows vertical scroll with some swaying, matching the general path above */}
+      {/* The plane follows vertical scroll with swaying, matching the general path above */}
       <motion.div
         style={{
           position: 'absolute',
