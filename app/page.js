@@ -9,7 +9,6 @@ import Certs from './components/Certs';
 import About from './components/About';
 import CursorFX from './components/CursorFX';
 import Contact from './components/Contact';
-import PaperPlane from './components/PaperPlane';
 import Education from './components/Education';
 
 export default function Home() {
@@ -17,9 +16,6 @@ export default function Home() {
     <>
       {/* Global cursor effect (click sound + sparks) */}
       <CursorFX />
-
-      {/* Global Paper Plane Scroll Animation */}
-      <PaperPlane />
 
       {/* Floating pill nav */}
       <Nav />
