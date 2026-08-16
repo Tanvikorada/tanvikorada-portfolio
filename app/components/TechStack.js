@@ -1,6 +1,6 @@
 'use client';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import Spline from '@splinetool/react-spline';
 
 const SKILLS = [
   { name: 'React', color: '#61DAFB', svg: 'react' },
@@ -21,31 +21,6 @@ const SKILLS = [
 ];
 
 export default function TechStack() {
-  const containerRef = useRef(null);
-  
-  // Mouse tracking for the 3D Space Core
-  const mouseX = useMotionValue(0.5);
-  const mouseY = useMotionValue(0.5);
-
-  const springConfig = { damping: 20, stiffness: 100, mass: 0.5 };
-  const smoothX = useSpring(mouseX, springConfig);
-  const smoothY = useSpring(mouseY, springConfig);
-
-  const rotateX = useTransform(smoothY, [0, 1], [25, -25]);
-  const rotateY = useTransform(smoothX, [0, 1], [-25, 25]);
-
-  const handleMouseMove = (e) => {
-    if (!containerRef.current) return;
-    const { left, top, width, height } = containerRef.current.getBoundingClientRect();
-    mouseX.set((e.clientX - left) / width);
-    mouseY.set((e.clientY - top) / height);
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(0.5);
-    mouseY.set(0.5);
-  };
-
   return (
     <section className="tech-stack-section" style={{ position: 'relative', zIndex: 10, padding: '100px 8vw', background: 'var(--bg-base)' }}>
       <div className="section" style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', gap: '80px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -91,106 +66,19 @@ export default function TechStack() {
           </div>
         </div>
 
-        {/* Right side: 3D Space Core */}
+        {/* Right side: Spline 3D Keyboard */}
         <div 
-          ref={containerRef}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
           style={{ 
             flex: '1 1 400px', 
             height: '600px', 
-            perspective: '1000px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             position: 'relative'
           }}
         >
-          <motion.div
-            style={{
-              width: '300px',
-              height: '300px',
-              rotateX,
-              rotateY,
-              transformStyle: 'preserve-3d',
-              position: 'relative'
-            }}
-          >
-            {/* Outer Ring 1 */}
-            <motion.div 
-              animate={{ rotateZ: 360, rotateX: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-              style={{
-                position: 'absolute', inset: -50,
-                border: '2px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: '50%',
-                transformStyle: 'preserve-3d',
-                boxShadow: '0 0 40px rgba(0, 150, 255, 0.2), inset 0 0 20px rgba(0, 150, 255, 0.1)'
-              }}
-            />
-            {/* Outer Ring 2 */}
-            <motion.div 
-              animate={{ rotateZ: -360, rotateY: 360 }}
-              transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-              style={{
-                position: 'absolute', inset: -20,
-                border: '2px dashed rgba(255, 255, 255, 0.2)',
-                borderRadius: '50%',
-                transformStyle: 'preserve-3d',
-                boxShadow: '0 0 20px rgba(0, 255, 255, 0.2)'
-              }}
-            />
-            
-            {/* Inner Core */}
-            <motion.div
-              style={{
-                position: 'absolute', inset: 50,
-                background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), rgba(0,0,0,0.8))',
-                borderRadius: '50%',
-                boxShadow: '0 0 60px rgba(0, 150, 255, 0.4), inset 0 0 40px rgba(0,0,0,0.9)',
-                backdropFilter: 'blur(10px)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transform: 'translateZ(50px)'
-              }}
-            >
-              <div style={{
-                width: '40px', height: '40px',
-                background: 'var(--accent)',
-                borderRadius: '50%',
-                boxShadow: '0 0 40px var(--accent), 0 0 80px var(--accent)'
-              }} />
-            </motion.div>
-          </motion.div>
-
-          {/* Floating Particles */}
-          {Array.from({ length: 20 }).map((_, i) => (
-            <motion.div
-              key={i}
-              animate={{
-                y: [0, -20, 0],
-                x: [0, Math.random() * 20 - 10, 0],
-                opacity: [0.2, 0.8, 0.2]
-              }}
-              transition={{
-                duration: 2 + Math.random() * 3,
-                repeat: Infinity,
-                delay: Math.random() * 2
-              }}
-              style={{
-                position: 'absolute',
-                width: '4px',
-                height: '4px',
-                background: 'var(--accent)',
-                borderRadius: '50%',
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                boxShadow: '0 0 10px var(--accent)',
-                filter: 'blur(1px)'
-              }}
-            />
-          ))}
+          {/* Loaded from public folder! */}
+          <Spline scene="/skills-keyboard.spline" />
         </div>
 
       </div>
