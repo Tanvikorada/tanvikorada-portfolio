@@ -26,8 +26,8 @@ export default function Home() {
 
       {/* Main content scrolls over the sticky hero */}
       <div style={{ position: 'relative', zIndex: 10, background: 'var(--bg-base)', transition: 'background 0.6s' }}>
-        {/* Scroll-driven paper plane that flies the full page */}
-        <PaperPlane />
+        {/* Scroll-driven paper plane that flies the full page (Disabled per user request) */}
+        {/* <PaperPlane /> */}
         {/* Sky band cloud transition */}
         <SkyBand />
 
