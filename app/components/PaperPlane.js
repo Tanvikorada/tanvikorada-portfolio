@@ -2,145 +2,131 @@
 import { useEffect, useRef, useState } from 'react';
 
 /**
- * PaperPlane — Floating scroll-driven origami airplane + animated dotted trail.
- * Fixed viewport overlay:
- *  - Guaranteed 100% visible on top of all sections (z-index: 9999, pointer-events: none)
- *  - Fixed full viewport (100vw x 100vh) so it NEVER adds extra scroll height or bottom space
- *  - Rotates dynamically to match flight tangent angle
- *  - Renders a dotted flight trail behind the plane
+ * PaperPlane — scroll-driven paper plane + dotted trail.
+ * Faithfully replicates the Zainab Kabira reference:
+ *  - SVG trail path masked to reveal itself exactly behind the plane.
+ *  - Plane sprite positioned + rotated along the EXACT same path via getPointAtLength().
+ *  - Single unified path guarantees perfect alignment.
  */
 export default function PaperPlane() {
   const [mounted, setMounted] = useState(false);
+  const containerRef = useRef(null);
   const planeRef = useRef(null);
-  const pathRef = useRef(null);
   const trailRef = useRef(null);
-
-  // Flight waypoints in viewport percentage [x%, y%] across 0..1 scroll progress
-  const WAYPOINTS = [
-    { p: 0.00, x: 0.95, y: 0.15 },
-    { p: 0.08, x: 0.75, y: 0.30 },
-    { p: 0.18, x: 0.40, y: 0.55 },
-    { p: 0.28, x: 0.15, y: 0.35 },
-    { p: 0.38, x: 0.35, y: 0.20 },
-    { p: 0.48, x: 0.78, y: 0.45 },
-    { p: 0.58, x: 0.82, y: 0.70 },
-    { p: 0.68, x: 0.45, y: 0.60 },
-    { p: 0.78, x: 0.18, y: 0.40 },
-    { p: 0.88, x: 0.35, y: 0.75 },
-    { p: 0.95, x: 0.65, y: 0.55 },
-    { p: 1.00, x: 0.80, y: 0.70 },
-  ];
+  const maskPathRef = useRef(null);
+  const motionPathRef = useRef(null);
 
   useEffect(() => {
     setMounted(true);
 
-    let animFrameId = null;
-    let targetP = 0;
-    let currentP = 0;
+    let motionLen = 0;
+    let lastMd = null;
+    let lastAppear = null;
 
-    // Catmull-Rom spline interpolation
-    function getSplinePoint(t) {
-      const n = WAYPOINTS.length - 1;
-      const scaled = t * n;
-      const i0 = Math.max(0, Math.min(n, Math.floor(scaled)));
-      const i1 = Math.min(n, i0 + 1);
-      const iPrev = Math.max(0, i0 - 1);
-      const iNext = Math.min(n, i1 + 1);
-
-      const localT = scaled - i0;
-
-      const p0 = WAYPOINTS[iPrev];
-      const p1 = WAYPOINTS[i0];
-      const p2 = WAYPOINTS[i1];
-      const p3 = WAYPOINTS[iNext];
-
-      const t2 = localT * localT;
-      const t3 = t2 * localT;
-
-      const calc = (v0, v1, v2, v3) => {
-        return 0.5 * (
-          (2 * v1) +
-          (-v0 + v2) * localT +
-          (2 * v0 - 5 * v1 + 4 * v2 - v3) * t2 +
-          (-v0 + 3 * v1 - 3 * v2 + v3) * t3
-        );
-      };
-
-      return {
-        x: calc(p0.x, p1.x, p2.x, p3.x),
-        y: calc(p0.y, p1.y, p2.y, p3.y),
-      };
-    }
-
-    const onScroll = () => {
-      const docH = document.documentElement.scrollHeight - window.innerHeight;
-      if (docH <= 0) return;
-      targetP = Math.max(0, Math.min(1, window.scrollY / docH));
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-
-    function renderLoop() {
-      // Smooth interpolation for silky flight
-      currentP += (targetP - currentP) * 0.12;
-
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-
-      // Calculate current point and slight forward point for tangent angle
-      const pt = getSplinePoint(currentP);
-      const delta = 0.01;
-      const forwardT = Math.min(1, currentP + delta);
-      const ptForward = getSplinePoint(forwardT);
-
-      const px = pt.x * vw;
-      const py = pt.y * vh;
-      const fpx = ptForward.x * vw;
-      const fpy = ptForward.y * vh;
-
-      // Plane sprite nose offset (~ -31deg in sprite coordinate)
-      const angleRad = Math.atan2(fpy - py, fpx - px);
-      const angleDeg = (angleRad * 180) / Math.PI - 31;
-
-      // Fade plane in once user starts scrolling, or subtle hint
-      const opacity = Math.min(1, Math.max(0, (window.scrollY - 30) / 150));
-
-      if (planeRef.current) {
-        planeRef.current.style.transform = `translate3d(${px}px, ${py}px, 0) translate(-50%, -50%) rotate(${angleDeg}deg)`;
-        planeRef.current.style.opacity = opacity;
-      }
-
-      // Draw dynamic trail up to current point
-      if (trailRef.current && opacity > 0.05) {
-        const steps = 40;
-        const trailLen = Math.min(steps, Math.max(2, Math.floor(currentP * steps)));
-        let d = '';
-        for (let s = 0; s <= trailLen; s++) {
-          const sampleT = (s / steps) * currentP;
-          const sPt = getSplinePoint(sampleT);
-          const sx = (sPt.x * vw).toFixed(1);
-          const sy = (sPt.y * vh).toFixed(1);
-          if (s === 0) {
-            d += `M ${sx} ${sy}`;
-          } else {
-            d += ` L ${sx} ${sy}`;
-          }
+    function buildPath() {
+      if (!containerRef.current) return;
+      
+      const w = window.innerWidth;
+      // We read the container height (which spans the rest of the page below Hero)
+      const h = containerRef.current.offsetHeight;
+      
+      const svg = trailRef.current.closest('svg');
+      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      
+      // Build an elegant asymmetric swooping path down the page
+      const loops = Math.max(3, Math.floor(h / 800)); // Dynamic loops based on height
+      const step = h / loops;
+      
+      let d = `M ${w * 0.85} 0`; // Start top right
+      
+      for(let i = 0; i < loops; i++) {
+        const y0 = i * step;
+        const y1 = (i + 1) * step;
+        if (i % 2 === 0) {
+          // Curve right to left
+          d += ` C ${w * 0.85} ${y0 + step * 0.4}, ${w * 0.15} ${y0 + step * 0.6}, ${w * 0.15} ${y1}`;
+        } else {
+          // Curve left to right
+          d += ` C ${w * 0.15} ${y0 + step * 0.4}, ${w * 0.85} ${y0 + step * 0.6}, ${w * 0.85} ${y1}`;
         }
-        trailRef.current.setAttribute('d', d);
-        trailRef.current.style.opacity = (opacity * 0.45).toFixed(2);
-      } else if (trailRef.current) {
-        trailRef.current.style.opacity = '0';
       }
 
-      animFrameId = requestAnimationFrame(renderLoop);
+      motionPathRef.current.setAttribute('d', d);
+      trailRef.current.setAttribute('d', d);
+      maskPathRef.current.setAttribute('d', d);
+
+      motionLen = motionPathRef.current.getTotalLength();
+      
+      // Setup the mask length
+      maskPathRef.current.style.strokeDasharray = motionLen;
+      maskPathRef.current.style.strokeDashoffset = motionLen;
     }
 
-    animFrameId = requestAnimationFrame(renderLoop);
+    const ease = (t) => t * t * (3 - 2 * t);
+
+    function update() {
+      if (!motionLen || !motionPathRef.current) return;
+      
+      const scrollY = window.scrollY;
+      const vh = window.innerHeight;
+      const docH = document.documentElement.scrollHeight - vh;
+      if (docH <= 0) return;
+
+      // Scroll progress 0 to 1
+      let p = Math.max(0, Math.min(1, scrollY / docH));
+      
+      // Reveal the plane gradually on first scroll
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const appear = reduce ? 1 : ease(Math.min(1, scrollY / (vh * 0.5)));
+
+      const md = p * motionLen;
+
+      if (md === lastMd && appear === lastAppear) return;
+      const mdChanged = md !== lastMd;
+      lastAppear = appear;
+
+      if (!mdChanged) {
+        planeRef.current.style.opacity = appear;
+        trailRef.current.style.opacity = appear * 0.6;
+        return;
+      }
+      lastMd = md;
+
+      // Mask trails perfectly
+      maskPathRef.current.style.strokeDashoffset = Math.max(0, motionLen - md);
+
+      // Math for position and exact tangency
+      const pt = motionPathRef.current.getPointAtLength(md);
+      const pA = motionPathRef.current.getPointAtLength(Math.max(0, md - 1));
+      const pB = motionPathRef.current.getPointAtLength(Math.min(motionLen, md + 1));
+      const ang = Math.atan2(pB.y - pA.y, pB.x - pA.x) * 180 / Math.PI;
+
+      // -31 deg offset because the plane.svg points slightly down-right
+      planeRef.current.style.transform = `translate3d(${pt.x.toFixed(1)}px, ${pt.y.toFixed(1)}px, 0) translate(-50%, -50%) rotate(${ang - 31}deg)`;
+      planeRef.current.style.opacity = appear;
+      trailRef.current.style.opacity = (appear * 0.6).toFixed(2);
+    }
+
+    function rebuild() {
+      lastMd = null;
+      lastAppear = null;
+      buildPath();
+      update();
+    }
+
+    // Wait for full layout to render before measuring heights
+    const timer = setTimeout(() => {
+      requestAnimationFrame(() => {
+        rebuild();
+        window.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', rebuild);
+      });
+    }, 100);
 
     return () => {
-      window.removeEventListener('scroll', onScroll);
-      if (animFrameId) cancelAnimationFrame(animFrameId);
+      clearTimeout(timer);
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', rebuild);
     };
   }, []);
 
@@ -148,37 +134,61 @@ export default function PaperPlane() {
 
   return (
     <div
+      ref={containerRef}
       aria-hidden="true"
       style={{
-        position: 'fixed',
-        inset: 0,
-        width: '100vw',
-        height: '100vh',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
         pointerEvents: 'none',
-        zIndex: 9999,
+        zIndex: 9999, // Overlay above all other section content
         overflow: 'hidden',
       }}
     >
       <svg
         style={{
           position: 'absolute',
-          inset: 0,
+          top: 0,
+          left: 0,
           width: '100%',
           height: '100%',
           overflow: 'visible',
         }}
       >
-        {/* Glowing Dotted Flight Trail */}
+        <defs>
+          <mask id="planeTrailMask">
+            <path
+              ref={maskPathRef}
+              fill="none"
+              stroke="#fff"
+              strokeWidth="60"
+              strokeLinecap="butt"
+            />
+          </mask>
+        </defs>
+
+        {/* Hidden motion path for getPointAtLength */}
+        <path
+          ref={motionPathRef}
+          fill="none"
+          stroke="none"
+        />
+
+        {/* Dotted visible trail, exactly masked */}
         <path
           ref={trailRef}
           fill="none"
           stroke="var(--gold, #c9961a)"
-          strokeWidth="2"
-          strokeDasharray="6 6"
+          strokeWidth="2.5"
+          strokeDasharray="8 8"
           strokeLinecap="round"
           style={{
-            transition: 'opacity 0.2s ease',
-            filter: 'drop-shadow(0 0 6px rgba(201, 150, 26, 0.4))',
+            mask: 'url(#planeTrailMask)',
+            opacity: 0,
+            transition: 'opacity 0.5s ease',
+            filter: 'drop-shadow(0 2px 4px rgba(201,150,26,0.3))',
           }}
         />
       </svg>
@@ -193,14 +203,13 @@ export default function PaperPlane() {
           position: 'absolute',
           left: 0,
           top: 0,
-          width: '56px',
+          width: '64px',
           height: 'auto',
           transformOrigin: 'center center',
           willChange: 'transform, opacity',
           opacity: 0,
-          transition: 'opacity 0.3s ease',
-          filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.25)) drop-shadow(0 2px 4px rgba(0,0,0,0.15))',
           pointerEvents: 'none',
+          filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.3))',
         }}
       />
     </div>
