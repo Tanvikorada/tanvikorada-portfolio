@@ -56,10 +56,9 @@ export default function PaperPlane() {
 
       motionLen = motionPathRef.current.getTotalLength();
       
-      // Setup the mask length for a fading tail instead of permanent scribble
-      const tailLen = Math.min(600, motionLen);
-      maskPathRef.current.style.strokeDasharray = `${tailLen} ${motionLen}`;
-      maskPathRef.current.style.strokeDashoffset = tailLen;
+      // Setup the mask length for full permanent trail
+      maskPathRef.current.style.strokeDasharray = motionLen;
+      maskPathRef.current.style.strokeDashoffset = motionLen;
     }
 
     const ease = (t) => t * t * (3 - 2 * t);
@@ -92,9 +91,8 @@ export default function PaperPlane() {
       }
       lastMd = md;
 
-      // Mask trails perfectly with a trailing tail
-      const tailLen = Math.min(600, motionLen);
-      maskPathRef.current.style.strokeDashoffset = tailLen - md;
+      // Mask trails perfectly covering full path
+      maskPathRef.current.style.strokeDashoffset = Math.max(0, motionLen - md);
 
       // Math for position and exact tangency
       const pt = motionPathRef.current.getPointAtLength(md);
@@ -115,19 +113,24 @@ export default function PaperPlane() {
       update();
     }
 
-    // Wait for full layout to render before measuring heights
-    const timer = setTimeout(() => {
+    // Use ResizeObserver to detect layout shifts (images loading, accordions, etc.)
+    // This fixes the issue where the plane detaches from the path near the bottom of the page!
+    const resizeObserver = new ResizeObserver(() => {
       requestAnimationFrame(() => {
         rebuild();
-        window.addEventListener('scroll', update, { passive: true });
-        window.addEventListener('resize', rebuild);
       });
+    });
+    
+    // Wait for initial layout
+    const timer = setTimeout(() => {
+      resizeObserver.observe(document.documentElement);
+      window.addEventListener('scroll', update, { passive: true });
     }, 100);
 
     return () => {
       clearTimeout(timer);
+      resizeObserver.disconnect();
       window.removeEventListener('scroll', update);
-      window.removeEventListener('resize', rebuild);
     };
   }, []);
 
