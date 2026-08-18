@@ -143,7 +143,7 @@ export default function PaperPlane() {
         width: '100%',
         height: '100%',
         pointerEvents: 'none',
-        zIndex: 9999, // Overlay above all other section content
+        zIndex: 0, // Behind the content, above the background
         overflow: 'hidden',
       }}
     >
