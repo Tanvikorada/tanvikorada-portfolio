@@ -10,6 +10,7 @@ import About from './components/About';
 import CursorFX from './components/CursorFX';
 import Contact from './components/Contact';
 import Education from './components/Education';
+import PaperPlane from './components/PaperPlane';
 
 export default function Home() {
   return (
@@ -25,6 +26,8 @@ export default function Home() {
 
       {/* Main content scrolls over the sticky hero */}
       <div style={{ position: 'relative', zIndex: 10, background: 'var(--bg-base)', transition: 'background 0.6s' }}>
+        {/* Scroll-driven paper plane that flies the full page */}
+        <PaperPlane />
         {/* Sky band cloud transition */}
         <SkyBand />
 
