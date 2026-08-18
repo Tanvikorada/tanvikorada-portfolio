@@ -9,8 +9,7 @@ export default function TechStack() {
         position: 'relative',
         zIndex: 10,
         width: '100%',
-        /* Tall section so keyboard is visible while scrolling — mirrors Naresh's 150dvh */
-        minHeight: '100vh',
+        height: '100vh',
       }}
     >
       {/* ── Full-screen Spline keyboard iframe (fills entire section) ── */}

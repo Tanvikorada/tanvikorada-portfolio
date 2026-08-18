@@ -54,10 +54,7 @@ export default function Hero() {
       <motion.div className="hero-bg-night" style={{ y: yBg }} />
       <div className="hero-stars" />
 
-      {/* SVG Path for Paper Plane (To be wired in global layout or here) */}
-      <svg className="scroll-path" preserveAspectRatio="none" viewBox="0 0 100 100" style={{ position: 'absolute', width: '100%', height: '200vh', top: '50%', left: 0, pointerEvents: 'none', zIndex: 0 }}>
-        <path id="flight-path" d="M -10,50 Q 30,10 50,50 T 110,50" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" strokeDasharray="2 4" />
-      </svg>
+
 
       <motion.div 
         className="hero-content" 
