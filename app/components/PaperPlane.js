@@ -32,17 +32,23 @@ export default function PaperPlane() {
       const svg = trailRef.current.closest('svg');
       svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
       
-      // Zainab Kabira's exact reference paths (Featured Work section, 1440x2933)
-      // We join the three disconnected paths with smooth Bezier curves to create one continuous flight.
-      const rawPath = `M 210 110 C 110 200 70 325 88 410 C 103 488 192 528 255 555 C 600 600 1100 450 1225 513 C 1400 571 1408 837 1177 928 C 900 1000 700 900 526 944 C 343 950 -12 1108 114 1503 C 181 1632 428 1799 685 1627 C 1049 1385 1402 1429 1402 1762 C 1402 2099 1089 2154 826 2073 C 564 1992 279 1966 203 2255 C 123 2561 552 2708 800 2549 C 1047 2391 1393 2589 1253 2887`;
-
-      // Scale the reference path to fit our page perfectly
-      let d = rawPath.replace(/(-?\d+)\s+(-?\d+)/g, (match, px, py) => {
-        const nx = (parseFloat(px) / 1440) * w;
-        // Since our page is much taller than her 2933px section, we scale Y aggressively so it spans the entire page
-        const ny = (parseFloat(py) / 2933) * h;
-        return `${nx.toFixed(1)} ${ny.toFixed(1)}`;
-      });
+      // Build an elegant asymmetric swooping path down the page
+      const loops = Math.max(3, Math.floor(h / 800)); // Dynamic loops based on height
+      const step = h / loops;
+      
+      let d = `M ${w * 0.85} 0`; // Start top right
+      
+      for(let i = 0; i < loops; i++) {
+        const y0 = i * step;
+        const y1 = (i + 1) * step;
+        if (i % 2 === 0) {
+          // Curve right to left (organic swoop)
+          d += ` C ${w * 0.9} ${y0 + step * 0.3}, ${w * 0.05} ${y0 + step * 0.6}, ${w * 0.15} ${y1}`;
+        } else {
+          // Curve left to right (shallower glide)
+          d += ` C ${w * 0.3} ${y0 + step * 0.4}, ${w * 0.95} ${y0 + step * 0.7}, ${w * 0.85} ${y1}`;
+        }
+      }
 
       motionPathRef.current.setAttribute('d', d);
       trailRef.current.setAttribute('d', d);
@@ -50,9 +56,10 @@ export default function PaperPlane() {
 
       motionLen = motionPathRef.current.getTotalLength();
       
-      // Setup the mask length
-      maskPathRef.current.style.strokeDasharray = motionLen;
-      maskPathRef.current.style.strokeDashoffset = motionLen;
+      // Setup the mask length for a fading tail instead of permanent scribble
+      const tailLen = Math.min(600, motionLen);
+      maskPathRef.current.style.strokeDasharray = `${tailLen} ${motionLen}`;
+      maskPathRef.current.style.strokeDashoffset = tailLen;
     }
 
     const ease = (t) => t * t * (3 - 2 * t);
@@ -85,8 +92,9 @@ export default function PaperPlane() {
       }
       lastMd = md;
 
-      // Mask trails perfectly
-      maskPathRef.current.style.strokeDashoffset = Math.max(0, motionLen - md);
+      // Mask trails perfectly with a trailing tail
+      const tailLen = Math.min(600, motionLen);
+      maskPathRef.current.style.strokeDashoffset = tailLen - md;
 
       // Math for position and exact tangency
       const pt = motionPathRef.current.getPointAtLength(md);
