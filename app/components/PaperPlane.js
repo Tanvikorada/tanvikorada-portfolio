@@ -26,7 +26,7 @@ export default function PaperPlane() {
     function buildPath() {
       if (!containerRef.current) return;
       
-      const w = window.innerWidth;
+      const w = document.documentElement.clientWidth; // Use clientWidth to exclude scrollbar width
       // We read the container height (which spans the rest of the page below Hero)
       const h = containerRef.current.offsetHeight;
       
@@ -43,11 +43,11 @@ export default function PaperPlane() {
         const y0 = i * step;
         const y1 = (i + 1) * step;
         if (i % 2 === 0) {
-          // Curve right to left
-          d += ` C ${w * 0.85} ${y0 + step * 0.4}, ${w * 0.15} ${y0 + step * 0.6}, ${w * 0.15} ${y1}`;
+          // Curve right to left (organic swoop)
+          d += ` C ${w * 0.9} ${y0 + step * 0.3}, ${w * 0.05} ${y0 + step * 0.6}, ${w * 0.15} ${y1}`;
         } else {
-          // Curve left to right
-          d += ` C ${w * 0.15} ${y0 + step * 0.4}, ${w * 0.85} ${y0 + step * 0.6}, ${w * 0.85} ${y1}`;
+          // Curve left to right (shallower glide)
+          d += ` C ${w * 0.3} ${y0 + step * 0.4}, ${w * 0.95} ${y0 + step * 0.7}, ${w * 0.85} ${y1}`;
         }
       }
 
