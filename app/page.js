@@ -1,6 +1,6 @@
 import Nav from './components/Nav';
 import Hero from './components/Hero';
-import SkyBand from './components/SkyBand';
+import AnimatedBackground from './components/AnimatedBackground';
 import TechStack from './components/TechStack';
 import Projects from './components/Projects';
 import MoreProjects from './components/MoreProjects';
@@ -21,27 +21,29 @@ export default function Home() {
       {/* Floating pill nav */}
       <Nav />
 
-      {/* 1. Sticky Sky Hero */}
-      <Hero />
+      <AnimatedBackground />
 
       {/* Main content scrolls over the sticky hero */}
-      <div style={{ position: 'relative', zIndex: 10, background: 'var(--bg-base)', transition: 'background 0.6s' }}>
+      <div className="canvas-overlay-mode" style={{ position: 'relative', zIndex: 10 }}>
+        {/* 1. Sticky Sky Hero */}
+        <Hero />
+
         {/* Scroll-driven paper plane that flies the full page */}
         <PaperPlane />
-        {/* Sky band cloud transition */}
-        <SkyBand />
 
         {/* 2. Tech Stack */}
         <TechStack />
 
-        {/* 3. Projects — scroll stacking cards */}
-        <Projects />
+        {/* Start solid background for the rest of the site */}
+        <div style={{ background: 'var(--bg-base)', position: 'relative', zIndex: 10 }}>
+          {/* 3. Projects — scroll stacking cards */}
+          <Projects />
 
-        {/* 4. More Projects - horizontal row */}
-        <MoreProjects />
+          {/* 4. More Projects - horizontal row */}
+          <MoreProjects />
 
-        {/* 5. Experience Timeline */}
-        <Experience />
+          {/* 5. Experience Timeline */}
+          <Experience />
 
         {/* 6. Education */}
         <Education />
@@ -52,8 +54,9 @@ export default function Home() {
         {/* 5. About bento */}
         <About />
 
-        {/* 6. Contact */}
-        <Contact />
+          {/* 6. Contact */}
+          <Contact />
+        </div>
       </div>
     </>
   );
