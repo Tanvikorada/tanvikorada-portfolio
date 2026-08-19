@@ -1,7 +1,7 @@
 'use client';
 import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import Dynamic3DBuilding from './Dynamic3DBuilding';
+import HolographicBuilding from './HolographicBuilding';
 
 const EDUCATION_DATA = [
   {
@@ -71,7 +71,7 @@ export default function Education() {
         
         {/* Dynamic Background Animation (fixed in center) */}
         <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.8, pointerEvents: 'none' }}>
-           <Dynamic3DBuilding progress={scrollYProgress} />
+           <HolographicBuilding progress={scrollYProgress} />
         </div>
 
         {/* Horizontal Scrolling Track */}
