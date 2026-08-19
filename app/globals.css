@@ -17,6 +17,7 @@
   --border:         rgba(26,18,8,0.10);
   --border-mid:     rgba(26,18,8,0.16);
   --nav-bg:         rgba(255,249,241,0.88);
+  --primary:        #00ffcc; /* Neon Cyan for holograms */
   --hero-day-from:  #ffe8a0;
   --hero-day-to:    #fff9f1;
   --hero-night-from:#0d0b2a;
@@ -39,6 +40,7 @@ body.night {
   --text-body:      #a09080;
   --text-muted:     #605850;
   --gold:           #f0b940;
+  --primary:        #00ffcc;
   --border:         rgba(240,237,232,0.08);
   --nav-bg:         rgba(13,13,15,0.92);
   --shadow-lift:    0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.3);
