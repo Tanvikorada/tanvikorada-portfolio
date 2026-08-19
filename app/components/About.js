@@ -56,7 +56,7 @@ export default function About() {
         </TiltCard>
 
         {/* Status */}
-        <TiltCard className="bento-status" style={{ background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)' }}>
+        <TiltCard className="bento-status" style={{ background: 'linear-gradient(135deg, rgba(220, 252, 231, 0.8) 0%, rgba(187, 247, 208, 0.4) 100%)', borderColor: 'rgba(34, 197, 94, 0.2)' }}>
           <p className="bento-label">Status</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
             <span className="status-dot" />
@@ -105,7 +105,7 @@ export default function About() {
         </TiltCard>
 
         {/* Location */}
-        <TiltCard className="bento-location" style={{ background: 'linear-gradient(135deg, #fef9ee 0%, #fef3c7 100%)' }}>
+        <TiltCard className="bento-location" style={{ background: 'linear-gradient(135deg, rgba(254, 243, 199, 0.6) 0%, rgba(253, 230, 138, 0.3) 100%)', borderColor: 'rgba(245, 158, 11, 0.2)' }}>
           <p className="bento-label">Location</p>
           <motion.div 
             animate={{ y: [0, -10, 0] }}

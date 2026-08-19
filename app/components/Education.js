@@ -30,14 +30,14 @@ function EduCard({ item, index }) {
     offset: ["0 1", "1.2 1"] // fade in when entering from bottom
   });
 
-  const opacity = useTransform(scrollYProgress, [0, 1], [0.3, 1]);
-  const scale = useTransform(scrollYProgress, [0, 1], [0.95, 1]);
-  const y = useTransform(scrollYProgress, [0, 1], [20, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const scale = useTransform(scrollYProgress, [0, 1], [0.9, 1]);
+  const x = useTransform(scrollYProgress, [0, 1], [-50, 0]);
 
   return (
     <motion.div 
       ref={ref}
-      style={{ opacity, scale, y }}
+      style={{ opacity, scale, x }}
       className="edu-card"
     >
       <div className="edu-dot" />
@@ -87,32 +87,44 @@ export default function Education() {
       <style jsx>{`
         .edu-card {
           position: relative;
-          background: var(--bg-base);
-          border: 1px solid var(--border);
-          border-radius: 16px;
-          padding: 24px;
-          box-shadow: var(--shadow-sm);
-          transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+          background: rgba(255, 255, 255, 0.65);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+          border: 1px solid rgba(255, 255, 255, 0.4);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+          border-radius: 20px;
+          padding: 28px;
+          transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s;
+        }
+        :global(body.night) .edu-card {
+          background: rgba(20, 20, 20, 0.55);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
         }
         .edu-card:hover {
-          border-color: var(--border-hover);
-          transform: translateY(-2px);
-          box-shadow: var(--shadow-md);
+          transform: translateX(8px);
+          box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
+          border-color: var(--accent);
+        }
+        :global(body.night) .edu-card:hover {
+          box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
         .edu-dot {
           position: absolute;
-          left: -39px;
-          top: 28px;
-          width: 14px;
-          height: 14px;
+          left: -41px;
+          top: 32px;
+          width: 16px;
+          height: 16px;
           border-radius: 50%;
-          background: var(--bg-base);
-          border: 2px solid var(--accent);
-          transition: background 0.3s;
+          background: var(--bg-surface);
+          border: 3px solid var(--accent);
+          transition: background 0.4s, box-shadow 0.4s, transform 0.4s;
+          box-shadow: 0 0 0 rgba(0,0,0,0);
         }
         .edu-card:hover .edu-dot {
           background: var(--accent);
-          box-shadow: 0 0 12px var(--accent);
+          box-shadow: 0 0 20px var(--accent);
+          transform: scale(1.3);
         }
         .edu-inst {
           font-family: var(--font-serif);
