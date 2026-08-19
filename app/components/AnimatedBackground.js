@@ -263,6 +263,59 @@ export default function AnimatedBackground() {
   useEffect(() => {
     if (!splineApp) return;
 
+    const createSectionTimeline = (triggerId, targetStateKey) => {
+      const kbd = splineApp.findObjectByName("keyboard");
+      if (!kbd) return null;
+      
+      const targetState = KEYBOARD_STATES[targetStateKey];
+      const prevState = KEYBOARD_STATES['hero']; // For now, hero is the only prev state
+
+      return gsap.timeline({
+        scrollTrigger: {
+          trigger: triggerId,
+          start: "top 50%",
+          end: "bottom bottom",
+          scrub: true,
+          onEnter: () => {
+            gsap.to(kbd.scale, { ...targetState.scale, duration: 1 });
+            gsap.to(kbd.position, { ...targetState.position, duration: 1 });
+            gsap.to(kbd.rotation, { ...targetState.rotation, duration: 1 });
+          },
+          onLeaveBack: () => {
+            gsap.to(kbd.scale, { ...prevState.scale, duration: 1 });
+            gsap.to(kbd.position, { ...prevState.position, duration: 1 });
+            gsap.to(kbd.rotation, { ...prevState.rotation, duration: 1 });
+          },
+        },
+      });
+    };
+
+    const setupScrollAnimations = () => {
+      const kbd = splineApp.findObjectByName("keyboard");
+      if (!kbd) return [];
+
+      // Initial state
+      const isMobile = window.innerWidth < 768;
+      const heroState = KEYBOARD_STATES.hero;
+      // Adjust hero position slightly for mobile
+      if (isMobile) {
+        heroState.position = { x: 0, y: -150, z: 0 };
+        heroState.scale = { x: 0.15, y: 0.15, z: 0.15 };
+      }
+
+      gsap.set(kbd.scale, heroState.scale);
+      gsap.set(kbd.position, heroState.position);
+      gsap.set(kbd.rotation, heroState.rotation);
+
+      const timelines = [
+        createSectionTimeline("#stack", "stack"),
+      ].filter(Boolean);
+      
+      return timelines;
+    };
+
+    const timelines = setupScrollAnimations();
+
     handleSplineInteractions();
     bongoAnimationRef.current = getBongoAnimation();
     keycapAnimationsRef.current = getKeycapsAnimation();
