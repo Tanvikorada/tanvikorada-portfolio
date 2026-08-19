@@ -231,9 +231,9 @@ export default function AnimatedBackground() {
 
   const KEYBOARD_STATES = {
     hero: {
-      scale: { x: 0, y: 0, z: 0 },
-      position: { x: 350, y: 150, z: -100 },
-      rotation: { x: Math.PI / 4, y: 0, z: 0 },
+      scale: { x: 0.25, y: 0.25, z: 0.25 },
+      position: { x: 400, y: 50, z: -100 }, // Tucked behind the profile photo
+      rotation: { x: Math.PI / 8, y: -Math.PI / 6, z: Math.PI / 12 },
     },
     stack: {
       scale: { x: 0.25, y: 0.25, z: 0.25 },
@@ -315,23 +315,16 @@ export default function AnimatedBackground() {
       return gsap.timeline({
         scrollTrigger: {
           trigger: triggerId,
-          start: "top 50%",
-          end: "bottom bottom",
-          scrub: true,
-          onEnter: () => {
-            setActiveSection(targetStateKey);
-            gsap.to(kbd.scale, { ...targetState.scale, duration: 1 });
-            gsap.to(kbd.position, { ...targetState.position, duration: 1 });
-            gsap.to(kbd.rotation, { ...targetState.rotation, duration: 1 });
-          },
-          onLeaveBack: () => {
-            setActiveSection(prevStateKey);
-            gsap.to(kbd.scale, { ...prevState.scale, duration: 1 });
-            gsap.to(kbd.position, { ...prevState.position, duration: 1 });
-            gsap.to(kbd.rotation, { ...prevState.rotation, duration: 1 });
-          },
+          start: "top 80%", // Start animating when section is mostly in view
+          end: "top 30%",   // Finish animation when section is near top
+          scrub: 1.5,       // 1.5s smoothing on the scroll scrub for premium feel
+          onEnter: () => setActiveSection(targetStateKey),
+          onLeaveBack: () => setActiveSection(prevStateKey)
         },
-      });
+      })
+      .to(kbd.scale, { ...targetState.scale, ease: "power2.inOut" }, 0)
+      .to(kbd.position, { ...targetState.position, ease: "power2.inOut" }, 0)
+      .to(kbd.rotation, { ...targetState.rotation, ease: "power2.inOut" }, 0);
     };
 
     const setupScrollAnimations = () => {
