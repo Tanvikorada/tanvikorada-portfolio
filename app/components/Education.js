@@ -227,20 +227,26 @@ export default function Education() {
           {EDUCATION_DATA.map((edu, i) => {
             
             // Fade and scale each card as it approaches the center
-            // Card 0: centered at progress 0
-            // Card 1: centered at progress 0.5
-            // Card 2: centered at progress 1.0
             const centerProgress = i * 0.5; 
-            const opacity = useTransform(
-              scrollYProgress, 
-              [centerProgress - 0.25, centerProgress, centerProgress + 0.25], 
-              [0.2, 1, 0.2]
-            );
-            const scale = useTransform(
-              scrollYProgress, 
-              [centerProgress - 0.25, centerProgress, centerProgress + 0.25], 
-              [0.8, 1, 0.8]
-            );
+            
+            // Clamp inputs to [0, 1] to prevent WAAPI animate offset errors
+            let input, outputOpacity, outputScale;
+            if (i === 0) {
+              input = [0, 0.25];
+              outputOpacity = [1, 0.2];
+              outputScale = [1, 0.8];
+            } else if (i === EDUCATION_DATA.length - 1) {
+              input = [0.75, 1];
+              outputOpacity = [0.2, 1];
+              outputScale = [0.8, 1];
+            } else {
+              input = [centerProgress - 0.25, centerProgress, centerProgress + 0.25];
+              outputOpacity = [0.2, 1, 0.2];
+              outputScale = [0.8, 1, 0.8];
+            }
+
+            const opacity = useTransform(scrollYProgress, input, outputOpacity);
+            const scale = useTransform(scrollYProgress, input, outputScale);
 
             return (
               <div key={i} style={{ width: '100vw', display: 'flex', justifyContent: 'center', padding: '0 5vw' }}>
