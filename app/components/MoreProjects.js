@@ -25,7 +25,7 @@ const EXTRA_PROJECTS = [
 
 export default function MoreProjects() {
   return (
-    <section className="section" style={{ paddingTop: '40px' }}>
+    <section id="more-projects" className="section" style={{ paddingTop: '40px' }}>
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 8vw' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '40px' }}>
           <h3 style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>More Explorations</h3>

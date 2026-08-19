@@ -232,16 +232,21 @@ export default function AnimatedBackground() {
   // Predefined states mapped exactly from Naresh's config
   const KEYBOARD_STATES = {
     hero: {
-      scale: { x: 0.20, y: 0.20, z: 0.20 },
-      position: { x: 225, y: -100, z: 0 },
-      rotation: { x: 0, y: 0, z: 0 },
+      scale: { x: 0.1, y: 0.1, z: 0.1 },
+      position: { x: 500, y: 150, z: -100 },
+      rotation: { x: Math.PI / 4, y: 0, z: 0 },
     },
     stack: {
       scale: { x: 0.25, y: 0.25, z: 0.25 },
       position: { x: 0, y: -40, z: 0 },
       rotation: { x: 0, y: Math.PI / 12, z: 0 },
     },
-    projects: {
+    hidden: {
+      scale: { x: 0, y: 0, z: 0 },
+      position: { x: 0, y: 1000, z: 0 },
+      rotation: { x: 0, y: 0, z: 0 },
+    },
+    more_projects: {
       scale: { x: 0.25, y: 0.25, z: 0.25 },
       position: { x: 0, y: -40, z: 0 },
       rotation: { x: Math.PI, y: Math.PI / 3, z: Math.PI },
@@ -259,7 +264,7 @@ export default function AnimatedBackground() {
 
     const manageAnimations = async () => {
       // Handle Bongo Cat
-      if (activeSection === "projects") {
+      if (activeSection === "more_projects") {
         await sleep(300);
         if (cancelled) return;
         bongoAnimationRef.current?.start();
@@ -269,15 +274,26 @@ export default function AnimatedBackground() {
         bongoAnimationRef.current?.stop();
       }
 
-      // Handle Contact (Floating Keycaps)
+      // Handle Tech Stack (Float & Settle for 1 second)
+      if (activeSection === "stack") {
+        await sleep(200);
+        if (cancelled) return;
+        keycapAnimationsRef.current?.start();
+        setTimeout(() => {
+          if (!cancelled && activeSection === "stack") {
+            keycapAnimationsRef.current?.stop();
+          }
+        }, 1000);
+      } else if (activeSection !== "contact") {
+        // Ensure floating is stopped if we leave
+        keycapAnimationsRef.current?.stop();
+      }
+
+      // Handle Contact (Floating Keycaps continuously)
       if (activeSection === "contact") {
         await sleep(600);
         if (cancelled) return;
         keycapAnimationsRef.current?.start();
-      } else {
-        await sleep(600);
-        if (cancelled) return;
-        keycapAnimationsRef.current?.stop();
       }
     };
 
@@ -338,8 +354,10 @@ export default function AnimatedBackground() {
 
       const timelines = [
         createSectionTimeline("#stack", "stack", "hero"),
-        createSectionTimeline("#projects", "projects", "stack"),
-        createSectionTimeline("#contact", "contact", "projects"),
+        createSectionTimeline("#projects", "hidden", "stack"),
+        createSectionTimeline("#more-projects", "more_projects", "hidden"),
+        createSectionTimeline("#experience", "hidden", "more_projects"),
+        createSectionTimeline("#contact", "contact", "hidden"),
       ].filter(Boolean);
       
       return timelines;
@@ -411,37 +429,12 @@ export default function AnimatedBackground() {
       gsap.set(kbd.rotation, KEYBOARD_STATES.hero.rotation);
     }
     
-    // Typing cat starts on hero
-    bongoAnimationRef.current.start();
-
-    // Setup timeline for the transition to TechStack
-    let stackTl;
-    if (kbd) {
-      stackTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: "#stack",
-          start: "top 70%",
-          end: "bottom bottom",
-          scrub: true,
-          onEnter: () => {
-             bongoAnimationRef.current?.stop();
-             keycapAnimationsRef.current?.start();
-          },
-          onLeaveBack: () => {
-             keycapAnimationsRef.current?.stop();
-             bongoAnimationRef.current?.start();
-          }
-        }
-      });
-      stackTl.to(kbd.scale, { ...KEYBOARD_STATES.stack.scale, duration: 1 }, 0);
-      stackTl.to(kbd.position, { ...KEYBOARD_STATES.stack.position, duration: 1 }, 0);
-      stackTl.to(kbd.rotation, { ...KEYBOARD_STATES.stack.rotation, duration: 1 }, 0);
-    }
+    // Bongo cat is hidden initially since hero is hidden
+    bongoAnimationRef.current.stop();
 
     return () => {
       bongoAnimationRef.current?.stop();
       keycapAnimationsRef.current?.stop();
-      if (stackTl) stackTl.kill();
       window.removeEventListener('resize', updateLogos);
     };
   }, [splineApp]);

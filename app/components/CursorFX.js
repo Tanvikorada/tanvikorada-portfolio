@@ -22,9 +22,13 @@ export default function CursorFX() {
 
     // Click sound + spark
     const playClick = (e) => {
+      // Skip audio if clicking on the Spline canvas (keyboard plays its own sound)
+      const isCanvas = e.target.tagName && e.target.tagName.toUpperCase() === 'CANVAS';
+      
       // Sound: A softer, dual-tone "chime" or "glass tap"
       try {
-        if (!audioCtx.current) {
+        if (!isCanvas) {
+          if (!audioCtx.current) {
           audioCtx.current = new (window.AudioContext || window.webkitAudioContext)();
         }
         const ctx = audioCtx.current;
@@ -51,9 +55,10 @@ export default function CursorFX() {
         gain2.gain.setValueAtTime(0.03, ctx.currentTime);
         gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
         osc2.connect(gain2);
-        gain2.connect(ctx.destination);
-        osc2.start(ctx.currentTime);
-        osc2.stop(ctx.currentTime + 0.08);
+          gain2.connect(ctx.destination);
+          osc2.start(ctx.currentTime);
+          osc2.stop(ctx.currentTime + 0.08);
+        }
       } catch (err) { /* ignore */ }
 
       // Sparks
