@@ -29,9 +29,12 @@ export default function CursorFX() {
       try {
         if (!isCanvas) {
           if (!audioCtx.current) {
-          audioCtx.current = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        const ctx = audioCtx.current;
+            audioCtx.current = new (window.AudioContext || window.webkitAudioContext)();
+          }
+          const ctx = audioCtx.current;
+          if (ctx.state === 'suspended') {
+            ctx.resume();
+          }
         
         // Tone 1
         const osc1 = ctx.createOscillator();

@@ -15,20 +15,40 @@ gsap.registerPlugin(ScrollTrigger);
 
 const BOMB_EMOJIS = ['😸', '🚀', '🔥', '⚡', '💻', '🎉', '💖', '👀'];
 
+let thockAudio = null;
+let releaseAudio = null;
+let isAudioUnlocked = false;
+
+if (typeof window !== 'undefined') {
+  thockAudio = new Audio('/assets/keycap-sounds/press.mp3');
+  releaseAudio = new Audio('/assets/keycap-sounds/release.mp3');
+  thockAudio.volume = 0.5;
+  releaseAudio.volume = 0.5;
+
+  const unlockAudio = () => {
+    if (isAudioUnlocked) return;
+    thockAudio.play().then(() => thockAudio.pause()).catch(() => {});
+    releaseAudio.play().then(() => releaseAudio.pause()).catch(() => {});
+    isAudioUnlocked = true;
+    window.removeEventListener('click', unlockAudio);
+    window.removeEventListener('touchstart', unlockAudio);
+  };
+  window.addEventListener('click', unlockAudio, { once: true });
+  window.addEventListener('touchstart', unlockAudio, { once: true });
+}
+
 const playThock = () => {
-  try {
-    const audio = new Audio('/assets/keycap-sounds/press.mp3');
-    audio.volume = 0.5;
-    audio.play().catch(() => {});
-  } catch (e) {}
+  if (thockAudio && isAudioUnlocked) {
+    thockAudio.currentTime = 0;
+    thockAudio.play().catch(() => {});
+  }
 };
 
 const playRelease = () => {
-  try {
-    const audio = new Audio('/assets/keycap-sounds/release.mp3');
-    audio.volume = 0.5;
-    audio.play().catch(() => {});
-  } catch (e) {}
+  if (releaseAudio && isAudioUnlocked) {
+    releaseAudio.currentTime = 0;
+    releaseAudio.play().catch(() => {});
+  }
 };
 
 const SKILLS = {
@@ -231,8 +251,8 @@ export default function AnimatedBackground() {
 
   const KEYBOARD_STATES = {
     hero: {
-      scale: { x: 0.25, y: 0.25, z: 0.25 },
-      position: { x: 400, y: 50, z: -100 }, // Tucked behind the profile photo
+      scale: { x: 0, y: 0, z: 0 },
+      position: { x: 400, y: 50, z: -100 },
       rotation: { x: Math.PI / 8, y: -Math.PI / 6, z: Math.PI / 12 },
     },
     stack: {
@@ -247,7 +267,7 @@ export default function AnimatedBackground() {
     },
     more_projects: {
       scale: { x: 0.25, y: 0.25, z: 0.25 },
-      position: { x: 0, y: -150, z: 0 }, // Lowered y so it doesn't overlap the Projects section background
+      position: { x: 0, y: 0, z: 0 },
       rotation: { x: Math.PI, y: Math.PI / 3, z: Math.PI },
     },
     contact: {
@@ -315,16 +335,22 @@ export default function AnimatedBackground() {
       return gsap.timeline({
         scrollTrigger: {
           trigger: triggerId,
-          start: "top 80%", // Start animating when section is mostly in view
-          end: "top 30%",   // Finish animation when section is near top
-          scrub: 1.5,       // 1.5s smoothing on the scroll scrub for premium feel
-          onEnter: () => setActiveSection(targetStateKey),
-          onLeaveBack: () => setActiveSection(prevStateKey)
+          start: "top 50%",
+          end: "bottom bottom",
+          onEnter: () => {
+            setActiveSection(targetStateKey);
+            gsap.to(kbd.scale, { ...targetState.scale, duration: 0.8, ease: "power2.out" });
+            gsap.to(kbd.position, { ...targetState.position, duration: 0.8, ease: "power2.out" });
+            gsap.to(kbd.rotation, { ...targetState.rotation, duration: 0.8, ease: "power2.out" });
+          },
+          onLeaveBack: () => {
+            setActiveSection(prevStateKey);
+            gsap.to(kbd.scale, { ...prevState.scale, duration: 0.8, ease: "power2.out" });
+            gsap.to(kbd.position, { ...prevState.position, duration: 0.8, ease: "power2.out" });
+            gsap.to(kbd.rotation, { ...prevState.rotation, duration: 0.8, ease: "power2.out" });
+          },
         },
-      })
-      .to(kbd.scale, { ...targetState.scale, ease: "power2.inOut" }, 0)
-      .to(kbd.position, { ...targetState.position, ease: "power2.inOut" }, 0)
-      .to(kbd.rotation, { ...targetState.rotation, ease: "power2.inOut" }, 0);
+      });
     };
 
     const setupScrollAnimations = () => {
@@ -347,8 +373,9 @@ export default function AnimatedBackground() {
       const timelines = [
         createSectionTimeline("#stack", "stack", "hero"),
         createSectionTimeline("#work", "hidden", "stack"),
-        createSectionTimeline("#more-projects", "more_projects", "hidden"),
-        createSectionTimeline("#experience", "hidden", "more_projects"),
+        createSectionTimeline("#bongo-section", "more_projects", "hidden"),
+        createSectionTimeline("#more-projects", "hidden", "more_projects"),
+        createSectionTimeline("#experience", "hidden", "hidden"),
         createSectionTimeline("#contact", "contact", "hidden"),
       ].filter(Boolean);
       
@@ -485,7 +512,9 @@ export default function AnimatedBackground() {
           pointerEvents: 'auto', // Must be auto so Spline registers hover/click
           width: '100vw', 
           height: '100vh', 
-          background: 'var(--bg-base)'
+          background: 'var(--bg-base)',
+          opacity: splineApp ? 1 : 0,
+          transition: 'opacity 1s ease'
         }}
       >
         <Suspense fallback={null}>

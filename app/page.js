@@ -2,6 +2,7 @@ import Nav from './components/Nav';
 import Hero from './components/Hero';
 import AnimatedBackground from './components/AnimatedBackground';
 import TechStack from './components/TechStack';
+import BongoCatSection from './components/BongoCatSection';
 import Projects from './components/Projects';
 import MoreProjects from './components/MoreProjects';
 import Experience from './components/Experience';
@@ -32,35 +33,52 @@ export default function Home() {
         <PaperPlane />
 
         {/* 2. Tech Stack */}
-        <TechStack />
+        <div style={{ position: 'relative', zIndex: 30 }}>
+          <TechStack />
+        </div>
+        
+        <BongoCatSection />
 
-        {/* Wrap sections that need solid background so the Spline canvas is visible on others */}
-        <div style={{ position: 'relative', zIndex: 10, pointerEvents: 'auto' }}>
+        {/* Wrap sections so the plane (z:20) flies OVER the bg (z:10) but UNDER the content (z:30) */}
+        <div style={{ position: 'relative', pointerEvents: 'auto' }}>
           
-          <div style={{ background: 'var(--bg-base)' }}>
-            {/* 3. Projects — scroll stacking cards */}
-            <Projects />
+          <div style={{ position: 'relative' }}>
+            {/* Background layer */}
+            <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-base)', zIndex: 10 }} />
+            {/* Content layer */}
+            <div style={{ position: 'relative', zIndex: 30 }}>
+              <Projects />
+            </div>
           </div>
 
           {/* 4. More Projects - horizontal row. Needs to be transparent for Bongo Cat */}
-          <MoreProjects />
+          <div style={{ position: 'relative', zIndex: 30 }}>
+            <MoreProjects />
+          </div>
 
-          <div style={{ background: 'var(--bg-base)' }}>
-            {/* 5. Experience Timeline */}
-            <Experience />
+          <div style={{ position: 'relative' }}>
+            {/* Background layer */}
+            <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-base)', zIndex: 10 }} />
+            {/* Content layer */}
+            <div style={{ position: 'relative', zIndex: 30 }}>
+              {/* 5. Experience Timeline */}
+              <Experience />
 
-            {/* 6. Education */}
-            <Education />
+              {/* 6. Education */}
+              <Education />
 
-            {/* 7. Certifications + Achievements */}
-            <Certs />
+              {/* 7. Certifications + Achievements */}
+              <Certs />
 
-            {/* 5. About bento */}
-            <About />
+              {/* 5. About bento */}
+              <About />
+            </div>
           </div>
 
           {/* 6. Contact - Needs to be transparent for floating keycaps */}
-          <Contact />
+          <div style={{ position: 'relative', zIndex: 30 }}>
+            <Contact />
+          </div>
         </div>
       </div>
     </>

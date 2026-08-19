@@ -50,6 +50,8 @@ export default function Hero() {
 
   return (
     <section id="hero" className="hero" style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
+      <motion.div className="hero-bg-day" style={{ y: yBg }} />
+      <motion.div className="hero-bg-night" style={{ y: yBg }} />
       <div className="hero-stars" />
       <motion.div 
         className="hero-content" 

@@ -43,10 +43,10 @@ export default function PaperPlane() {
         const y1 = (i + 1) * step;
         if (i % 2 === 0) {
           // Curve right to left (organic swoop)
-          d += ` C ${w * 0.9} ${y0 + step * 0.3}, ${w * 0.05} ${y0 + step * 0.6}, ${w * 0.15} ${y1}`;
+          d += ` C ${w * 0.85} ${y0 + step * 0.3}, ${w * 0.15} ${y0 + step * 0.6}, ${w * 0.15} ${y1}`;
         } else {
           // Curve left to right (shallower glide)
-          d += ` C ${w * 0.3} ${y0 + step * 0.4}, ${w * 0.95} ${y0 + step * 0.7}, ${w * 0.85} ${y1}`;
+          d += ` C ${w * 0.15} ${y0 + step * 0.4}, ${w * 0.85} ${y0 + step * 0.7}, ${w * 0.85} ${y1}`;
         }
       }
 
@@ -147,7 +147,7 @@ export default function PaperPlane() {
         width: '100%',
         height: '100%',
         pointerEvents: 'none',
-        zIndex: 50, // Float over everything (clicks pass through)
+        zIndex: 20, // Fly BEHIND text (zIndex 30) but OVER section backgrounds (zIndex 10)
         overflow: 'hidden',
       }}
     >
