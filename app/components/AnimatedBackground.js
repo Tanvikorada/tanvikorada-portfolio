@@ -267,6 +267,13 @@ export default function AnimatedBackground() {
     bongoAnimationRef.current = getBongoAnimation();
     keycapAnimationsRef.current = getKeycapsAnimation();
 
+    // Start the infinite typing cat and floating keycaps
+    bongoAnimationRef.current.start();
+    // Only start floating keycaps after the initial drop animation finishes
+    setTimeout(() => {
+      keycapAnimationsRef.current.start();
+    }, 4000);
+
     const kbd = splineApp.findObjectByName("keyboard");
     // Setup visibility for the logos (text nodes) on the keycaps
     const tDD = splineApp.findObjectByName("text-desktop-dark");
