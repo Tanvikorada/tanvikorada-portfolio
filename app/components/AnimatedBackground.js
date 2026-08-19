@@ -229,11 +229,10 @@ export default function AnimatedBackground() {
     return { start, stop };
   };
 
-  // Predefined states mapped exactly from Naresh's config
   const KEYBOARD_STATES = {
     hero: {
-      scale: { x: 0.1, y: 0.1, z: 0.1 },
-      position: { x: 500, y: 150, z: -100 },
+      scale: { x: 0, y: 0, z: 0 },
+      position: { x: 350, y: 150, z: -100 },
       rotation: { x: Math.PI / 4, y: 0, z: 0 },
     },
     stack: {

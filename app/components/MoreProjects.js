@@ -27,6 +27,12 @@ export default function MoreProjects() {
   return (
     <section id="more-projects" className="section" style={{ paddingTop: '40px' }}>
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 8vw' }}>
+        
+        {/* Dedicated space for the 3D Bongo Cat Keyboard to appear */}
+        <div style={{ height: '500px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+           {/* The 3D canvas is fixed in the background, this just reserves scroll space */}
+        </div>
+
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '40px' }}>
           <h3 style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>More Explorations</h3>
           <span style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--accent)' }}>Swipe / Scroll</span>
