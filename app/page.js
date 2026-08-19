@@ -12,6 +12,7 @@ import CursorFX from './components/CursorFX';
 import Contact from './components/Contact';
 import Education from './components/Education';
 import PaperPlane from './components/PaperPlane';
+import Preloader from './components/Preloader';
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
       {/* Global cursor effect (click sound + sparks) */}
       <CursorFX />
 
+      <Preloader />
       {/* Floating pill nav */}
       <Nav />
 
