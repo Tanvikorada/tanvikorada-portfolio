@@ -393,6 +393,18 @@ body.night .main-content { background: var(--bg-base); }
   letter-spacing: -0.02em;
 }
 
+/* Pass pointer events through the overlay so Spline gets clicks/hover */
+.canvas-overlay-mode {
+  pointer-events: none;
+}
+.canvas-overlay-mode a,
+.canvas-overlay-mode button,
+.canvas-overlay-mode input,
+.canvas-overlay-mode textarea,
+.canvas-overlay-mode select {
+  pointer-events: auto;
+}
+
 /* ── TECH STACK ─────────────────────────────────────────────── */
 .tech-stack-section {
   padding: 80px 8vw;
