@@ -242,12 +242,12 @@ export default function AnimatedBackground() {
     },
     hidden: {
       scale: { x: 0, y: 0, z: 0 },
-      position: { x: 0, y: 1000, z: 0 },
+      position: { x: 0, y: -150, z: 0 }, // Changed from y:1000 to y:-150 to prevent massive vertical travel
       rotation: { x: 0, y: 0, z: 0 },
     },
     more_projects: {
       scale: { x: 0.25, y: 0.25, z: 0.25 },
-      position: { x: 0, y: -40, z: 0 },
+      position: { x: 0, y: -150, z: 0 }, // Lowered y so it doesn't overlap the Projects section background
       rotation: { x: Math.PI, y: Math.PI / 3, z: Math.PI },
     },
     contact: {
@@ -353,7 +353,7 @@ export default function AnimatedBackground() {
 
       const timelines = [
         createSectionTimeline("#stack", "stack", "hero"),
-        createSectionTimeline("#projects", "hidden", "stack"),
+        createSectionTimeline("#work", "hidden", "stack"),
         createSectionTimeline("#more-projects", "more_projects", "hidden"),
         createSectionTimeline("#experience", "hidden", "more_projects"),
         createSectionTimeline("#contact", "contact", "hidden"),

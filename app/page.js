@@ -34,27 +34,32 @@ export default function Home() {
         {/* 2. Tech Stack */}
         <TechStack />
 
-        {/* Start solid background for the rest of the site */}
-        <div style={{ background: 'var(--bg-base)', position: 'relative', zIndex: 10, pointerEvents: 'auto' }}>
-          {/* 3. Projects — scroll stacking cards */}
-          <Projects />
+        {/* Wrap sections that need solid background so the Spline canvas is visible on others */}
+        <div style={{ position: 'relative', zIndex: 10, pointerEvents: 'auto' }}>
+          
+          <div style={{ background: 'var(--bg-base)' }}>
+            {/* 3. Projects — scroll stacking cards */}
+            <Projects />
+          </div>
 
-          {/* 4. More Projects - horizontal row */}
+          {/* 4. More Projects - horizontal row. Needs to be transparent for Bongo Cat */}
           <MoreProjects />
 
-          {/* 5. Experience Timeline */}
-          <Experience />
+          <div style={{ background: 'var(--bg-base)' }}>
+            {/* 5. Experience Timeline */}
+            <Experience />
 
-        {/* 6. Education */}
-        <Education />
+            {/* 6. Education */}
+            <Education />
 
-        {/* 7. Certifications + Achievements */}
-        <Certs />
+            {/* 7. Certifications + Achievements */}
+            <Certs />
 
-        {/* 5. About bento */}
-        <About />
+            {/* 5. About bento */}
+            <About />
+          </div>
 
-          {/* 6. Contact */}
+          {/* 6. Contact - Needs to be transparent for floating keycaps */}
           <Contact />
         </div>
       </div>
