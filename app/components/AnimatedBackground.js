@@ -427,7 +427,7 @@ export default function AnimatedBackground() {
         }}
       >
         <Suspense fallback={null}>
-          <Spline
+          <Spline 
             style={{ width: '100%', height: '100%' }}
             onLoad={(app) => setSplineApp(app)}
             scene="/assets/skills-keyboard.spline"
