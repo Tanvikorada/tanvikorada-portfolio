@@ -17,36 +17,18 @@ const BOMB_EMOJIS = ['😸', '🚀', '🔥', '⚡', '💻', '🎉', '💖', '�
 
 const playThock = () => {
   try {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.05);
-    gainNode.gain.setValueAtTime(1, audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-    osc.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.05);
-  } catch(e) {}
+    const audio = new Audio('/assets/keycap-sounds/press.mp3');
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+  } catch (e) {}
 };
 
 const playRelease = () => {
   try {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.03);
-    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
-    osc.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.03);
-  } catch(e) {}
+    const audio = new Audio('/assets/keycap-sounds/release.mp3');
+    audio.volume = 0.5;
+    audio.play().catch(() => {});
+  } catch (e) {}
 };
 
 const SKILLS = {
@@ -79,9 +61,10 @@ const SKILLS = {
 
 export default function AnimatedBackground() {
   const [splineApp, setSplineApp] = useState(null);
+  const [activeSection, setActiveSection] = useState('hero');
   const [emojiMenuPos, setEmojiMenuPos] = useState(null);
+  const splineContainer = useRef(null);
   const selectedSkillRef = useRef(null);
-
   const bongoAnimationRef = useRef(null);
   const keycapAnimationsRef = useRef(null);
 
@@ -258,17 +241,61 @@ export default function AnimatedBackground() {
       position: { x: 0, y: -40, z: 0 },
       rotation: { x: 0, y: Math.PI / 12, z: 0 },
     },
+    projects: {
+      scale: { x: 0.25, y: 0.25, z: 0.25 },
+      position: { x: 0, y: -40, z: 0 },
+      rotation: { x: Math.PI, y: Math.PI / 3, z: Math.PI },
+    },
+    contact: {
+      scale: { x: 0.2, y: 0.2, z: 0.2 },
+      position: { x: 350, y: -250, z: 0 },
+      rotation: { x: 0, y: 0, z: 0 },
+    },
   };
+
+  useEffect(() => {
+    let cancelled = false;
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    const manageAnimations = async () => {
+      // Handle Bongo Cat
+      if (activeSection === "projects") {
+        await sleep(300);
+        if (cancelled) return;
+        bongoAnimationRef.current?.start();
+      } else {
+        await sleep(200);
+        if (cancelled) return;
+        bongoAnimationRef.current?.stop();
+      }
+
+      // Handle Contact (Floating Keycaps)
+      if (activeSection === "contact") {
+        await sleep(600);
+        if (cancelled) return;
+        keycapAnimationsRef.current?.start();
+      } else {
+        await sleep(600);
+        if (cancelled) return;
+        keycapAnimationsRef.current?.stop();
+      }
+    };
+
+    if (splineApp && bongoAnimationRef.current && keycapAnimationsRef.current) {
+      manageAnimations();
+    }
+    return () => { cancelled = true; };
+  }, [activeSection, splineApp]);
 
   useEffect(() => {
     if (!splineApp) return;
 
-    const createSectionTimeline = (triggerId, targetStateKey) => {
+    const createSectionTimeline = (triggerId, targetStateKey, prevStateKey) => {
       const kbd = splineApp.findObjectByName("keyboard");
       if (!kbd) return null;
       
       const targetState = KEYBOARD_STATES[targetStateKey];
-      const prevState = KEYBOARD_STATES['hero']; // For now, hero is the only prev state
+      const prevState = KEYBOARD_STATES[prevStateKey];
 
       return gsap.timeline({
         scrollTrigger: {
@@ -277,11 +304,13 @@ export default function AnimatedBackground() {
           end: "bottom bottom",
           scrub: true,
           onEnter: () => {
+            setActiveSection(targetStateKey);
             gsap.to(kbd.scale, { ...targetState.scale, duration: 1 });
             gsap.to(kbd.position, { ...targetState.position, duration: 1 });
             gsap.to(kbd.rotation, { ...targetState.rotation, duration: 1 });
           },
           onLeaveBack: () => {
+            setActiveSection(prevStateKey);
             gsap.to(kbd.scale, { ...prevState.scale, duration: 1 });
             gsap.to(kbd.position, { ...prevState.position, duration: 1 });
             gsap.to(kbd.rotation, { ...prevState.rotation, duration: 1 });
@@ -308,7 +337,9 @@ export default function AnimatedBackground() {
       gsap.set(kbd.rotation, heroState.rotation);
 
       const timelines = [
-        createSectionTimeline("#stack", "stack"),
+        createSectionTimeline("#stack", "stack", "hero"),
+        createSectionTimeline("#projects", "projects", "stack"),
+        createSectionTimeline("#contact", "contact", "projects"),
       ].filter(Boolean);
       
       return timelines;
@@ -319,13 +350,6 @@ export default function AnimatedBackground() {
     handleSplineInteractions();
     bongoAnimationRef.current = getBongoAnimation();
     keycapAnimationsRef.current = getKeycapsAnimation();
-
-    // Start the infinite typing cat and floating keycaps
-    bongoAnimationRef.current.start();
-    // Only start floating keycaps after the initial drop animation finishes
-    setTimeout(() => {
-      keycapAnimationsRef.current.start();
-    }, 4000);
 
     const kbd = splineApp.findObjectByName("keyboard");
     // Setup visibility for the logos (text nodes) on the keycaps

@@ -35,7 +35,7 @@ export default function Home() {
         <TechStack />
 
         {/* Start solid background for the rest of the site */}
-        <div style={{ background: 'var(--bg-base)', position: 'relative', zIndex: 10 }}>
+        <div style={{ background: 'var(--bg-base)', position: 'relative', zIndex: 10, pointerEvents: 'auto' }}>
           {/* 3. Projects — scroll stacking cards */}
           <Projects />
 
