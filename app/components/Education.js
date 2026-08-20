@@ -1,8 +1,7 @@
 'use client';
 import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Canvas } from '@react-three/fiber';
-import GlassBuilding from './GlassBuilding';
+import IsometricCity from './IsometricCity';
 
 const EDUCATION_DATA = [
   {
@@ -71,9 +70,7 @@ export default function Education() {
       >
         {/* Dynamic Background Animation (fixed in center) */}
         <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.8, pointerEvents: 'none' }}>
-           <Canvas camera={{ position: [0, 2, 8], fov: 45 }}>
-             <GlassBuilding progress={scrollYProgress} />
-           </Canvas>
+           <IsometricCity progress={scrollYProgress} />
         </div>
 
         {/* Horizontal Scrolling Track */}
