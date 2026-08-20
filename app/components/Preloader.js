@@ -7,15 +7,17 @@ export default function Preloader() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const duration = 2500;
-    const interval = 20;
+    // 3 seconds to feel "crazy" and give 3D assets time to load
+    const duration = 3000;
+    const interval = 20; 
     const step = 100 / (duration / interval);
     
     const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev + step >= 100) {
           clearInterval(timer);
-          setTimeout(() => setLoading(false), 600); // Hold at 100% for a moment before zooming
+          // Wait at 100% before triggering the massive wipe
+          setTimeout(() => setLoading(false), 800); 
           return 100;
         }
         return prev + step;
@@ -29,59 +31,82 @@ export default function Preloader() {
     <AnimatePresence>
       {loading && (
         <motion.div
-          key="preloader"
-          initial={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 3, filter: 'blur(10px)' }} // Hyperspace zoom exit
-          transition={{ duration: 0.8, ease: "easeInOut" }}
+          key="crazy-booter"
+          // Exit animation: circle opens up revealing the site underneath
+          exit={{ 
+            clipPath: 'circle(150% at 50% 50%)', 
+            opacity: 0,
+            transition: { duration: 1.2, ease: [0.76, 0, 0.24, 1] } 
+          }}
           style={{
             position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            background: '#050505', // Deep black for space
+            background: '#050505',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            color: 'var(--text-body)'
+            color: 'var(--text-body)',
+            clipPath: 'circle(100% at 50% 50%)', // Initial state
           }}
         >
-          {/* Glowing Paper Plane Blueprint */}
-          <div style={{ position: 'relative', width: '150px', height: '150px', marginBottom: '2rem' }}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{ width: '100%', height: '100%', filter: 'drop-shadow(0 0 8px var(--primary))' }}>
-              <motion.path
-                d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2"
-                initial={{ pathLength: 0, opacity: 0.5 }}
-                animate={{ pathLength: progress / 100, opacity: 1 }}
-                transition={{ duration: 0.1 }} // Smooth out the interval steps
+          {/* Central Typography Core */}
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            
+            {/* Glowing Ring */}
+            <svg viewBox="0 0 100 100" style={{ position: 'absolute', width: '300px', height: '300px', filter: 'drop-shadow(0 0 10px var(--primary))', transform: 'rotate(-90deg)' }}>
+              {/* Background Track */}
+              <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="2" />
+              {/* Progress Bar */}
+              <motion.circle 
+                cx="50" 
+                cy="50" 
+                r="45" 
+                fill="none" 
+                stroke="var(--primary)" 
+                strokeWidth="2" 
+                strokeLinecap="round"
+                initial={{ strokeDasharray: 283, strokeDashoffset: 283 }}
+                animate={{ strokeDashoffset: 283 - (283 * progress) / 100 }}
+                transition={{ duration: 0.1 }}
               />
             </svg>
-            {/* Glow Core */}
-            <motion.div
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                width: '50%',
-                height: '50%',
-                background: 'var(--primary)',
-                filter: 'blur(40px)',
-                borderRadius: '50%',
-                x: '-50%',
-                y: '-50%',
-                opacity: progress / 200 // Max 0.5 opacity at 100%
+
+            {/* Massive Number */}
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              style={{ 
+                fontSize: '6rem', 
+                fontWeight: 900, 
+                fontFamily: 'var(--font-sans)', 
+                color: 'white',
+                textShadow: '0 0 40px rgba(255,255,255,0.2)',
+                letterSpacing: '-0.05em'
               }}
-            />
+            >
+              {Math.round(progress)}
+              <span style={{ fontSize: '3rem', opacity: 0.5 }}>%</span>
+            </motion.div>
           </div>
 
-          {/* Futuristic Percentage */}
-          <div style={{ fontSize: '3rem', fontWeight: 300, fontFamily: 'monospace', letterSpacing: '0.1em', color: 'var(--text-base)', textShadow: '0 0 10px rgba(255,255,255,0.3)' }}>
-            {Math.round(progress).toString().padStart(3, '0')}%
-          </div>
-          
-          {/* Loading text */}
-          <div style={{ marginTop: '1rem', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.3em', opacity: 0.5 }}>
-            Initializing System
-          </div>
+          {/* Subtitle / System Text */}
+          <motion.div 
+            animate={{ opacity: [0.3, 1, 0.3] }} 
+            transition={{ repeat: Infinity, duration: 2 }}
+            style={{ 
+              marginTop: '4rem', 
+              fontSize: '0.8rem', 
+              textTransform: 'uppercase', 
+              letterSpacing: '0.4em', 
+              color: 'var(--primary)',
+              fontFamily: 'monospace' 
+            }}
+          >
+            Booting System Sequence
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
