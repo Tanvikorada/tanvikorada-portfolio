@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function Preloader() {
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [dimensions, setDimensions] = useState({ width: 1000, height: 800 });
 
   // SVG Curve path logic for the Awwwards effect
   // Starts flat, bends during transition, flattens at end
@@ -12,6 +13,8 @@ export default function Preloader() {
   const targetPath = `M0 0 L100 0 L100 0 Q50 0 0 0 Z`;
 
   useEffect(() => {
+    setDimensions({ width: window.innerWidth, height: window.innerHeight });
+    
     // Fast, sleek counting
     const duration = 2000;
     const interval = 20; 
@@ -61,9 +64,43 @@ export default function Preloader() {
               background: '#0a0a0a',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              overflow: 'hidden' // Keep plane inside until it exits
             }}
           >
+            {/* Flying Paper Plane */}
+            <motion.div
+              initial={{ x: -200, y: 200, opacity: 0, rotate: 45 }}
+              animate={
+                progress < 100
+                  ? {
+                      x: [ -dimensions.width * 0.2, dimensions.width * 0.2, -dimensions.width * 0.2 ],
+                      y: [ dimensions.height * 0.2, -dimensions.height * 0.2, dimensions.height * 0.2 ],
+                      rotate: [ 15, -15, 15 ],
+                      opacity: 1
+                    }
+                  : { 
+                      x: dimensions.width * 0.8, 
+                      y: -dimensions.height * 0.8, 
+                      rotate: 0, 
+                      opacity: 1 
+                    }
+              }
+              transition={
+                progress < 100
+                  ? { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                  : { duration: 0.6, ease: "easeIn" }
+              }
+              style={{
+                position: 'absolute',
+                width: '100px', // Bigger so it's clearly visible
+                height: 'auto',
+                zIndex: 10
+              }}
+            >
+              <img src="/plane.svg" alt="" style={{ width: '100%', height: 'auto', filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.5))' }} />
+            </motion.div>
+
             {/* Minimal Elegant Typography */}
             <motion.div 
               exit={{ opacity: 0, y: -50 }}
@@ -75,7 +112,8 @@ export default function Preloader() {
                 color: 'white',
                 letterSpacing: '-0.02em',
                 display: 'flex',
-                alignItems: 'flex-start'
+                alignItems: 'flex-start',
+                zIndex: 20
               }}
             >
               {Math.round(progress)}

@@ -1,16 +1,52 @@
 'use client';
 import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import dynamic from 'next/dynamic';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { RoundedBox, Environment, Float, ContactShadows, PresentationControls } from '@react-three/drei';
 
-const Spline = dynamic(() => import('@splinetool/react-spline'), {
-  ssr: false,
-  loading: () => (
-    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid rgba(0,255,204,0.1)', borderTopColor: 'var(--primary)', animation: 'spin 1s linear infinite' }} />
-    </div>
-  )
-});
+function IsometricDesk() {
+  const groupRef = useRef();
+
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    groupRef.current.rotation.y = Math.sin(t / 4) / 4;
+  });
+
+  return (
+    <group ref={groupRef} position={[0, -1, 0]}>
+      {/* Floating platform */}
+      <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
+        <RoundedBox args={[6, 0.4, 4]} radius={0.1} smoothness={4} position={[0, -0.2, 0]}>
+          <meshStandardMaterial color="#1a1a1c" roughness={0.2} metalness={0.5} />
+        </RoundedBox>
+
+        {/* Laptop */}
+        <group position={[-1, 0.1, 0.5]} rotation={[0, 0.2, 0]}>
+          {/* Base */}
+          <RoundedBox args={[2, 0.1, 1.5]} radius={0.05} smoothness={4} position={[0, 0, 0]}>
+            <meshStandardMaterial color="#2a2a2c" roughness={0.5} />
+          </RoundedBox>
+          {/* Screen */}
+          <RoundedBox args={[2, 1.4, 0.1]} radius={0.05} smoothness={4} position={[0, 0.7, -0.7]} rotation={[-0.2, 0, 0]}>
+            <meshStandardMaterial color="#00ffcc" emissive="#00ffcc" emissiveIntensity={0.5} roughness={0.2} />
+          </RoundedBox>
+        </group>
+
+        {/* Floating Book / Note */}
+        <Float speed={3} rotationIntensity={0.5} floatIntensity={1} position={[1.5, 0.5, -0.5]} rotation={[0, -0.5, 0]}>
+          <RoundedBox args={[1.2, 0.2, 1.6]} radius={0.05} smoothness={4}>
+            <meshStandardMaterial color="#ff0055" roughness={0.3} metalness={0.2} />
+          </RoundedBox>
+          <RoundedBox args={[1.1, 0.22, 1.5]} radius={0.02} smoothness={4} position={[0, 0, 0]}>
+            <meshStandardMaterial color="#ffffff" roughness={0.9} />
+          </RoundedBox>
+        </Float>
+      </Float>
+
+      <ContactShadows position={[0, -1.5, 0]} opacity={0.4} scale={10} blur={2} far={4} />
+    </group>
+  );
+}
 
 const EDUCATION_DATA = [
   {
@@ -78,8 +114,22 @@ export default function Education() {
         }}
       >
         {/* Dynamic Background Animation (fixed in center) */}
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 1, pointerEvents: 'auto' }}>
-           <Spline scene="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode" />
+        <div style={{ position: 'absolute', inset: 0, opacity: 1, pointerEvents: 'auto' }}>
+           <Canvas camera={{ position: [0, 5, 10], fov: 35 }}>
+             <ambientLight intensity={0.5} />
+             <directionalLight position={[10, 10, 5]} intensity={1.5} />
+             <Environment preset="city" />
+             <PresentationControls
+                global
+                config={{ mass: 2, tension: 500 }}
+                snap={{ mass: 4, tension: 1500 }}
+                rotation={[0, 0.3, 0]}
+                polar={[-Math.PI / 3, Math.PI / 3]}
+                azimuth={[-Math.PI / 1.4, Math.PI / 2]}
+             >
+               <IsometricDesk />
+             </PresentationControls>
+           </Canvas>
         </div>
 
         {/* Horizontal Scrolling Track */}
