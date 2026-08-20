@@ -32,9 +32,9 @@ export default function Preloader() {
       {loading && (
         <motion.div
           key="crazy-booter"
-          // Exit animation: circle opens up revealing the site underneath
+          // Exit animation: circle shrinks to 0% revealing the site underneath
           exit={{ 
-            clipPath: 'circle(150% at 50% 50%)', 
+            clipPath: 'circle(0% at 50% 50%)', 
             opacity: 0,
             transition: { duration: 1.2, ease: [0.76, 0, 0.24, 1] } 
           }}

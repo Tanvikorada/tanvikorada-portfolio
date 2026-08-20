@@ -35,19 +35,22 @@ export default function GlassBuilding({ progress = 0 }) {
     // Slowly rotate the entire structure for a premium showcase feel
     groupRef.current.rotation.y += delta * 0.2;
     
+    // Get the actual number from the MotionValue
+    const p = typeof progress.get === 'function' ? progress.get() : progress;
+    
     // Animate individual scales based on scroll progress
     
     // School (0 -> 0.3)
-    const schoolScale = progress < 0.3 ? 1 : 1 - (progress - 0.3) * 5;
+    const schoolScale = p < 0.3 ? 1 : 1 - (p - 0.3) * 5;
     if (schoolRef.current) {
       schoolRef.current.scale.setScalar(Math.max(0, schoolScale));
     }
 
     // College (0.3 -> 0.6)
     let collegeScale = 0;
-    if (progress > 0.25 && progress < 0.65) {
-      collegeScale = Math.min(1, (progress - 0.25) * 5);
-      if (progress > 0.55) collegeScale = Math.max(0, 1 - (progress - 0.55) * 5);
+    if (p > 0.25 && p < 0.65) {
+      collegeScale = Math.min(1, (p - 0.25) * 5);
+      if (p > 0.55) collegeScale = Math.max(0, 1 - (p - 0.55) * 5);
     }
     if (collegeRef.current) {
       collegeRef.current.scale.setScalar(Math.max(0, collegeScale));
@@ -55,8 +58,8 @@ export default function GlassBuilding({ progress = 0 }) {
 
     // University (0.6 -> 1.0)
     let univScale = 0;
-    if (progress > 0.55) {
-      univScale = Math.min(1, (progress - 0.55) * 5);
+    if (p > 0.55) {
+      univScale = Math.min(1, (p - 0.55) * 5);
     }
     if (univRef.current) {
       univRef.current.scale.setScalar(Math.max(0, univScale));
