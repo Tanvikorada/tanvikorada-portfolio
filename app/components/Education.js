@@ -1,7 +1,16 @@
 'use client';
 import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import IsometricCity from './IsometricCity';
+import dynamic from 'next/dynamic';
+
+const Spline = dynamic(() => import('@splinetool/react-spline'), {
+  ssr: false,
+  loading: () => (
+    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ width: '40px', height: '40px', borderRadius: '50%', border: '2px solid rgba(0,255,204,0.1)', borderTopColor: 'var(--primary)', animation: 'spin 1s linear infinite' }} />
+    </div>
+  )
+});
 
 const EDUCATION_DATA = [
   {
@@ -69,8 +78,8 @@ export default function Education() {
         }}
       >
         {/* Dynamic Background Animation (fixed in center) */}
-        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.8, pointerEvents: 'none' }}>
-           <IsometricCity progress={scrollYProgress} />
+        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 1, pointerEvents: 'auto' }}>
+           <Spline scene="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode" />
         </div>
 
         {/* Horizontal Scrolling Track */}
@@ -81,7 +90,8 @@ export default function Education() {
             x: xTransform,
             alignItems: 'center',
             position: 'relative',
-            zIndex: 10
+            zIndex: 10,
+            pointerEvents: 'none'
           }}
         >
           {EDUCATION_DATA.map((edu, i) => {
@@ -109,18 +119,29 @@ export default function Education() {
             const scale = useTransform(scrollYProgress, input, outputScale);
 
             return (
-              <div key={i} style={{ width: '100vw', display: 'flex', justifyContent: 'center', padding: '0 5vw' }}>
-                <motion.div 
-                  className="edu-card"
-                  style={{ 
-                    opacity, 
-                    scale, 
-                    width: '100%', 
-                    maxWidth: '500px',
-                    borderTop: `4px solid ${edu.color}`,
-                    marginTop: '300px' // push down below the building slightly
-                  }}
-                >
+              <motion.div key={i} className="edu-card" style={{ 
+                  width: '100vw', 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  alignItems: 'center',
+                  opacity,
+                  scale,
+                  pointerEvents: 'none',
+                  marginTop: '250px' // Keep it shifted down below center Spline object
+                }}>
+                <div style={{
+                  background: 'rgba(20, 20, 22, 0.4)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255,255,255,0.05)',
+                  borderTop: `4px solid ${edu.color}`,
+                  borderRadius: '24px',
+                  padding: '40px',
+                  maxWidth: '500px',
+                  width: '90%',
+                  boxShadow: '0 30px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)',
+                  pointerEvents: 'auto'
+                }}>
                   <h3 className="edu-inst" style={{ fontSize: '1.8rem', color: 'var(--text-heading)', marginBottom: '8px' }}>{edu.institution}</h3>
                   <div className="edu-meta" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '16px', color: 'var(--text-muted)' }}>
                     <span className="edu-deg" style={{ fontWeight: 600 }}>{edu.degree}</span>
@@ -129,8 +150,8 @@ export default function Education() {
                   <div className="edu-score" style={{ display: 'inline-block', padding: '6px 12px', background: `${edu.color}22`, color: edu.color, borderRadius: '8px', fontWeight: 'bold' }}>
                     {edu.score}
                   </div>
-                </motion.div>
-              </div>
+                </div>
+              </motion.div>
             );
           })}
         </motion.div>
