@@ -1,13 +1,13 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
-import * as THREE from 'three';
-import CLOUDS from 'vanta/dist/vanta.clouds.min';
+import Script from 'next/script';
 
 export default function DynamicSky() {
   const [mounted, setMounted] = useState(false);
   const [isNight, setIsNight] = useState(false);
   const vantaRef = useRef(null);
   const vantaEffectRef = useRef(null);
+  const [scriptsLoaded, setScriptsLoaded] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -21,7 +21,7 @@ export default function DynamicSky() {
   }, []);
 
   useEffect(() => {
-    if (!mounted || !vantaRef.current) return;
+    if (!mounted || !scriptsLoaded || !vantaRef.current) return;
 
     if (vantaEffectRef.current) {
       vantaEffectRef.current.destroy();
@@ -46,17 +46,18 @@ export default function DynamicSky() {
     const colors = isNight ? nightColors : dayColors;
 
     try {
-      vantaEffectRef.current = CLOUDS({
-        el: vantaRef.current,
-        THREE: THREE,
-        mouseControls: true,
-        touchControls: true,
-        gyroControls: false,
-        minHeight: 200.00,
-        minWidth: 200.00,
-        speed: 1.0,
-        ...colors
-      });
+      if (window.VANTA && window.VANTA.CLOUDS) {
+        vantaEffectRef.current = window.VANTA.CLOUDS({
+          el: vantaRef.current,
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.00,
+          minWidth: 200.00,
+          speed: 1.0,
+          ...colors
+        });
+      }
     } catch (e) {
       console.error("Vanta initialization failed:", e);
     }
@@ -64,12 +65,22 @@ export default function DynamicSky() {
     return () => {
       if (vantaEffectRef.current) vantaEffectRef.current.destroy();
     };
-  }, [mounted, isNight]);
+  }, [mounted, isNight, scriptsLoaded]);
 
   if (!mounted) return null;
 
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+      <Script 
+        src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js" 
+        strategy="afterInteractive"
+      />
+      <Script 
+        src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.clouds.min.js" 
+        strategy="afterInteractive"
+        onLoad={() => setScriptsLoaded(true)}
+      />
+
       {/* Vanta Canvas Container */}
       <div 
         ref={vantaRef} 
