@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import DynamicSky from './DynamicSky';
 
 const WORDS = ['Developer.', 'Builder.', 'Engineer.', 'Creator.'];
 
@@ -50,9 +51,7 @@ export default function Hero() {
 
   return (
     <section id="hero" className="hero" style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
-      <motion.div className="hero-bg-day" style={{ y: yBg }} />
-      <motion.div className="hero-bg-night" style={{ y: yBg }} />
-      <div className="hero-stars" />
+      <DynamicSky />
       <motion.div 
         className="hero-content" 
         style={{ opacity: opacityText, y: yText, zIndex: 10, position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 8vw' }}
