@@ -11,7 +11,7 @@ export default function Preloader({ onComplete }) {
     const timer = setTimeout(() => {
       setIsLoaded(true);
       setTimeout(() => {
-        onComplete();
+        if (onComplete) onComplete();
       }, 1000); // 1 second fade out duration
     }, 3000);
 
