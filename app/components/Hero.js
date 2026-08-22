@@ -51,7 +51,6 @@ export default function Hero() {
 
   return (
     <section id="hero" className="hero" style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
-      <DynamicSky />
       <motion.div 
         className="hero-content" 
         style={{ opacity: opacityText, y: yText, zIndex: 10, position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 8vw' }}

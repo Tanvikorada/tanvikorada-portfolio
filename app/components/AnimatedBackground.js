@@ -512,7 +512,7 @@ export default function AnimatedBackground() {
           pointerEvents: 'auto', // Must be auto so Spline registers hover/click
           width: '100vw', 
           height: '100vh', 
-          background: 'var(--bg-base)',
+          background: 'transparent',
           opacity: splineApp ? 1 : 0,
           transition: 'opacity 1s ease'
         }}

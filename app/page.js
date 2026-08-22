@@ -1,5 +1,6 @@
 import Nav from './components/Nav';
 import Hero from './components/Hero';
+import DynamicSky from './components/DynamicSky';
 import AnimatedBackground from './components/AnimatedBackground';
 import TechStack from './components/TechStack';
 import BongoCatSection from './components/BongoCatSection';
@@ -24,6 +25,7 @@ export default function Home() {
       {/* Floating pill nav */}
       <Nav />
 
+      <DynamicSky />
       <AnimatedBackground />
 
       {/* Main content scrolls over the sticky hero */}
@@ -34,36 +36,46 @@ export default function Home() {
         {/* Scroll-driven paper plane that flies the full page */}
         <PaperPlane />
 
-        {/* Unified Glassmorphic Content Container */}
-        <div style={{ position: 'relative', background: 'var(--bg-glass)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', borderTop: '1px solid var(--border)', zIndex: 20 }}>
-          {/* 2. Tech Stack */}
-          <div style={{ position: 'relative', zIndex: 30 }}>
-            <TechStack />
-          </div>
+        {/* 2. Tech Stack - Must be transparent for Spline keyboard */}
+        <div style={{ position: 'relative', zIndex: 30 }}>
+          <TechStack />
+        </div>
+        
+        <BongoCatSection />
+
+        <div style={{ position: 'relative', pointerEvents: 'auto' }}>
           
-          <BongoCatSection />
-
-          <div style={{ position: 'relative', zIndex: 30 }}>
-            <Projects />
+          <div style={{ position: 'relative' }}>
+            {/* Glass Background layer */}
+            <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', zIndex: 10, borderTop: '1px solid var(--border)' }} />
+            {/* Content layer */}
+            <div style={{ position: 'relative', zIndex: 30 }}>
+              <Projects />
+            </div>
           </div>
 
-          {/* 4. More Projects - horizontal row */}
+          {/* 4. More Projects - horizontal row. Needs to be transparent for Bongo Cat */}
           <div style={{ position: 'relative', zIndex: 30 }}>
             <MoreProjects />
           </div>
 
-          <div style={{ position: 'relative', zIndex: 30 }}>
-            {/* 5. Experience Timeline */}
-            <Experience />
+          <div style={{ position: 'relative' }}>
+            {/* Glass Background layer */}
+            <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', zIndex: 10, borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }} />
+            {/* Content layer */}
+            <div style={{ position: 'relative', zIndex: 30 }}>
+              {/* 5. Experience Timeline */}
+              <Experience />
 
-            {/* 6. Education */}
-            <Education />
+              {/* 6. Education */}
+              <Education />
 
-            {/* 7. Certifications + Achievements */}
-            <Certs />
+              {/* 7. Certifications + Achievements */}
+              <Certs />
 
-            {/* 5. About bento */}
-            <About />
+              {/* 5. About bento */}
+              <About />
+            </div>
           </div>
 
           {/* 6. Contact - Needs to be transparent for floating keycaps */}

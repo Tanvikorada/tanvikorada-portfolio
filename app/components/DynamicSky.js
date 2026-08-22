@@ -40,7 +40,7 @@ export default function DynamicSky() {
         .dynamic-sky-container {
           position: fixed;
           inset: 0;
-          z-index: 0;
+          z-index: -1;
           pointer-events: none;
           overflow: hidden;
           transition: background-color 1.5s ease;
