@@ -138,7 +138,7 @@ export default function Hero() {
       {/* Scroll hint */}
       <motion.div 
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 1 }}
-        className="hero-scroll-hint" style={{ position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'var(--text-muted)' }}
+        className="hero-scroll-hint" style={{ opacity: opacityText, position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'var(--text-muted)' }}
       >
         <div style={{ width: '1px', height: '40px', background: 'var(--border-mid)', overflow: 'hidden' }}>
            <motion.div 

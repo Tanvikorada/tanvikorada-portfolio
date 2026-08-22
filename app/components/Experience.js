@@ -59,7 +59,7 @@ function TimelineItem({ exp, index }) {
 
       {/* Content */}
       <motion.div style={{ flex: 1, opacity, x }} className="exp-card">
-        <div style={{ padding: '24px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '24px' }}>
+        <div style={{ padding: '24px', background: 'var(--bg-card)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid var(--border)', borderRadius: '24px' }}>
           <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '1px' }}>{exp.date}</span>
           <h3 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-heading)', marginTop: '8px' }}>{exp.role}</h3>
           <p style={{ fontSize: '14px', color: 'var(--text-main)', marginTop: '4px', fontWeight: 600 }}>{exp.company}</p>

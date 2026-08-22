@@ -38,7 +38,7 @@ export default function DynamicSky() {
 
       <style jsx>{`
         .dynamic-sky-container {
-          position: absolute;
+          position: fixed;
           inset: 0;
           z-index: 0;
           pointer-events: none;
