@@ -1,9 +1,11 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 export default function DynamicSky() {
   const [mounted, setMounted] = useState(false);
   const [isNight, setIsNight] = useState(false);
+  const vantaRef = useRef(null);
+  const [vantaEffect, setVantaEffect] = useState(null);
 
   useEffect(() => {
     setMounted(true);
@@ -16,26 +18,76 @@ export default function DynamicSky() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (!mounted || !vantaRef.current) return;
+
+    let vantaInstance = null;
+
+    const initVanta = async () => {
+      try {
+        const THREE = await import('three');
+        window.THREE = THREE; // Vanta needs this globally sometimes
+        const { default: CLOUDS } = await import('vanta/dist/vanta.clouds.min');
+        
+        vantaInstance = CLOUDS({
+          el: vantaRef.current,
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.00,
+          minWidth: 200.00,
+          speed: 1.0,
+          THREE: THREE,
+          ...(isNight ? {
+            skyColor: 0x020617,
+            cloudColor: 0x1e293b,
+            cloudShadowColor: 0x0f172a,
+            sunColor: 0x000000,
+            sunGlareColor: 0x000000,
+            sunPosition: {x: 0, y: -1, z: -1} // Hide sun
+          } : {
+            skyColor: 0xa1c4fd,
+            cloudColor: 0xffffff,
+            cloudShadowColor: 0xc2e9fb,
+            sunColor: 0xff9919,
+            sunGlareColor: 0xff6633,
+            sunPosition: {x: 1, y: 1, z: 1}
+          })
+        });
+        setVantaEffect(vantaInstance);
+      } catch (error) {
+        console.error("Vanta load error:", error);
+      }
+    };
+
+    initVanta();
+
+    return () => {
+      if (vantaInstance) vantaInstance.destroy();
+    };
+  }, [mounted, isNight]);
+
   if (!mounted) return null;
 
   return (
     <div className={`dynamic-sky-container ${isNight ? 'night-mode' : 'day-mode'}`}>
-      {/* Animated Aurora Blobs */}
-      <div className="aurora-blob blob-1"></div>
-      <div className="aurora-blob blob-2"></div>
-      <div className="aurora-blob blob-3"></div>
-      <div className="aurora-blob blob-4"></div>
+      
+      {/* Vanta WebGL Container */}
+      <div 
+        ref={vantaRef} 
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          transition: 'opacity 1s ease',
+          opacity: vantaEffect ? 1 : 0
+        }}
+      />
       
       {/* Bottom gradient mask for smooth blending into the next section */}
       <div className="sky-gradient-mask" />
       
-      {/* Starfield overlay for night mode */}
-      <div className={`vanta-stars-overlay ${isNight ? 'visible' : ''}`}>
-        <div className="stars-sm"></div>
-        <div className="stars-md"></div>
-        <div className="stars-lg"></div>
-      </div>
-
       <style jsx>{`
         .dynamic-sky-container {
           position: fixed;
@@ -43,44 +95,6 @@ export default function DynamicSky() {
           z-index: -1;
           pointer-events: none;
           overflow: hidden;
-          transition: background-color 1.5s ease;
-        }
-
-        .day-mode {
-          background-color: #e0f2fe; /* Light sky blue base */
-        }
-        
-        .night-mode {
-          background-color: #020617; /* Deep slate base */
-        }
-
-        .aurora-blob {
-          position: absolute;
-          border-radius: 50%;
-          filter: blur(80px);
-          opacity: 0.8;
-          mix-blend-mode: normal;
-          animation: blob-float 20s infinite alternate ease-in-out;
-          transition: all 1.5s ease;
-        }
-
-        /* Day Mode Colors (Sophisticated airy blues, subtle purples/peach) */
-        .day-mode .blob-1 { background: #bae6fd; width: 60vw; height: 60vw; top: -10%; left: -10%; animation-delay: 0s; }
-        .day-mode .blob-2 { background: #c7d2fe; width: 50vw; height: 50vw; top: 40%; right: -10%; animation-delay: -5s; }
-        .day-mode .blob-3 { background: #f3e8ff; width: 70vw; height: 70vw; bottom: -20%; left: 20%; animation-delay: -10s; }
-        .day-mode .blob-4 { background: #fff; width: 40vw; height: 40vw; top: 10%; left: 50%; animation-delay: -15s; mix-blend-mode: overlay; opacity: 0.6; }
-
-        /* Night Mode Colors (Deep space, rich indigo, subtle sky glow) */
-        .night-mode .blob-1 { background: #1e1b4b; width: 70vw; height: 70vw; top: -10%; left: -10%; animation-delay: 0s; }
-        .night-mode .blob-2 { background: #3b0764; width: 60vw; height: 60vw; top: 40%; right: -10%; animation-delay: -5s; opacity: 0.8; }
-        .night-mode .blob-3 { background: #0f172a; width: 80vw; height: 80vw; bottom: -20%; left: 20%; animation-delay: -10s; }
-        .night-mode .blob-4 { background: #0369a1; width: 50vw; height: 50vw; top: 10%; left: 50%; animation-delay: -15s; mix-blend-mode: screen; opacity: 0.2; }
-
-        @keyframes blob-float {
-          0% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(10vw, -10vh) scale(1.1); }
-          66% { transform: translate(-10vw, 15vh) scale(0.9); }
-          100% { transform: translate(5vw, 5vh) scale(1.05); }
         }
 
         .sky-gradient-mask {
@@ -93,54 +107,7 @@ export default function DynamicSky() {
           pointer-events: none;
           z-index: 2;
         }
-
-        .vanta-stars-overlay {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          z-index: 1;
-          opacity: 0;
-          transition: opacity 2s ease;
-        }
-        
-        .vanta-stars-overlay.visible {
-          opacity: 1;
-        }
-
-        .stars-sm, .stars-md, .stars-lg {
-          position: absolute;
-          inset: 0;
-        }
-        
-        .stars-sm {
-          width: 1px; height: 1px; background: transparent;
-          box-shadow: 10vw 20vh #fff, 30vw 10vh #fff, 50vw 50vh #fff, 70vw 30vh #fff, 90vw 80vh #fff,
-                      15vw 60vh #fff, 35vw 70vh #fff, 55vw 15vh #fff, 75vw 65vh #fff, 95vw 25vh #fff,
-                      5vw 90vh #fff, 25vw 40vh #fff, 45vw 85vh #fff, 65vw 10vh #fff, 85vw 55vh #fff;
-          animation: twinkle-stars 3s ease-in-out infinite alternate;
-        }
-        
-        .stars-md {
-          width: 2px; height: 2px; background: transparent;
-          box-shadow: 20vw 30vh #fff, 40vw 50vh #fff, 60vw 10vh #fff, 80vw 70vh #fff, 100vw 20vh #fff,
-                      10vw 80vh #fff, 50vw 90vh #fff, 90vw 40vh #fff, 30vw 15vh #fff, 70vw 85vh #fff;
-          animation: twinkle-stars 4s ease-in-out infinite alternate-reverse;
-          border-radius: 50%;
-        }
-        
-        .stars-lg {
-          width: 3px; height: 3px; background: transparent;
-          box-shadow: 15vw 40vh #fff, 45vw 20vh #fff, 75vw 50vh #fff, 85vw 90vh #fff, 25vw 75vh #fff;
-          animation: twinkle-stars 5s ease-in-out infinite alternate;
-          border-radius: 50%;
-        }
-        
-        @keyframes twinkle-stars {
-          0% { opacity: 0.1; }
-          100% { opacity: 0.8; }
-        }
       `}</style>
     </div>
   );
 }
-
