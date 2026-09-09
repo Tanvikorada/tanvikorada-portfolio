@@ -177,30 +177,16 @@ export default function AnimatedBackground() {
     const frame1 = splineApp?.findObjectByName("frame-1");
     const frame2 = splineApp?.findObjectByName("frame-2");
 
-    if (!frame1 || !frame2 || !framesParent) return { start: () => {}, stop: () => {} };
-
-    let interval;
-    const start = () => {
-      let i = 0;
-      framesParent.visible = true;
-      interval = setInterval(() => {
-        if (i % 2) {
-          frame1.visible = false;
-          frame2.visible = true;
-        } else {
-          frame1.visible = true;
-          frame2.visible = false;
-        }
-        i++;
-      }, 100);
-    };
     const stop = () => {
-      clearInterval(interval);
-      framesParent.visible = false;
-      frame1.visible = false;
-      frame2.visible = false;
+      if (framesParent) framesParent.visible = false;
+      if (frame1) frame1.visible = false;
+      if (frame2) frame2.visible = false;
     };
-    return { start, stop };
+    
+    // Always hide it initially
+    stop();
+    
+    return { start: stop, stop };
   };
 
   const getKeycapsAnimation = () => {
@@ -373,8 +359,6 @@ export default function AnimatedBackground() {
       const timelines = [
         createSectionTimeline("#stack", "stack", "hero"),
         createSectionTimeline("#work", "hidden", "stack"),
-        createSectionTimeline("#bongo-section", "more_projects", "hidden"),
-        createSectionTimeline("#more-projects", "hidden", "more_projects"),
         createSectionTimeline("#experience", "hidden", "hidden"),
         createSectionTimeline("#contact", "contact", "hidden"),
       ].filter(Boolean);

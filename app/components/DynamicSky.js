@@ -64,17 +64,17 @@ export default function DynamicSky() {
           transition: all 1.5s ease;
         }
 
-        /* Day Mode Colors (Bright, airy blues/cyans) */
+        /* Day Mode Colors (Sophisticated airy blues, subtle purples/peach) */
         .day-mode .blob-1 { background: #bae6fd; width: 60vw; height: 60vw; top: -10%; left: -10%; animation-delay: 0s; }
-        .day-mode .blob-2 { background: #7dd3fc; width: 50vw; height: 50vw; top: 40%; right: -10%; animation-delay: -5s; }
-        .day-mode .blob-3 { background: #e0f2fe; width: 70vw; height: 70vw; bottom: -20%; left: 20%; animation-delay: -10s; }
-        .day-mode .blob-4 { background: #fff; width: 40vw; height: 40vw; top: 10%; left: 50%; animation-delay: -15s; mix-blend-mode: overlay; opacity: 0.5; }
+        .day-mode .blob-2 { background: #c7d2fe; width: 50vw; height: 50vw; top: 40%; right: -10%; animation-delay: -5s; }
+        .day-mode .blob-3 { background: #f3e8ff; width: 70vw; height: 70vw; bottom: -20%; left: 20%; animation-delay: -10s; }
+        .day-mode .blob-4 { background: #fff; width: 40vw; height: 40vw; top: 10%; left: 50%; animation-delay: -15s; mix-blend-mode: overlay; opacity: 0.6; }
 
-        /* Night Mode Colors (Deep space, neon blues/purples) */
+        /* Night Mode Colors (Deep space, rich indigo, subtle sky glow) */
         .night-mode .blob-1 { background: #1e1b4b; width: 70vw; height: 70vw; top: -10%; left: -10%; animation-delay: 0s; }
-        .night-mode .blob-2 { background: #0f172a; width: 60vw; height: 60vw; top: 40%; right: -10%; animation-delay: -5s; }
-        .night-mode .blob-3 { background: #312e81; width: 80vw; height: 80vw; bottom: -20%; left: 20%; animation-delay: -10s; }
-        .night-mode .blob-4 { background: #0ea5e9; width: 50vw; height: 50vw; top: 10%; left: 50%; animation-delay: -15s; mix-blend-mode: screen; opacity: 0.15; }
+        .night-mode .blob-2 { background: #3b0764; width: 60vw; height: 60vw; top: 40%; right: -10%; animation-delay: -5s; opacity: 0.8; }
+        .night-mode .blob-3 { background: #0f172a; width: 80vw; height: 80vw; bottom: -20%; left: 20%; animation-delay: -10s; }
+        .night-mode .blob-4 { background: #0369a1; width: 50vw; height: 50vw; top: 10%; left: 50%; animation-delay: -15s; mix-blend-mode: screen; opacity: 0.2; }
 
         @keyframes blob-float {
           0% { transform: translate(0, 0) scale(1); }

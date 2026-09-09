@@ -67,7 +67,7 @@ export default function Hero() {
           </motion.div>
 
           {/* Giant Title */}
-          <h1 className="hero-title" style={{ fontSize: 'clamp(3rem, 8vw, 7rem)', lineHeight: 1.1, fontWeight: 800, letterSpacing: '-0.04em', fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>
+          <h1 className="hero-title" style={{ fontSize: 'clamp(3rem, 8vw, 7.5rem)', lineHeight: 1.05, fontWeight: 800, letterSpacing: '-0.04em', fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>
             <div style={{ overflow: 'hidden' }}>
               <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}>
                 Full-Stack
@@ -75,7 +75,10 @@ export default function Hero() {
             </div>
             <div style={{ overflow: 'hidden', display: 'flex' }}>
               <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}>
-                AI&nbsp;
+                <span style={{ backgroundImage: 'linear-gradient(135deg, #38bdf8, #818cf8, #c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', display: 'inline-block' }}>
+                  AI
+                </span>
+                &nbsp;
               </motion.div>
               <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}>
                 <WordRoller />
@@ -87,9 +90,9 @@ export default function Hero() {
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
             className="hero-subtitle" 
-            style={{ marginTop: '24px', maxWidth: '600px', fontSize: '1.1rem', color: 'var(--text-muted)', lineHeight: 1.6 }}
+            style={{ marginTop: '24px', maxWidth: '600px', fontSize: '1.2rem', color: 'var(--text-muted)', lineHeight: 1.6, letterSpacing: '-0.01em' }}
           >
             Building AI-native web products at the intersection of great engineering and real-world impact.
             B.Tech CSE @ SRMIST.
@@ -98,11 +101,15 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            style={{ marginTop: '32px', display: 'flex', gap: '16px' }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.6 }}
+            style={{ marginTop: '40px', display: 'flex', gap: '16px' }}
           >
-             <a href="#work" className="resume-btn" style={{ padding: '12px 24px', fontSize: '15px' }}>View Projects</a>
-             <a href="/resume.pdf" target="_blank" className="nav-link" style={{ padding: '12px 24px', fontSize: '15px', border: '1px solid var(--border)' }}>Read Resume</a>
+             <motion.a href="#work" className="resume-btn" style={{ padding: '14px 28px', fontSize: '15px', fontWeight: 600, display: 'inline-block' }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+               View Projects
+             </motion.a>
+             <motion.a href="/resume.pdf" target="_blank" className="nav-link" style={{ padding: '14px 28px', fontSize: '15px', fontWeight: 600, border: '1px solid var(--border-mid)', borderRadius: '100px', display: 'inline-block' }} whileHover={{ scale: 1.05, backgroundColor: 'var(--border)' }} whileTap={{ scale: 0.95 }}>
+               Read Resume
+             </motion.a>
           </motion.div>
         </div>
 

@@ -3,7 +3,6 @@ import Hero from './components/Hero';
 import DynamicSky from './components/DynamicSky';
 import AnimatedBackground from './components/AnimatedBackground';
 import TechStack from './components/TechStack';
-import BongoCatSection from './components/BongoCatSection';
 import Projects from './components/Projects';
 import MoreProjects from './components/MoreProjects';
 import Experience from './components/Experience';
@@ -12,7 +11,6 @@ import About from './components/About';
 import CursorFX from './components/CursorFX';
 import Contact from './components/Contact';
 import Education from './components/Education';
-import PaperPlane from './components/PaperPlane';
 import Preloader from './components/Preloader';
 
 export default function Home() {
@@ -33,15 +31,10 @@ export default function Home() {
         {/* 1. Sticky Sky Hero */}
         <Hero />
 
-        {/* Scroll-driven paper plane that flies the full page */}
-        <PaperPlane />
-
         {/* 2. Tech Stack - Must be transparent for Spline keyboard */}
         <div style={{ position: 'relative', zIndex: 30 }}>
           <TechStack />
         </div>
-        
-        <BongoCatSection />
 
         <div style={{ position: 'relative', pointerEvents: 'auto' }}>
           
@@ -54,7 +47,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 4. More Projects - horizontal row. Needs to be transparent for Bongo Cat */}
+          {/* 4. More Projects - horizontal row. Needs to be transparent for Spline bg */}
           <div style={{ position: 'relative', zIndex: 30 }}>
             <MoreProjects />
           </div>
