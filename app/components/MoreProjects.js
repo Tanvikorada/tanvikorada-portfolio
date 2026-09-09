@@ -2,6 +2,8 @@
 
 import { motion } from 'framer-motion';
 
+import SpotlightCard from './ui/SpotlightCard';
+
 const EXTRA_PROJECTS = [
   {
     title: 'TrackR',
@@ -35,13 +37,10 @@ export default function MoreProjects() {
         
         <div className="more-projects-scroll">
           {EXTRA_PROJECTS.map((p, i) => (
-            <motion.div 
+            <SpotlightCard 
               key={i} 
               className="more-project-card"
-              whileHover={{ scale: 1.02, y: -5 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >
-              <div className="card-glare" />
               <div>
                 <h4 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-heading)', marginBottom: '8px' }}>{p.title}</h4>
                 <p style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>{p.subtitle}</p>
@@ -60,7 +59,7 @@ export default function MoreProjects() {
                   }}>{t}</span>
                 ))}
               </div>
-            </motion.div>
+            </SpotlightCard>
           ))}
         </div>
       </div>

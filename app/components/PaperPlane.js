@@ -167,10 +167,23 @@ export default function PaperPlane() {
               ref={maskPathRef}
               fill="none"
               stroke="#fff"
-              strokeWidth="60"
+              strokeWidth="100"
               strokeLinecap="butt"
             />
           </mask>
+          
+          <linearGradient id="trailGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+             <stop offset="0%" stopColor="var(--accent-pink)" />
+             <stop offset="100%" stopColor="var(--accent)" />
+          </linearGradient>
+
+          <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
 
         {/* Hidden motion path for getPointAtLength */}
@@ -180,42 +193,46 @@ export default function PaperPlane() {
           stroke="none"
         />
 
-        {/* Dotted visible trail, exactly masked */}
+        {/* Sleek visible trail */}
         <path
           ref={trailRef}
           fill="none"
-          stroke="var(--gold, #c9961a)"
-          strokeWidth="2.5"
-          strokeDasharray="8 8"
+          stroke="url(#trailGradient)"
+          strokeWidth="3"
+          strokeDasharray="12 12"
           strokeLinecap="round"
           style={{
             mask: 'url(#planeTrailMask)',
             opacity: 0,
             transition: 'opacity 0.5s ease',
-            filter: 'drop-shadow(0 2px 4px rgba(201,150,26,0.3))',
+            filter: 'url(#neonGlow)',
           }}
         />
       </svg>
 
-      {/* The Origami Paper Plane Sprite */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      {/* The Sleek Neon Arrow Sprite */}
+      <div
         ref={planeRef}
-        src="/plane.svg"
-        alt=""
         style={{
           position: 'absolute',
           left: 0,
           top: 0,
-          width: '64px',
-          height: 'auto',
+          width: '40px',
+          height: '40px',
           transformOrigin: 'center center',
           willChange: 'transform, opacity',
           opacity: 0,
           pointerEvents: 'none',
-          filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.3))',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          filter: 'drop-shadow(0 0 12px var(--accent))',
         }}
-      />
+      >
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="var(--accent-pink)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3" fill="var(--bg-card)" />
+        </svg>
+      </div>
     </div>
   );
 }

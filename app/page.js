@@ -12,6 +12,7 @@ import CursorFX from './components/CursorFX';
 import Contact from './components/Contact';
 import Education from './components/Education';
 import Preloader from './components/Preloader';
+import PaperPlane from './components/PaperPlane';
 
 export default function Home() {
   return (
@@ -23,6 +24,7 @@ export default function Home() {
       <AnimatedBackground />
 
       <main className="canvas-overlay-mode" style={{ position: 'relative', zIndex: 10 }}>
+        <PaperPlane />
         <Hero />
 
         <section style={{ position: 'relative', zIndex: 30 }}>

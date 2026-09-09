@@ -2,6 +2,7 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
+import SpotlightCard from './ui/SpotlightCard';
 
 const PROJECTS = [
   {
@@ -65,7 +66,7 @@ function ProjectCard({ project, i, progress, range, targetScale }) {
   
   return (
     <div ref={containerRef} style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'sticky', top: 0 }}>
-      <motion.div 
+      <SpotlightCard 
         className="project-card"
         style={{ scale, top: `calc(-10% + ${i * 25}px)` }}
       >
@@ -103,7 +104,7 @@ function ProjectCard({ project, i, progress, range, targetScale }) {
         <div className="project-image-side" style={{ padding: '0', background: 'var(--bg-surface)' }}>
           <Image src={project.image} alt={project.title} fill style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 50vw" />
         </div>
-      </motion.div>
+      </SpotlightCard>
     </div>
   );
 }

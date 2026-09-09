@@ -1,6 +1,7 @@
 'use client';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
+import SpotlightCard from './ui/SpotlightCard';
 
 const AI_SKILLS = ['OpenAI API', 'Groq API', 'Claude API', 'Gemini API', 'LangChain', 'LangGraph', 'MediaPipe', 'YOLO', 'Computer Vision', 'Prompt Engineering'];
 const FRONTEND = ['React', 'Next.js', 'Tailwind CSS', 'Three.js (R3F)', 'HTML/CSS'];
@@ -10,14 +11,12 @@ const CLOUD = ['AWS', 'Vercel', 'Render', 'Railway', 'Docker', 'Git'];
 
 function TiltCard({ children, className = "", style = {} }) {
   return (
-    <motion.div 
+    <SpotlightCard 
       className={`bento-card ${className}`}
       style={style}
-      whileHover={{ scale: 1.02, rotateX: 2, rotateY: -2, zIndex: 10 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
     >
       {children}
-    </motion.div>
+    </SpotlightCard>
   );
 }
 
