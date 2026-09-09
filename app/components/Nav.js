@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 
 export default function Nav() {
   const [isNight, setIsNight] = useState(false);
@@ -48,10 +49,10 @@ export default function Nav() {
         transition={{ duration: 0.4 }}
       >
         {/* Logo */}
-        <a href="#hero" className="nav-logo" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+        <Link href="/" className="nav-logo">
           <span className="nav-logo-dot" />
           <span style={{ fontWeight: 800, letterSpacing: '-0.5px' }}>Tanvi</span>
-        </a>
+        </Link>
 
         <span className="nav-divider" />
 
@@ -59,7 +60,7 @@ export default function Nav() {
         <div style={{ display: 'flex', gap: '4px' }}>
           <button className="nav-link" onClick={() => scrollTo('work')}>Work</button>
           <button className="nav-link" onClick={() => scrollTo('about')}>About</button>
-          <button className="nav-link" onClick={() => scrollTo('contact')}>Contact</button>
+          <Link href="/playground" className="nav-link" style={{ textDecoration: 'none' }}>Playground</Link>
         </div>
 
         <div className="nav-right">

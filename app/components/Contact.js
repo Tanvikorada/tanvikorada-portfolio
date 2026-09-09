@@ -1,8 +1,6 @@
-import InteractiveRacer from './InteractiveRacer';
-
 export default function Contact() {
   return (
-    <section id="contact" className="contact-section" style={{ position: 'relative', overflow: 'hidden' }}>
+    <section id="contact" className="contact-section" style={{ position: 'relative' }}>
       <div style={{ position: 'relative', zIndex: 20 }}>
         <p className="section-eyebrow" style={{ textAlign: 'center' }}>Contact</p>
 
@@ -62,11 +60,6 @@ export default function Contact() {
         <p className="footer-copy">
           ✦ Korada Tanvi · Chennai, India · {new Date().getFullYear()} ✦
         </p>
-      </div>
-      
-      {/* The Interactive Racer Game taking up the bottom half of the footer */}
-      <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '50%', zIndex: 10 }}>
-        <InteractiveRacer />
       </div>
     </section>
   );
