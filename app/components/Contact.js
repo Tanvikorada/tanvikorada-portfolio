@@ -19,6 +19,7 @@ export default function Contact() {
         target="_blank"
         rel="noopener noreferrer"
         className="contact-email-btn"
+        aria-label="Send an email to Tanvi Korada"
       >
         <span>📧</span>
         tanvikorada@gmail.com
@@ -31,6 +32,7 @@ export default function Contact() {
           target="_blank" rel="noopener noreferrer"
           className="social-link"
           title="LinkedIn"
+          aria-label="Visit my LinkedIn Profile"
         >
           in
         </a>
@@ -39,6 +41,7 @@ export default function Contact() {
           target="_blank" rel="noopener noreferrer"
           className="social-link"
           title="GitHub"
+          aria-label="Visit my GitHub Profile"
         >
           gh
         </a>
@@ -47,6 +50,7 @@ export default function Contact() {
           target="_blank" rel="noopener noreferrer"
           className="social-link"
           title="Portfolio"
+          aria-label="Visit my main portfolio"
         >
           ↗
         </a>

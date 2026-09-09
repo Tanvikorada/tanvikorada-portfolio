@@ -16,67 +16,47 @@ import Preloader from './components/Preloader';
 export default function Home() {
   return (
     <>
-      {/* Global cursor effect (click sound + sparks) */}
       <CursorFX />
-
       <Preloader />
-      {/* Floating pill nav */}
       <Nav />
-
       <DynamicSky />
       <AnimatedBackground />
 
-      {/* Main content scrolls over the sticky hero */}
-      <div className="canvas-overlay-mode" style={{ position: 'relative', zIndex: 10 }}>
-        {/* 1. Sticky Sky Hero */}
+      <main className="canvas-overlay-mode" style={{ position: 'relative', zIndex: 10 }}>
         <Hero />
 
-        {/* 2. Tech Stack - Must be transparent for Spline keyboard */}
-        <div style={{ position: 'relative', zIndex: 30 }}>
+        <section style={{ position: 'relative', zIndex: 30 }}>
           <TechStack />
-        </div>
+        </section>
 
         <div style={{ position: 'relative', pointerEvents: 'auto' }}>
           
-          <div style={{ position: 'relative' }}>
-            {/* Glass Background layer */}
+          <section style={{ position: 'relative' }}>
             <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', zIndex: 10, borderTop: '1px solid var(--border)' }} />
-            {/* Content layer */}
             <div style={{ position: 'relative', zIndex: 30 }}>
               <Projects />
             </div>
-          </div>
+          </section>
 
-          {/* 4. More Projects - horizontal row. Needs to be transparent for Spline bg */}
-          <div style={{ position: 'relative', zIndex: 30 }}>
+          <section style={{ position: 'relative', zIndex: 30 }}>
             <MoreProjects />
-          </div>
+          </section>
 
-          <div style={{ position: 'relative' }}>
-            {/* Glass Background layer */}
+          <section style={{ position: 'relative' }}>
             <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', zIndex: 10, borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }} />
-            {/* Content layer */}
             <div style={{ position: 'relative', zIndex: 30 }}>
-              {/* 5. Experience Timeline */}
               <Experience />
-
-              {/* 6. Education */}
               <Education />
-
-              {/* 7. Certifications + Achievements */}
               <Certs />
-
-              {/* 5. About bento */}
               <About />
             </div>
-          </div>
+          </section>
 
-          {/* 6. Contact - Needs to be transparent for floating keycaps */}
-          <div style={{ position: 'relative', zIndex: 30 }}>
+          <section style={{ position: 'relative', zIndex: 30 }}>
             <Contact />
-          </div>
+          </section>
         </div>
-      </div>
+      </main>
     </>
   );
 }

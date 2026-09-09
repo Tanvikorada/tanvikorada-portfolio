@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import DynamicSky from './DynamicSky';
 
+import Image from 'next/image';
+
 const WORDS = ['Developer.', 'Builder.', 'Engineer.', 'Creator.'];
 
 function SplitText({ text }) {
@@ -104,10 +106,10 @@ export default function Hero() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.6 }}
             style={{ marginTop: '40px', display: 'flex', gap: '16px' }}
           >
-             <motion.a href="#work" className="resume-btn" style={{ padding: '14px 28px', fontSize: '15px', fontWeight: 600, display: 'inline-block' }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+             <motion.a href="#work" aria-label="View Projects Section" className="resume-btn" style={{ padding: '14px 28px', fontSize: '15px', fontWeight: 600, display: 'inline-block' }} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                View Projects
              </motion.a>
-             <motion.a href="/resume.pdf" target="_blank" className="nav-link" style={{ padding: '14px 28px', fontSize: '15px', fontWeight: 600, border: '1px solid var(--border-mid)', borderRadius: '100px', display: 'inline-block' }} whileHover={{ scale: 1.05, backgroundColor: 'var(--border)' }} whileTap={{ scale: 0.95 }}>
+             <motion.a href="/resume.pdf" aria-label="Read Resume PDF" target="_blank" className="nav-link" style={{ padding: '14px 28px', fontSize: '15px', fontWeight: 600, border: '1px solid var(--border-mid)', borderRadius: '100px', display: 'inline-block' }} whileHover={{ scale: 1.05, backgroundColor: 'var(--border)' }} whileTap={{ scale: 0.95 }}>
                Read Resume
              </motion.a>
           </motion.div>
@@ -134,9 +136,10 @@ export default function Hero() {
             overflow: 'hidden',
             border: '8px solid rgba(255,255,255,0.1)',
             boxShadow: 'var(--shadow-lg)',
-            background: 'var(--bg-surface)'
+            background: 'var(--bg-surface)',
+            position: 'relative'
           }}>
-            <img src="/images/profile.jpg" alt="Korada Tanvi" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <Image src="/images/profile.jpg" alt="Korada Tanvi" fill style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 200px, 350px" priority />
           </div>
         </motion.div>
       </motion.div>

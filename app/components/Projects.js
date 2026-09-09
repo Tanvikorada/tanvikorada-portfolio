@@ -1,6 +1,7 @@
 'use client';
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import Image from 'next/image';
 
 const PROJECTS = [
   {
@@ -89,6 +90,7 @@ function ProjectCard({ project, i, progress, range, targetScale }) {
             target="_blank"
             rel="noopener noreferrer"
             className="project-link"
+            aria-label={`View live demo for ${project.title}`}
           >
             Live Demo
             <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
@@ -99,7 +101,7 @@ function ProjectCard({ project, i, progress, range, targetScale }) {
         
         {/* Image Side */}
         <div className="project-image-side" style={{ padding: '0', background: 'var(--bg-surface)' }}>
-          <img src={project.image} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <Image src={project.image} alt={project.title} fill style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 50vw" />
         </div>
       </motion.div>
     </div>

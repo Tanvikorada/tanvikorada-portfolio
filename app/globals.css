@@ -393,8 +393,25 @@ body.night .main-content { background: var(--bg-base); }
 .canvas-overlay-mode button,
 .canvas-overlay-mode input,
 .canvas-overlay-mode textarea,
-.canvas-overlay-mode select {
+.canvas-overlay-mode select,
+.canvas-overlay-mode p,
+.canvas-overlay-mode h1,
+.canvas-overlay-mode h2,
+.canvas-overlay-mode h3,
+.canvas-overlay-mode span,
+.canvas-overlay-mode li {
   pointer-events: auto;
+  user-select: text;
+}
+
+/* ── ACCESSIBILITY (A11Y) ───────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.resume-btn:focus-visible, .nav-link:focus-visible, .project-link:focus-visible {
+  border-radius: 100px;
 }
 
 /* ── TECH STACK ─────────────────────────────────────────────── */
