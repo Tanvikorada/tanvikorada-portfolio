@@ -1,10 +1,6 @@
+'use client';
 import Spline from '@splinetool/react-spline/next';
 import Link from 'next/link';
-
-export const metadata = {
-  title: 'Playground | Tanvi Korada',
-  description: 'Interactive 3D WebGL Playground',
-};
 
 export default function Playground() {
   return (
