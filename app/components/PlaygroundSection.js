@@ -1,8 +1,7 @@
 'use client';
 import { useEffect, useRef } from 'react';
-import Link from 'next/link';
 
-export default function Playground() {
+export default function PlaygroundSection() {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -211,25 +210,11 @@ export default function Playground() {
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden', background: '#010409' }}>
       {/* Navigation */}
-      <nav style={{
+      <div style={{
         position: 'absolute', top: 0, left: 0, width: '100%',
-        padding: '2rem 3rem', display: 'flex', justifyContent: 'space-between',
+        padding: '2rem 3rem', display: 'flex', justifyContent: 'flex-end',
         alignItems: 'flex-start', zIndex: 50, pointerEvents: 'none',
       }}>
-        <Link href="/" style={{
-          display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'white',
-          fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em',
-          textDecoration: 'none', pointerEvents: 'auto',
-          background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)',
-          padding: '0.75rem 1.25rem', borderRadius: '100px',
-          border: '1px solid rgba(255,255,255,0.15)', transition: 'all 0.3s ease',
-        }}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-            strokeLinecap="round" strokeLinejoin="round" style={{ width: '18px', height: '18px' }}>
-            <path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>
-          </svg>
-          <span>Back to Home</span>
-        </Link>
         <div style={{ textAlign: 'right', color: 'white', pointerEvents: 'none' }}>
           <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', fontWeight: 400, margin: '0 0 0.25rem' }}>
             Playground
@@ -238,7 +223,7 @@ export default function Playground() {
             Night Drive · Interactive 3D
           </p>
         </div>
-      </nav>
+      </div>
 
       {/* Three.js Canvas — fills entire screen */}
       <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />

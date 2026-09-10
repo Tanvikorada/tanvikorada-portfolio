@@ -13,6 +13,7 @@ import Contact from './components/Contact';
 import Education from './components/Education';
 import Preloader from './components/Preloader';
 import PaperPlane from './components/PaperPlane';
+import PlaygroundSection from './components/PlaygroundSection';
 
 export default function Home() {
   return (
@@ -56,6 +57,10 @@ export default function Home() {
 
           <section style={{ position: 'relative', zIndex: 30 }}>
             <Contact />
+          </section>
+
+          <section id="playground" style={{ position: 'relative', zIndex: 40, marginTop: '2rem' }}>
+            <PlaygroundSection />
           </section>
         </div>
       </main>
