@@ -1,7 +1,5 @@
 import Nav from './components/Nav';
 import Hero from './components/Hero';
-import DynamicSky from './components/DynamicSky';
-import AnimatedBackground from './components/AnimatedBackground';
 import TechStack from './components/TechStack';
 import Projects from './components/Projects';
 import MoreProjects from './components/MoreProjects';
@@ -12,7 +10,6 @@ import CursorFX from './components/CursorFX';
 import Contact from './components/Contact';
 import Education from './components/Education';
 import Preloader from './components/Preloader';
-import PaperPlane from './components/PaperPlane';
 import PlaygroundSection from './components/PlaygroundSection';
 
 export default function Home() {
@@ -21,49 +18,21 @@ export default function Home() {
       <CursorFX />
       <Preloader />
       <Nav />
-      <DynamicSky />
-      <AnimatedBackground />
 
-      <main className="canvas-overlay-mode" style={{ position: 'relative', zIndex: 10 }}>
-        <PaperPlane />
+      {/* Global CSS background provided in global.css */}
+      <main style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8rem', paddingBottom: '4rem' }}>
         <Hero />
-
-        <section style={{ position: 'relative', zIndex: 30 }}>
-          <TechStack />
-        </section>
-
-        <div style={{ position: 'relative', pointerEvents: 'auto' }}>
-          
-          <section style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', zIndex: 10, borderTop: '1px solid var(--border)' }} />
-            <div style={{ position: 'relative', zIndex: 30 }}>
-              <Projects />
-            </div>
-          </section>
-
-          <section style={{ position: 'relative', zIndex: 30 }}>
-            <MoreProjects />
-          </section>
-
-          <section style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', zIndex: 10, borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }} />
-            <div style={{ position: 'relative', zIndex: 30 }}>
-              <Experience />
-              <Education />
-              <Certs />
-              <About />
-            </div>
-          </section>
-
-          <section style={{ position: 'relative', zIndex: 30 }}>
-            <Contact />
-          </section>
-
-          <section id="playground" style={{ position: 'relative', zIndex: 40, marginTop: '2rem' }}>
-            <PlaygroundSection />
-          </section>
-        </div>
+        <TechStack />
+        <Projects />
+        <MoreProjects />
+        <Experience />
+        <Education />
+        <Certs />
+        <About />
+        <Contact />
       </main>
+      
+      <PlaygroundSection />
     </>
   );
 }
