@@ -60,7 +60,7 @@ export default function Nav() {
         <div style={{ display: 'flex', gap: '4px' }}>
           <button className="nav-link" onClick={() => scrollTo('work')}>Work</button>
           <button className="nav-link" onClick={() => scrollTo('about')}>About</button>
-          <Link href="/playground" className="nav-link" style={{ textDecoration: 'none' }}>Playground</Link>
+          <button className="nav-link" onClick={() => scrollTo('playground')}>Playground</button>
         </div>
 
         <div className="nav-right">
