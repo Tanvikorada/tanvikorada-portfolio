@@ -289,6 +289,7 @@ export default function AnimatedBackground() {
             keycapAnimationsRef.current?.stop();
           }
         }, 1000);
+      }
       if (activeSection !== "stack") {
         // Ensure floating is stopped if we leave stack
         keycapAnimationsRef.current?.stop();
