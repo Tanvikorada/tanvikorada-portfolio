@@ -25,8 +25,9 @@ export default function DynamicSky() {
 
     const initVanta = async () => {
       try {
-        const THREE = await import('three');
-        window.THREE = THREE; // Vanta needs this globally sometimes
+        const threeModule = await import('three');
+        // Vanta expects the THREE namespace — use the module itself (named exports) as the THREE object
+        const THREE = threeModule.default ? threeModule.default : threeModule;
         const { default: CLOUDS } = await import('vanta/dist/vanta.clouds.min');
         
         vantaInstance = CLOUDS({
@@ -37,7 +38,7 @@ export default function DynamicSky() {
           minHeight: 200.00,
           minWidth: 200.00,
           speed: 1.0,
-          THREE: THREE,
+          THREE: threeModule,
           ...(isNight ? {
             skyColor: 0x020617,
             cloudColor: 0x1e293b,
