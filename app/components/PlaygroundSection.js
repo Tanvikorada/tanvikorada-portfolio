@@ -275,7 +275,7 @@ export default function PlaygroundSection() {
   }, []);
 
   return (
-    <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden', transition: 'background 0.5s ease' }}>
+    <div style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden', transition: 'background 0.5s ease' }}>
       <div style={{
         position: 'absolute', top: 0, left: 0, width: '100%',
         padding: '3rem 3rem', display: 'flex', justifyContent: 'flex-end',
