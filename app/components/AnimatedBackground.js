@@ -289,16 +289,9 @@ export default function AnimatedBackground() {
             keycapAnimationsRef.current?.stop();
           }
         }, 1000);
-      } else if (activeSection !== "contact") {
-        // Ensure floating is stopped if we leave
+      if (activeSection !== "stack") {
+        // Ensure floating is stopped if we leave stack
         keycapAnimationsRef.current?.stop();
-      }
-
-      // Handle Contact (Floating Keycaps continuously)
-      if (activeSection === "contact") {
-        await sleep(600);
-        if (cancelled) return;
-        keycapAnimationsRef.current?.start();
       }
     };
 
@@ -359,8 +352,7 @@ export default function AnimatedBackground() {
       const timelines = [
         createSectionTimeline("#stack", "stack", "hero"),
         createSectionTimeline("#work", "hidden", "stack"),
-        createSectionTimeline("#experience", "hidden", "hidden"),
-        createSectionTimeline("#contact", "contact", "hidden"),
+        createSectionTimeline("#experience", "hidden", "hidden")
       ].filter(Boolean);
       
       return timelines;
