@@ -24,21 +24,46 @@ export default function Home() {
       <DynamicSky />
       <AnimatedBackground />
 
-      {/* Global CSS background provided in global.css */}
-      <main className="canvas-overlay-mode" style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8rem', paddingBottom: '4rem' }}>
+      <main className="canvas-overlay-mode" style={{ position: 'relative', zIndex: 10 }}>
         <PaperPlane />
         <Hero />
-        <TechStack />
-        <Projects />
-        <MoreProjects />
-        <Experience />
-        <Education />
-        <Certs />
-        <About />
-        <Contact />
+
+        <section style={{ position: 'relative', zIndex: 30 }}>
+          <TechStack />
+        </section>
+
+        <div style={{ position: 'relative', pointerEvents: 'auto' }}>
+          
+          <section style={{ position: 'relative' }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', zIndex: 10, borderTop: '1px solid var(--border)' }} />
+            <div style={{ position: 'relative', zIndex: 30 }}>
+              <Projects />
+            </div>
+          </section>
+
+          <section style={{ position: 'relative', zIndex: 30 }}>
+            <MoreProjects />
+          </section>
+
+          <section style={{ position: 'relative' }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', zIndex: 10, borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }} />
+            <div style={{ position: 'relative', zIndex: 30 }}>
+              <Experience />
+              <Education />
+              <Certs />
+              <About />
+            </div>
+          </section>
+
+          <section style={{ position: 'relative', zIndex: 30 }}>
+            <Contact />
+          </section>
+
+          <section id="playground" style={{ position: 'relative', zIndex: 40, marginTop: '2rem' }}>
+            <PlaygroundSection />
+          </section>
+        </div>
       </main>
-      
-      <PlaygroundSection />
     </>
   );
 }

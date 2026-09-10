@@ -114,9 +114,9 @@ export default function About() {
             📍
           </motion.div>
           <div style={{ fontFamily: 'var(--font-serif)', fontSize: '24px', color: 'var(--text-heading)' }}>Chennai</div>
-          <div style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '4px' }}>India • Tamil Nadu</div>
+          <div style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '4px' }}>India · Tamil Nadu</div>
           <div style={{ marginTop: '16px', fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--text-muted)' }}>
-            SRMIST • 2024 - 2028
+            SRMIST · 2024 - 2028
           </div>
         </TiltCard>
 
@@ -129,11 +129,11 @@ export default function About() {
               <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>Photographer, Film Society (Winner: 'Saving Nature')</div>
             </motion.div>
             <motion.div whileHover={{ x: 5, color: 'var(--accent)' }} style={{ transition: 'color 0.2s' }}>
-              <div style={{ fontWeight: 600, fontSize: '15px' }}>📱 Andropedia</div>
+              <div style={{ fontWeight: 600, fontSize: '15px' }}>📰 Andropedia</div>
               <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>Media Team Member</div>
             </motion.div>
             <motion.div whileHover={{ x: 5, color: 'var(--accent)' }} style={{ transition: 'color 0.2s' }}>
-              <div style={{ fontWeight: 600, fontSize: '15px' }}>⚙️ SlugNPlug</div>
+              <div style={{ fontWeight: 600, fontSize: '15px' }}>🔌 SlugNPlug</div>
               <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>Hardware & Systems Club</div>
             </motion.div>
           </div>
