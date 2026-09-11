@@ -39,14 +39,18 @@ export default function Home() {
           
           <section style={{ position: 'relative', zIndex: 30, background: 'var(--bg-base)' }}>
             <ScrollExpand
-              src="/images/engineered_scale.jpg"
+              mediaType="color"
+              src="var(--bg-surface)"
+              textColor="var(--text-heading)"
+              noShadow={true}
+              overlayScrim={0}
               title="Engineered for Scale"
               scrollHint="Scroll to reveal"
               useWindowScroll
             >
-              <div style={{ textAlign: 'center', background: 'rgba(0,0,0,0.5)', padding: '3rem', borderRadius: '24px', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <h2 style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 'bold', color: 'white', marginBottom: '1rem', letterSpacing: '-0.02em' }}>Every pixel, crafted.</h2>
-                <p style={{ color: '#ccc', fontSize: '1.2rem', maxWidth: '500px', margin: '0 auto', lineHeight: 1.6 }}>From complex backend microservices to silky smooth frontend experiences.</p>
+              <div style={{ textAlign: 'center', padding: '3rem' }}>
+                <h2 style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 'bold', color: 'var(--text-heading)', marginBottom: '1rem', letterSpacing: '-0.02em' }}>Every pixel, crafted.</h2>
+                <p style={{ color: 'var(--text-body)', fontSize: '1.2rem', maxWidth: '500px', margin: '0 auto', lineHeight: 1.6 }}>From complex backend microservices to silky smooth frontend experiences.</p>
               </div>
             </ScrollExpand>
           </section>
@@ -84,5 +88,8 @@ export default function Home() {
     </>
   );
 }
+
+
+
 
 

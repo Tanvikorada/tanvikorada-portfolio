@@ -49,7 +49,7 @@ export default function PlaygroundSection() {
       return g + '</g>';
     }
     function wrap(w, h, inner) {
-      return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><g filter="url(#ft-paint)">${inner}</g></svg>`;
+      return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible"><rect width="${w}" height="${h}" fill="transparent" pointer-events="all"/><g filter="url(#ft-paint)">${inner}</g></svg>`;
     }
 
     function buildDaisy() {
@@ -109,9 +109,18 @@ export default function PlaygroundSection() {
     garden.appendChild(defs);
 
     const N = 20;
+    let storedScales = Array(N).fill(1.0);
+    try {
+      const s = localStorage.getItem('gardenScales');
+      if (s) {
+        const parsed = JSON.parse(s);
+        if (Array.isArray(parsed) && parsed.length === N) storedScales = parsed;
+      }
+    } catch(e) {}
+
     const nc = 5 + ((Math.random() * 2) | 0);
     const centers = [];
-    for (let c = 0; c < nc; c++) centers.push(clamp((c + 0.5) / nc * 100 + rnd(-5, 5), 7, 93));
+    for (let c = 0; c < nc; c++) centers.push(clamp((c + 0.5) / nc * 100, 7, 93));
 
     // Simple flat ridge since we don't have the image
     const plantY = (pct, depth) => 20 + depth; 
@@ -135,9 +144,10 @@ export default function PlaygroundSection() {
       el.style.left = xPct + '%';
       el.style.bottom = baseY + 'px';
       el.style.zIndex = String(1 + ((Math.random() * 2) | 0) + Math.round(depthPx / 12));
-      
-      const g0 = phoneMQ.matches ? rnd(0.4, 0.7) : rnd(0.65, 1.0);
+      let baseScale = phoneMQ.matches ? 0.55 : 0.85;
+      let g0 = baseScale * storedScales[i];
       el.style.setProperty('--g', g0.toFixed(3));
+      el.style.cursor = 'pointer';
       
       const stalk = document.createElement('div');
       // Adding sway CSS inline to avoid needing the exact site.css
@@ -151,6 +161,22 @@ export default function PlaygroundSection() {
       // Interactive scale
       el.addEventListener('mouseenter', () => { el.style.setProperty('--g', (g0 * 1.3).toFixed(3)); });
       el.addEventListener('mouseleave', () => { el.style.setProperty('--g', g0.toFixed(3)); });
+
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        storedScales[i] = Math.min(storedScales[i] * 1.15, 2.5); // Grow by 15%, max 2.5x
+        try { localStorage.setItem('gardenScales', JSON.stringify(storedScales)); } catch(err) {}
+        g0 = baseScale * storedScales[i];
+        el.style.setProperty('--g', (g0 * 1.3).toFixed(3)); // keep the hover size active
+        
+        // Add a tiny wiggle effect
+        el.style.transition = 'transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        el.style.transform = 'scale(calc(var(--g) * 1.1))';
+        setTimeout(() => {
+          el.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+          el.style.transform = 'scale(var(--g))';
+        }, 100);
+      });
 
       el.appendChild(stalk);
       garden.appendChild(el);
@@ -176,22 +202,6 @@ export default function PlaygroundSection() {
     garden.appendChild(style);
 
   }, []);
-
-  const handleWaterGarden = () => {
-    // Trigger growth animation
-    plantsRef.current.forEach(p => {
-      // Randomly scale up between 1.3x and 1.6x of base size
-      const targetScale = p.g0 * (1.3 + Math.random() * 0.3);
-      p.el.style.transform = `scale(${targetScale.toFixed(3)})`;
-    });
-
-    // Reset after 3 seconds
-    setTimeout(() => {
-      plantsRef.current.forEach(p => {
-        p.el.style.transform = `scale(${p.g0.toFixed(3)})`;
-      });
-    }, 3000);
-  };
 
   return (
     <section 
@@ -221,7 +231,7 @@ export default function PlaygroundSection() {
       {/* The Garden Bed */}
       <div 
         ref={containerRef} 
-        onClick={handleWaterGarden}
+        
         style={{ 
           position: 'absolute', 
           bottom: 0,  /* Start at bottom of section */
@@ -230,7 +240,7 @@ export default function PlaygroundSection() {
           height: '250px', 
           zIndex: 10,
           pointerEvents: 'auto',
-          cursor: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\"><text x=\"0\" y=\"24\" font-size=\"24\">🚿</text></svg>') 0 24, pointer"
+          
         }} 
       />
 
@@ -261,6 +271,7 @@ export default function PlaygroundSection() {
     </section>
   );
 }
+
 
 
 

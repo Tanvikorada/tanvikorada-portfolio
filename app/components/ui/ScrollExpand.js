@@ -16,6 +16,8 @@ const ScrollExpand = ({
   poster = '',
   alt = '',
   title = '',
+  textColor = '#fff',
+  noShadow = false,
   scrollHint = '',
   startWidth = 42,
   startHeight = 58,
@@ -198,6 +200,8 @@ const ScrollExpand = ({
         loop
         playsInline
       />
+    ) : mediaType === 'color' ? (
+      <div ref={mediaRef} className="scroll-expand__media" style={{ background: src }} />
     ) : (
       <img ref={mediaRef} className="scroll-expand__media" src={src} alt={alt} draggable={false} />
     );
@@ -221,12 +225,12 @@ const ScrollExpand = ({
             ) : null}
           </div>
           {title ? (
-            <div ref={titleRef} className="scroll-expand__title">
+            <div ref={titleRef} className="scroll-expand__title" style={{ color: textColor, textShadow: noShadow ? 'none' : undefined }}>
               {title}
             </div>
           ) : null}
           {scrollHint ? (
-            <div ref={hintRef} className="scroll-expand__hint">
+            <div ref={hintRef} className="scroll-expand__hint" style={{ color: textColor, textShadow: noShadow ? 'none' : undefined }}>
               {scrollHint}
             </div>
           ) : null}
@@ -237,3 +241,5 @@ const ScrollExpand = ({
 };
 
 export default ScrollExpand;
+
+
