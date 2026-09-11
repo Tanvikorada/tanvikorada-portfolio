@@ -27,16 +27,19 @@ const EXTRA_PROJECTS = [
 
 export default function MoreProjects() {
   return (
-    <section id="more-projects" className="section" style={{ paddingTop: '40px' }}>
+    <section id="more-projects" className="section" style={{ paddingTop: '40px', paddingBottom: '40px', overflow: 'hidden' }}>
+      
+      {/* Header is constrained */}
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 8vw' }}>
-        
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '40px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
           <h3 style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>More Explorations</h3>
           <span style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--accent)' }}>Swipe / Scroll</span>
         </div>
+      </div>
         
-        <div className="more-projects-scroll">
-          {EXTRA_PROJECTS.map((p, i) => (
+      {/* Scrolling container spans full width, but items start with 8vw padding */}
+      <div className="more-projects-scroll" style={{ padding: '20px 8vw', display: 'flex', gap: '20px', overflowX: 'auto' }}>
+        {EXTRA_PROJECTS.map((p, i) => (
             <SpotlightCard 
               key={i} 
               className="more-project-card"
@@ -62,7 +65,6 @@ export default function MoreProjects() {
             </SpotlightCard>
           ))}
         </div>
-      </div>
 
       <style jsx>{`
         .more-projects-scroll {
