@@ -79,13 +79,13 @@ function Cubes({ isNight }) {
 
           const cubeState = states[i];
 
-          // 1. Determine the color glow based on a soft distance radius
-          if (dist < maxDist) {
-            const normalizedDist = dist / maxDist;
-            const strength = Math.pow(1 - normalizedDist, 1.5);
-            cubeState.colorVal = strength;
+          // 1. Determine the color glow: ONLY cubes directly touched by the cursor!
+          const touchDist = 1.2;
+          if (dist < touchDist) {
+            cubeState.colorVal = 1.0;
           } else {
-            cubeState.colorVal = MathUtils.lerp(cubeState.colorVal, 0, 0.05);
+            // Fade out smoothly to leave a nice trail
+            cubeState.colorVal = MathUtils.lerp(cubeState.colorVal, 0, 0.04);
           }
 
           // 2. Restore the ORIGINAL physics movement you liked (flipping vs ambient wave)
@@ -170,3 +170,4 @@ export default function HeroBg() {
     </motion.div>
   );
 }
+
