@@ -244,11 +244,11 @@ export default function PlaygroundSection() {
           left: 0, 
           width: '100%', 
           height: '100px', /* Much taller so it covers the base of the plants */
-          zIndex: 15 /* RENDER ABOVE PLANTS TO HIDE THEIR BASES */
+          zIndex: 15, pointerEvents: 'none' /* RENDER ABOVE PLANTS TO HIDE THEIR BASES */
         }}
       >
-        <path d="M0,15 Q25,2 50,15 T100,5 L100,22 L0,22 Z" fill="#2a2e24" />
-        <path d="M0,12 Q30,0 60,12 T100,8 L100,22 L0,22 Z" fill="#3b4234" opacity="0.85" />
+        <path d="M0,15 Q25,2 50,15 T100,5 L100,22 L0,22 Z" fill="#0f172a" />
+        <path d="M0,12 Q30,0 60,12 T100,8 L100,22 L0,22 Z" fill="#1e1b4b" opacity="0.85" />
       </svg>
       
       <style>{`
@@ -261,5 +261,10 @@ export default function PlaygroundSection() {
     </section>
   );
 }
+
+
+
+
+
 
 
