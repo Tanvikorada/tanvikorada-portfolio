@@ -638,8 +638,7 @@ body.night .project-tag {
   display: none; /* Chrome/Safari */
 }
 .more-project-card {
-  min-width: 320px;
-  flex: 0 0 auto;
+  width: 100%; height: 100%;
   background: var(--bg-card);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -651,11 +650,9 @@ body.night .project-tag {
   position: relative;
   box-shadow: 0 8px 24px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.4);
   transition: border-color 0.4s, box-shadow 0.4s;
-  cursor: grab;
+  cursor: pointer;
 }
-.more-project-card:active {
-  cursor: grabbing;
-}
+
 body.night .more-project-card {
   background: rgba(15,23,42,0.6);
   border-color: rgba(255,255,255,0.1);
@@ -1026,6 +1023,8 @@ body.night .skill-pill {
     background-position: -200% 0;
   }
 }
+
+
 
 
 

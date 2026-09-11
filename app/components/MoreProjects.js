@@ -44,20 +44,28 @@ export default function MoreProjects() {
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 8vw' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
           <h3 style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>Other Projects</h3>
-          <span style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--accent)' }}>Swipe / Scroll</span>
+          <span style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--accent)' }}>Selected Archive</span>
         </div>
       </div>
         
       {/* Scrolling container spans full width, but items start with 8vw padding */}
-      <div className="more-projects-scroll" style={{ padding: '20px 8vw', display: 'flex', gap: '20px', overflowX: 'auto' }}>
+      <div style={{ padding: '20px 8vw', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
         {EXTRA_PROJECTS.map((p, i) => (
             <SpotlightCard 
               key={i} 
               className="more-project-card"
             >
-              <div>
-                <h4 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-heading)', marginBottom: '8px' }}>{p.title}</h4>
-                <p style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>{p.subtitle}</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <h4 style={{ fontSize: '1.6rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    {p.title}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
+                      <path d="M5 12h14"></path>
+                      <path d="m12 5 7 7-7 7"></path>
+                    </svg>
+                  </h4>
+                  <p style={{ fontSize: '12px', color: 'var(--accent)', fontWeight: 600, letterSpacing: '1.5px', textTransform: 'uppercase' }}>{p.subtitle}</p>
+                </div>
               </div>
               <p style={{ fontSize: '15px', color: 'var(--text-body)', lineHeight: 1.6, flex: 1, marginTop: '16px' }}>{p.desc}</p>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '24px' }}>
@@ -156,6 +164,8 @@ export default function MoreProjects() {
     </section>
   );
 }
+
+
 
 
 
