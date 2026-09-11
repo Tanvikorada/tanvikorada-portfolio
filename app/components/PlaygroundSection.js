@@ -184,6 +184,7 @@ export default function PlaygroundSection() {
         width: '100%', 
         height: '60vh',
         overflow: 'hidden',
+        background: 'var(--bg-base)',
         borderTop: '1px solid var(--border)'
       }}
     >
@@ -201,7 +202,7 @@ export default function PlaygroundSection() {
         ref={containerRef} 
         style={{ 
           position: 'absolute', 
-          bottom: 0, 
+          bottom: 20, 
           left: 0, 
           right: 0, 
           height: '250px', 
@@ -210,8 +211,8 @@ export default function PlaygroundSection() {
         }} 
       />
 
-      {/* Soil line */}
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '20px', background: 'var(--text-heading)', zIndex: 5 }} />
+      {/* Soil / Meadow Base */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40px', background: '#3b4234', zIndex: 5, borderTopLeftRadius: '50% 10px', borderTopRightRadius: '50% 10px' }} />
     </section>
   );
 }

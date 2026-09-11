@@ -90,12 +90,17 @@ function Cubes({ isNight }) {
 export default function HeroBg() {
   const [isNight, setIsNight] = useState(false);
 
+  const [mounted, setMounted] = useState(false);
+  
   useEffect(() => {
+    setMounted(true);
     setIsNight(document.body.classList.contains('night'));
     const obs = new MutationObserver(() => setIsNight(document.body.classList.contains('night')));
     obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     return () => obs.disconnect();
   }, []);
+
+  if (!mounted) return null;
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -2, pointerEvents: 'none' }}>

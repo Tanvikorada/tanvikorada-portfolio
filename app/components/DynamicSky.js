@@ -27,6 +27,7 @@ export default function DynamicSky() {
 
     const initVanta = async () => {
       try {
+        window.THREE = THREE;
         const vantaModule = await import('vanta/dist/vanta.clouds.min');
         const CLOUDS = vantaModule.default || vantaModule;
         

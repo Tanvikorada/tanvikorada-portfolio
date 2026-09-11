@@ -1,7 +1,10 @@
 import Nav from './components/Nav';
 import Hero from './components/Hero';
+
 import DynamicSky from './components/DynamicSky';
 import AnimatedBackground from './components/AnimatedBackground';
+
+import HeroBg from './components/HeroBg';
 import TechStack from './components/TechStack';
 import Projects from './components/Projects';
 import MoreProjects from './components/MoreProjects';
@@ -22,6 +25,7 @@ export default function Home() {
       <Preloader />
       <Nav />
       <DynamicSky />
+      <HeroBg />
       <AnimatedBackground />
 
       <main className="canvas-overlay-mode" style={{ position: 'relative', zIndex: 10 }}>
