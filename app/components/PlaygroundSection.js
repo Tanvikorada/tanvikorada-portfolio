@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 
 // Basic random utils
@@ -101,7 +101,7 @@ function Lavender({ h }) {
   );
 }
 
-function Plant({ type, left, defaultScale, mouseX, mouseY, windowHeight }) {
+function Plant({ type, left, defaultScale }) {
   const [scale, setScale] = useState(defaultScale);
   const h = type === 'daisy' ? rnd(150, 200) : rnd(130, 180);
 
@@ -121,8 +121,8 @@ function Plant({ type, left, defaultScale, mouseX, mouseY, windowHeight }) {
         rotate: { repeat: Infinity, repeatType: 'reverse', duration: rnd(3, 6), ease: 'easeInOut' },
         scale: { type: 'spring', damping: 15 }
       }}
-      onMouseMove={() => setScale(Math.min(1.4, scale + 0.1))}
-      onMouseLeave={() => setTimeout(() => setScale(defaultScale), 2000)}
+      onMouseMove={() => setScale(Math.min(1.5, scale + 0.15))}
+      onMouseLeave={() => setTimeout(() => setScale(defaultScale), 1500)}
     >
       {type === 'daisy' ? <Daisy h={h} /> : <Lavender h={h} />}
     </motion.div>
@@ -132,7 +132,7 @@ function Plant({ type, left, defaultScale, mouseX, mouseY, windowHeight }) {
 export default function PlaygroundSection() {
   const [isNight, setIsNight] = useState(false);
   const [mouse, setMouse] = useState({ x: -100, y: -100 });
-  const [winH, setWinH] = useState(1000);
+  const [winH, setWinH] = useState(800);
 
   useEffect(() => {
     setIsNight(document.body.classList.contains('night'));
@@ -152,7 +152,7 @@ export default function PlaygroundSection() {
       id: i,
       type: Math.random() > 0.4 ? 'daisy' : 'lavender',
       left: rnd(2, 98),
-      scale: rnd(0.5, 0.8),
+      scale: rnd(0.5, 0.9),
     }));
   }, []);
 
@@ -162,38 +162,38 @@ export default function PlaygroundSection() {
       style={{ 
         position: 'relative', 
         width: '100%', 
-        height: '100vh',
+        height: '80vh',
         overflow: 'hidden',
         background: isNight ? '#020617' : '#fafafa',
         transition: 'background 0.5s ease',
         cursor: 'none', 
+        borderTop: '1px solid var(--border)'
       }}
       onMouseMove={(e) => setMouse({ x: e.clientX, y: e.clientY })}
       onMouseLeave={() => setMouse({ x: -100, y: -100 })}
     >
       {/* Title */}
-      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', zIndex: 5 }}>
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', zIndex: 5, paddingBottom: '10vh' }}>
         <p style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '4px', textTransform: 'uppercase', color: isNight ? 'rgba(148,163,184,0.5)' : 'rgba(100,116,139,0.5)', marginBottom: '16px' }}>
-          Interactive Garden
+          Interactive Playground
         </p>
         <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(3rem, 7vw, 6rem)', color: isNight ? 'rgba(248,250,252,0.06)' : 'rgba(15,23,42,0.04)', lineHeight: 1, margin: 0 }}>
-          Playground
+          The Garden
         </h2>
       </div>
 
       {/* The Garden Bed */}
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40vh', zIndex: 10 }}>
+      <div style={{ position: 'absolute', bottom: '0px', left: 0, right: 0, height: '250px', zIndex: 10 }}>
         {plants.map((p) => (
           <Plant 
             key={p.id} 
             type={p.type} 
             left={p.left} 
             defaultScale={p.scale} 
-            mouseX={mouse.x} 
-            mouseY={mouse.y} 
-            windowHeight={winH} 
           />
         ))}
+        {/* Soil line */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '10px', background: isNight ? '#0f172a' : '#e2e8f0', zIndex: 30 }} />
       </div>
 
       {/* Watering Can Cursor FX */}
