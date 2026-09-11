@@ -48,7 +48,6 @@ export default function Contact() {
               idleDrift={0.5}
               fontSize="1em"
               fontWeight={800}
-              className="contact-title-accent"
               style={{ position: 'absolute', inset: 0 }}
             />
           </div>
