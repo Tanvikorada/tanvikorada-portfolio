@@ -60,7 +60,7 @@ body {
   font-family: var(--font-sans);
   background: var(--bg-base);
   color: var(--text-body);
-  overflow-x: hidden;
+  overflow-x: clip;
   transition: background 0.6s, color 0.6s;
 }
 a { text-decoration: none; color: inherit; }
@@ -824,8 +824,10 @@ body.night .bento-card:hover {
 body.night .bento-card::before {
   background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
 }
-.bento-bio       { grid-column: span 7; }
-.bento-status    { grid-column: span 5; }
+.bento-photo { grid-column: span 4; }
+.bento-stat { grid-column: span 2; }
+.bento-bio { grid-column: span 8; }
+.bento-status { grid-column: span 4; }
 .bento-skills    { grid-column: span 8; }
 .bento-location  { grid-column: span 4; }
 .bento-fun       { grid-column: span 12; }
@@ -994,7 +996,7 @@ body.night .skill-pill {
   }
   .project-image-side { min-height: 220px; }
   .project-content-side { padding: 28px; }
-  .bento-bio, .bento-status, .bento-skills, .bento-location, .bento-fun {
+  .bento-photo, .bento-bio, .bento-status, .bento-skills, .bento-location, .bento-fun, .bento-stat {
     grid-column: span 12;
   }
   .hero-title { font-size: clamp(52px, 12vw, 100px); }
@@ -1024,3 +1026,6 @@ body.night .skill-pill {
     background-position: -200% 0;
   }
 }
+
+
+

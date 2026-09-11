@@ -84,19 +84,19 @@ export default function About() {
         </TiltCard>
 
         {/* Stats */}
-        <TiltCard style={{ gridColumn: 'span 2', textAlign: 'center' }}>
+        <TiltCard className="bento-stat" style={{ textAlign: 'center' }}>
           <div className="bento-stat-num">9.27</div>
           <div className="bento-stat-label">CGPA / 10</div>
         </TiltCard>
-        <TiltCard style={{ gridColumn: 'span 2', textAlign: 'center' }}>
+        <TiltCard className="bento-stat" style={{ textAlign: 'center' }}>
           <div className="bento-stat-num">6+</div>
           <div className="bento-stat-label">Projects Shipped</div>
         </TiltCard>
-        <TiltCard style={{ gridColumn: 'span 2', textAlign: 'center' }}>
+        <TiltCard className="bento-stat" style={{ textAlign: 'center' }}>
           <div className="bento-stat-num">1</div>
           <div className="bento-stat-label">Research Paper</div>
         </TiltCard>
-        <TiltCard style={{ gridColumn: 'span 2', textAlign: 'center' }}>
+        <TiltCard className="bento-stat" style={{ textAlign: 'center' }}>
           <div className="bento-stat-num">4+</div>
           <div className="bento-stat-label">Internships</div>
         </TiltCard>
