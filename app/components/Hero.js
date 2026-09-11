@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import DynamicSky from './DynamicSky';
 
 import Image from 'next/image';
+import AnimatedSplitText from './ui/SplitText';
 
 const WORDS = ['Developer.', 'Builder.', 'Engineer.', 'Creator.'];
 
@@ -89,16 +90,19 @@ export default function Hero() {
           </h1>
 
           {/* Subtitle */}
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
-            className="hero-subtitle" 
-            style={{ marginTop: '24px', maxWidth: '600px', fontSize: '1.2rem', color: 'var(--text-muted)', lineHeight: 1.6, letterSpacing: '-0.01em' }}
-          >
-            Building AI-native web products at the intersection of great engineering and real-world impact.
-            B.Tech CSE @ SRMIST.
-          </motion.p>
+          <div style={{ marginTop: '24px', maxWidth: '600px', fontSize: '1.2rem', color: 'var(--text-muted)', lineHeight: 1.6, letterSpacing: '-0.01em' }}>
+            <AnimatedSplitText
+              text="Building AI-native web products at the intersection of great engineering and real-world impact. B.Tech CSE @ SRMIST."
+              className="hero-subtitle"
+              delay={30}
+              duration={0.8}
+              ease="power3.out"
+              splitType="words"
+              from={{ opacity: 0, y: 20 }}
+              to={{ opacity: 1, y: 0 }}
+              textAlign="left"
+            />
+          </div>
           
           <motion.div
             initial={{ opacity: 0, y: 20 }}

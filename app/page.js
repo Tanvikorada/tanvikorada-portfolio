@@ -17,6 +17,7 @@ import Education from './components/Education';
 import Preloader from './components/Preloader';
 import PaperPlane from './components/PaperPlane';
 import PlaygroundSection from './components/PlaygroundSection';
+import ScrollExpand from './components/ui/ScrollExpand';
 
 export default function Home() {
   return (
@@ -38,6 +39,20 @@ export default function Home() {
 
         <div style={{ position: 'relative', pointerEvents: 'auto' }}>
           
+          <section style={{ position: 'relative', zIndex: 30, background: 'var(--bg-base)' }}>
+            <ScrollExpand
+              src="/images/appcompiler.jpg"
+              title="Engineered for Scale"
+              scrollHint="Scroll to reveal"
+              useWindowScroll
+            >
+              <div style={{ textAlign: 'center', background: 'rgba(0,0,0,0.5)', padding: '3rem', borderRadius: '24px', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <h2 style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 'bold', color: 'white', marginBottom: '1rem', letterSpacing: '-0.02em' }}>Every pixel, crafted.</h2>
+                <p style={{ color: '#ccc', fontSize: '1.2rem', maxWidth: '500px', margin: '0 auto', lineHeight: 1.6 }}>From complex backend microservices to silky smooth frontend experiences.</p>
+              </div>
+            </ScrollExpand>
+          </section>
+
           <section style={{ position: 'relative' }}>
             <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', zIndex: 10, borderTop: '1px solid var(--border)' }} />
             <div style={{ position: 'relative', zIndex: 30 }}>
