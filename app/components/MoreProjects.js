@@ -8,12 +8,7 @@ import AccordionGallery from './ui/AccordionGallery';
 
 
 const EXTRA_PROJECTS = [
-  {
-    title: 'TrackR',
-    subtitle: 'AI-Powered Application Tracker',
-    tags: ['Next.js', 'Groq LLaMA 3.3', 'Upstash Redis', 'cron-job.org'],
-    desc: 'Full-stack tracker for managing internship & job apps. Automated workflows with Pushbullet notifications.',
-  },
+  
   {
     title: 'ShrimpCount',
     subtitle: 'Automated Hatchery Population Estimation',
@@ -161,6 +156,7 @@ export default function MoreProjects() {
     </section>
   );
 }
+
 
 
 
