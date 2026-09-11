@@ -3,9 +3,9 @@ import { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils } from 'three';
 
-const GRID_SIZE = 55; // Larger grid to cover angled edges
-const CUBE_SIZE = 1.0;
-const SPACING = 1.03; // slightly more gap for deep shadows
+const GRID_SIZE = 45; // Grid large enough to fill screen
+const CUBE_SIZE = 0.95;
+const SPACING = 1.05; // gap for shadows
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -118,7 +118,7 @@ export default function HeroBg() {
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -2, pointerEvents: 'none' }}>
       <div style={{ position: 'absolute', inset: 0, background: isNight ? '#020617' : '#fafafa', zIndex: -1 }} />
-      <Canvas camera={{ position: [0, -15, 15], fov: 45, rotation: [0.6, 0, 0] }}>
+      <Canvas camera={{ position: [0, 0, 18], fov: 50 }}>
         <ambientLight intensity={isNight ? 0.5 : 1.2} color={isNight ? '#ffffff' : '#f5f3ff'} />
         {/* Soft, studio-like lighting to make the white cubes look premium, tinted lavender for light mode */}
         <directionalLight position={[5, 10, 15]} intensity={isNight ? 2 : 2.5} color={isNight ? '#818cf8' : '#e0e7ff'} castShadow />
