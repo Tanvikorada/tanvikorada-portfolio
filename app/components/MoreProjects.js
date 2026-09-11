@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 
 import SpotlightCard from './ui/SpotlightCard';
-import MorphSlider from './ui/MorphSlider';
+import AccordionGallery from './ui/AccordionGallery';
 
 const EXTRA_PROJECTS = [
   {
@@ -27,11 +27,11 @@ const EXTRA_PROJECTS = [
 ];
 
 const SLIDER_ITEMS = [
-  { image: '/images/gallery_2.jpg', caption: 'Student Achievement Certificate - ATRIBS Software Systems' },
-  { image: '/images/gallery_5.jpg', caption: 'OpenAI x Outskill AI Builders Hackathon' },
-  { image: '/images/gallery_4.jpg', caption: 'ATRIBS Software Systems - Internship' },
-  { image: '/images/gallery_3.jpg', caption: 'SIH 2026 Team & Mentors - SRM Easwari Engineering' },
-  { image: '/images/gallery_1.jpg', caption: 'Awards Ceremony & Events' }
+  { image: '/images/gallery_2.jpg', label: 'Student Achievement Certificate - ATRIBS Software Systems' },
+  { image: '/images/gallery_5.jpg', label: 'OpenAI x Outskill AI Builders Hackathon' },
+  { image: '/images/gallery_4.jpg', label: 'ATRIBS Software Systems - Internship' },
+  { image: '/images/gallery_3.jpg', label: 'SIH 2026 Team & Mentors - SRM Easwari Engineering' },
+  { image: '/images/gallery_1.jpg', label: 'Awards Ceremony & Events' }
 ];
 
 export default function MoreProjects() {
@@ -81,13 +81,18 @@ export default function MoreProjects() {
           <h3 style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>Behind the Code</h3>
           <span style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--accent)' }}>Interactive</span>
         </div>
-        <div style={{ width: '100%', aspectRatio: '16/9', maxHeight: '600px', borderRadius: '24px', overflow: 'hidden', boxShadow: 'var(--shadow-md)' }}>
-          <MorphSlider 
-            items={SLIDER_ITEMS} 
-            transition="melt" 
-            intensity={0.55} 
-            overlayColor="#020617" 
-            autoplay={true}
+        <div style={{ width: '100%', boxShadow: 'var(--shadow-md)' }}>
+          <AccordionGallery
+            items={SLIDER_ITEMS}
+            defaultIndex={2}
+            expandRatio={0.52}
+            trigger="hover"
+            height={500}
+            gap={10}
+            radius={24}
+            accentColor="var(--accent)"
+            overlayColor="#020617"
+            grayscale={true}
           />
         </div>
       </div>
@@ -142,5 +147,7 @@ export default function MoreProjects() {
     </section>
   );
 }
+
+
 
 
