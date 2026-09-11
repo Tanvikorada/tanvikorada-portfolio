@@ -4,9 +4,9 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-const GRID_SIZE = 45; // Grid large enough to fill screen
-const CUBE_SIZE = 1.051; // Matches SPACING for zero gap
-const SPACING = 1.05; 
+const GRID_SIZE = 24; // Grid large enough to fill screen
+const CUBE_SIZE = 2.002; // Matches SPACING for zero gap
+const SPACING = 2.0; 
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -79,7 +79,7 @@ function Cubes({ isNight }) {
           const cubeState = states[i];
 
           // Threshold matches exactly the cubes that are flipping
-          if (dist < 3.5) {
+          if (dist < 4.5) {
             cubeState.colorVal = 1.0;
             cubeState.tpY = -0.5;
             cubeState.trX = Math.PI; 
@@ -164,4 +164,5 @@ export default function HeroBg() {
     </motion.div>
   );
 }
+
 
