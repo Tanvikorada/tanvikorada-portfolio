@@ -5,7 +5,7 @@ import { Object3D, MathUtils } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 const GRID_SIZE = 45; // Grid large enough to fill screen
-const CUBE_SIZE = 1.05; // Matches SPACING for zero gap
+const CUBE_SIZE = 0.95; // Matches SPACING for zero gap
 const SPACING = 1.05; 
 
 function Cubes({ isNight }) {
@@ -130,4 +130,5 @@ export default function HeroBg() {
     </motion.div>
   );
 }
+
 

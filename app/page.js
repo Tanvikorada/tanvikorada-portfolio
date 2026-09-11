@@ -1,7 +1,6 @@
 import Nav from './components/Nav';
 import Hero from './components/Hero';
 
-import DynamicSky from './components/DynamicSky';
 import AnimatedBackground from './components/AnimatedBackground';
 
 import HeroBg from './components/HeroBg';
@@ -25,8 +24,7 @@ export default function Home() {
       <CursorFX />
       <Preloader />
       <Nav />
-      <DynamicSky />
-      <HeroBg />
+            <HeroBg />
       <AnimatedBackground />
 
       <main className="canvas-overlay-mode" style={{ position: 'relative', zIndex: 10 }}>
@@ -86,3 +84,4 @@ export default function Home() {
     </>
   );
 }
+
