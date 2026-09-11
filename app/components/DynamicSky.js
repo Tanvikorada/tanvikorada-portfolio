@@ -29,7 +29,7 @@ export default function DynamicSky() {
       try {
         window.THREE = THREE;
         const vantaModule = await import('vanta/dist/vanta.clouds.min');
-        const CLOUDS = vantaModule.default || vantaModule;
+        const CLOUDS = window.VANTA.CLOUDS;
         
         if (isCancelled) return;
 
@@ -116,3 +116,4 @@ export default function DynamicSky() {
     </div>
   );
 }
+

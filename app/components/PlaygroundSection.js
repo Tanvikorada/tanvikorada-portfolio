@@ -14,13 +14,14 @@ const PETAL_EDGE = 'rgba(0,0,0,0.05)';
 
 export default function PlaygroundSection() {
   const containerRef = useRef(null);
+  const plantsRef = useRef([]);
 
   useEffect(() => {
     if (!containerRef.current) return;
     const garden = containerRef.current;
     
     // Clear any existing plants (for strict mode)
-    garden.innerHTML = '';
+    garden.innerHTML = ''; plantsRef.current = [];
 
     const rnd = (a, b) => a + Math.random() * (b - a);
     const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -107,7 +108,7 @@ export default function PlaygroundSection() {
     </filter></defs></svg>`;
     garden.appendChild(defs);
 
-    const N = 20, plants = [];
+    const N = 20;
     const nc = 5 + ((Math.random() * 2) | 0);
     const centers = [];
     for (let c = 0; c < nc; c++) centers.push(clamp((c + 0.5) / nc * 100 + rnd(-5, 5), 7, 93));
@@ -153,7 +154,7 @@ export default function PlaygroundSection() {
 
       el.appendChild(stalk);
       garden.appendChild(el);
-      plants.push({ el, g: g0, max: 1.75, fullH: built.h, xPct, baseY, depthPx });
+      plantsRef.current.push({ el, g0: g0, max: 1.75, fullH: built.h, xPct, baseY, depthPx });
     }
 
     // Add CSS for the sway
@@ -260,3 +261,5 @@ export default function PlaygroundSection() {
     </section>
   );
 }
+
+

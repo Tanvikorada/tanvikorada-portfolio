@@ -120,9 +120,9 @@ export default function AnimatedBackground() {
     if (e.target.name === "body" || e.target.name === "platform") {
       if (selectedSkillRef.current) playRelease();
       selectedSkillRef.current = null;
-      if (splineApp.getVariable("heading") && splineApp.getVariable("desc")) {
-        splineApp.setVariable("heading", "");
-        splineApp.setVariable("desc", "");
+      if (false) {
+        // splineApp.setVariable("heading", "");
+        // splineApp.setVariable("desc", "");
       }
     } else {
       const skillName = e.target.name;
@@ -131,8 +131,8 @@ export default function AnimatedBackground() {
         if (selectedSkillRef.current) playRelease();
         playThock();
         selectedSkillRef.current = skill;
-        splineApp.setVariable("heading", skill.label);
-        splineApp.setVariable("desc", skill.shortDescription);
+        // splineApp.setVariable("heading", skill.label);
+        // splineApp.setVariable("desc", skill.shortDescription);
       }
     }
   };
@@ -153,8 +153,8 @@ export default function AnimatedBackground() {
     splineApp.addEventListener("keyUp", () => {
       if (!splineApp || isInputFocused()) return;
       playRelease();
-      splineApp.setVariable("heading", "");
-      splineApp.setVariable("desc", "");
+      // splineApp.setVariable("heading", "");
+      // splineApp.setVariable("desc", "");
     });
 
     splineApp.addEventListener("keyDown", (e) => {
@@ -164,8 +164,8 @@ export default function AnimatedBackground() {
       if (skill) {
         playThock();
         selectedSkillRef.current = skill;
-        splineApp.setVariable("heading", skill.label);
-        splineApp.setVariable("desc", skill.shortDescription);
+        // splineApp.setVariable("heading", skill.label);
+        // splineApp.setVariable("desc", skill.shortDescription);
       }
     });
 
@@ -507,10 +507,13 @@ export default function AnimatedBackground() {
           <Spline 
             style={{ width: '100%', height: '100%' }}
             onLoad={(app) => setSplineApp(app)}
-            scene="/assets/skills-keyboard.spline"
+            scene="/assets/skills-keyboard.splinecode"
           />
         </Suspense>
       </div>
     </>
   );
 }
+
+
+
