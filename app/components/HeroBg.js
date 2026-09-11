@@ -2,17 +2,17 @@
 import { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils } from 'three';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 const GRID_SIZE = 45; // Grid large enough to fill screen
-const CUBE_SIZE = 0.95;
-const SPACING = 1.05; // gap for shadows
+const CUBE_SIZE = 1.05; // Matches SPACING for zero gap
+const SPACING = 1.05; 
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
   const dummy = useMemo(() => new Object3D(), []);
   const count = GRID_SIZE * GRID_SIZE;
   
-  // Track each cube's target rotation/position for smooth spring physics
   const states = useMemo(() => Array.from({ length: count }, () => ({
     rX: 0, rY: 0, rZ: 0,
     trX: 0, trY: 0, trZ: 0,
@@ -56,21 +56,17 @@ function Cubes({ isNight }) {
 
           const cubeState = states[i];
 
-          // If mouse is close, flip the cube
           if (dist < 3.5) {
-            // Push it back slightly and rotate
             cubeState.tpY = -0.5;
             cubeState.trX = Math.PI; 
             cubeState.trY = Math.PI / 4;
           } else {
-            // Subtle ambient wave when far
             const wave = Math.sin(px * 0.2 + time * 1.5) * 0.1 + Math.cos(py * 0.2 + time * 1.5) * 0.1;
             cubeState.tpY = wave;
             cubeState.trX = 0;
             cubeState.trY = 0;
           }
 
-          // Spring interpolation
           cubeState.pY = MathUtils.lerp(cubeState.pY, cubeState.tpY, 0.08);
           cubeState.rX = MathUtils.lerp(cubeState.rX, cubeState.trX, 0.1);
           cubeState.rY = MathUtils.lerp(cubeState.rY, cubeState.trY, 0.1);
@@ -86,8 +82,7 @@ function Cubes({ isNight }) {
     }
   });
 
-  // In light mode, the user requested a premium light lavender accent for the cubes!
-  const cubeColor = isNight ? '#0f172a' : '#f3e8ff'; // Very soft lavender base
+  const cubeColor = isNight ? '#0f172a' : '#f3e8ff';
 
   return (
     <instancedMesh ref={meshRef} args={[null, null, count]}>
@@ -104,6 +99,10 @@ function Cubes({ isNight }) {
 export default function HeroBg() {
   const [mounted, setMounted] = useState(false);
   const [isNight, setIsNight] = useState(false);
+  const { scrollYProgress } = useScroll();
+
+  const blurVal = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 5, 5, 0]);
+  const filterStyle = useTransform(blurVal, (v) => `blur(${v}px)`);
 
   useEffect(() => {
     setMounted(true);
@@ -116,11 +115,10 @@ export default function HeroBg() {
   if (!mounted) return null;
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -2, pointerEvents: 'none' }}>
+    <motion.div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -2, pointerEvents: 'none', filter: filterStyle }}>
       <div style={{ position: 'absolute', inset: 0, background: isNight ? '#020617' : '#fafafa', zIndex: -1 }} />
       <Canvas camera={{ position: [0, 0, 18], fov: 50 }}>
         <ambientLight intensity={isNight ? 0.5 : 1.2} color={isNight ? '#ffffff' : '#f5f3ff'} />
-        {/* Soft, studio-like lighting to make the white cubes look premium, tinted lavender for light mode */}
         <directionalLight position={[5, 10, 15]} intensity={isNight ? 2 : 2.5} color={isNight ? '#818cf8' : '#e0e7ff'} castShadow />
         <directionalLight position={[-15, -10, -10]} intensity={isNight ? 1 : 1.5} color={isNight ? '#c084fc' : '#d8b4fe'} />
         <pointLight position={[0, 0, 5]} intensity={isNight ? 1 : 0.8} color={isNight ? '#38bdf8' : '#c4b5fd'} />
@@ -129,6 +127,7 @@ export default function HeroBg() {
         
         <fog attach="fog" args={[isNight ? '#020617' : '#fafafa', 12, 28]} />
       </Canvas>
-    </div>
+    </motion.div>
   );
 }
+
