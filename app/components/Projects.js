@@ -28,22 +28,22 @@ const PROJECTS = [
       'Mobile-first PWA on a zero-cost stack using Tesseract OCR with Gemini Vision as fallback',
     ],
     url: 'https://satyalabel.vercel.app',
-    image: 'https://images.unsplash.com/photo-1586528116311-ad8ed7c83636?q=80&w=1200&auto=format&fit=crop',
+    image: '/images/satyalabel.png',
     color: '#eff6ff',
   },
   {
-    id: 'shrimpcount',
-    title: 'ShrimpCount',
-    tags: ['Computer Vision', 'YOLO', 'Python', 'Freelance'],
-    bullets: [
-      'Automated YOLO-based computer vision system to estimate shrimp population density',
-      'Designed data pipeline for model training on real hatchery image data',
-      'Targeting deployment for MAS Aqua Techniks, a commercial shrimp hatchery',
-    ],
-    url: '#',
-    image: 'https://images.unsplash.com/photo-1549615286-90b1464fb2bc?q=80&w=1200&auto=format&fit=crop',
-    color: '#fef9ee',
-  },
+      id: 'trackr',
+      title: 'TrackR',
+      tags: ['Next.js', 'Groq LLaMA 3.3', 'Upstash Redis', 'Automations'],
+      bullets: [
+        'AI-Powered full-stack tracker for managing internship and job applications centrally',
+        'Automated digest generation and pipeline status updates via Groq LLaMA 3.3',
+        'Scheduled cron jobs trigger Pushbullet push notifications for daily productivity nudges',
+      ],
+      url: 'https://trackr-by-tanvi.vercel.app',
+      image: '/images/trackr.png',
+      color: '#f8fafc',
+    },
   {
     id: 'physio',
     title: 'Physio',
@@ -161,4 +161,6 @@ export default function Projects() {
     </section>
   );
 }
+
+
 
