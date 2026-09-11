@@ -3,6 +3,7 @@ import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import SpotlightCard from './ui/SpotlightCard';
+import HalftoneReveal from './ui/HalftoneReveal';
 
 const PROJECTS = [
   {
@@ -101,8 +102,16 @@ function ProjectCard({ project, i, progress, range, targetScale }) {
         </div>
         
         {/* Image Side */}
-        <div className="project-image-side" style={{ padding: '0', background: 'var(--bg-surface)' }}>
-          <Image src={project.image} alt={project.title} fill style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 50vw" />
+        <div className="project-image-side" style={{ padding: '0', background: 'var(--bg-surface)', position: 'relative' }}>
+          <HalftoneReveal
+            src={project.image}
+            mode="color"
+            inkColor="#1c1917"
+            paperColor="#fff9f1"
+            dotDensity={80}
+            revealRadius={0.4}
+            borderRadius="0px"
+          />
         </div>
       </SpotlightCard>
     </div>
