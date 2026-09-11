@@ -153,6 +153,7 @@ const RippleDistortion = ({
   swirl = 1,
   rings = 4,
   spread = 5,
+  alignY = 0.5,
   fade = 3,
   spacing = 15,
   dispersion = 0,
@@ -436,6 +437,7 @@ const RippleDistortion = ({
 };
 
 export default RippleDistortion;
+
 
 
 
