@@ -27,10 +27,11 @@ const EXTRA_PROJECTS = [
 ];
 
 const SLIDER_ITEMS = [
-  { image: '/images/physio.png', caption: 'Physio - Real-time form correction' },
-  { image: '/images/appcompiler.jpg', caption: 'AppCompiler - LLM Pipeline' },
-  { image: '/images/studentos.jpg', caption: 'StudentOS - AI OS' },
-  { image: '/images/ingredientiq.jpg', caption: 'IngredientIQ - Gemini Vision' }
+  { image: '/images/gallery_2.jpg', caption: 'Student Achievement Certificate - ATRIBS Software Systems' },
+  { image: '/images/gallery_5.jpg', caption: 'OpenAI x Outskill AI Builders Hackathon' },
+  { image: '/images/gallery_4.jpg', caption: 'ATRIBS Software Systems - Internship' },
+  { image: '/images/gallery_3.jpg', caption: 'SIH 2026 Team & Mentors - SRM Easwari Engineering' },
+  { image: '/images/gallery_1.jpg', caption: 'Awards Ceremony & Events' }
 ];
 
 export default function MoreProjects() {
@@ -40,7 +41,7 @@ export default function MoreProjects() {
       {/* Header is constrained */}
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 8vw' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>More Explorations</h3>
+          <h3 style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>Other Projects</h3>
           <span style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--accent)' }}>Swipe / Scroll</span>
         </div>
       </div>
@@ -77,7 +78,7 @@ export default function MoreProjects() {
       {/* Morph Slider Gallery */}
       <div style={{ maxWidth: '1400px', margin: '60px auto 0', padding: '0 8vw' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>Featured Gallery</h3>
+          <h3 style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>Behind the Code</h3>
           <span style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--accent)' }}>Interactive</span>
         </div>
         <div style={{ width: '100%', aspectRatio: '16/9', maxHeight: '600px', borderRadius: '24px', overflow: 'hidden', boxShadow: 'var(--shadow-md)' }}>
@@ -141,3 +142,5 @@ export default function MoreProjects() {
     </section>
   );
 }
+
+
