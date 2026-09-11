@@ -80,6 +80,7 @@ uniform float uDispersion;
 uniform float uGlint;
 uniform float uTintAmount;
 uniform float uGrayscale;
+uniform float uAlignY;
 
 const float TAU = 6.283185307179586;
 
@@ -87,7 +88,7 @@ vec2 coverUV(vec2 uv) {
   vec2 safe = max(uTextureSize, vec2(1.0));
   vec2 s = uResolution / safe;
   vec2 scaledSize = safe * max(s.x, s.y);
-  vec2 offset = (uResolution - scaledSize) * 0.5;
+  vec2 offset = vec2((uResolution.x - scaledSize.x) * 0.5, (uResolution.y - scaledSize.y) * uAlignY);
   return (uv * uResolution - offset) / scaledSize;
 }
 
@@ -272,7 +273,8 @@ const RippleDistortion = ({
       uDispersion: { value: dispersion },
       uGlint: { value: glint },
       uTintAmount: { value: tintAmount },
-      uGrayscale: { value: grayscale ? 1 : 0 }
+      uGrayscale: { value: grayscale ? 1 : 0 },
+      uAlignY: { value: alignY }
     };
 
     const compositeMesh = new Mesh(gl, {
@@ -425,11 +427,15 @@ const RippleDistortion = ({
     u.composite.uGlint.value = glint;
     u.composite.uTintAmount.value = tintAmount;
     u.composite.uGrayscale.value = grayscale ? 1 : 0;
+    u.composite.uAlignY.value = alignY;
     u.composite.uHighlight.value = hexToRGB(highlightColor);
     u.composite.uTint.value = hexToRGB(tint);
-  }, [rings, strength, swirl, dispersion, glint, tintAmount, grayscale, highlightColor, tint]);
+  }, [rings, strength, swirl, dispersion, glint, tintAmount, grayscale, highlightColor, tint, alignY]);
 
   return <div ref={mountRef} className={`ripple-distortion ${className}`.trim()} style={style} />;
 };
 
 export default RippleDistortion;
+
+
+

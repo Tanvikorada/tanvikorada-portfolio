@@ -74,6 +74,7 @@ export default function About() {
             grayscale={true}
             swirl={1}
             strength={0.25}
+              alignY={1.0}
             trigger="hover"
             style={{ position: 'absolute', inset: 0 }}
           />
@@ -177,6 +178,7 @@ export default function About() {
     </section>
   );
 }
+
 
 
 
