@@ -134,7 +134,7 @@ export default function HeroBg() {
   const [isNight, setIsNight] = useState(false);
   const { scrollYProgress } = useScroll();
 
-  const blurVal = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 5, 5, 0]);
+  const blurVal = useTransform(scrollYProgress, [0, 0.05, 0.8, 1], [0, 15, 15, 20]);
   const filterStyle = useTransform(blurVal, (v) => `blur(${v}px)`);
 
   useEffect(() => {
@@ -164,3 +164,4 @@ export default function HeroBg() {
     </motion.div>
   );
 }
+
