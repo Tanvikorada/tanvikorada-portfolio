@@ -1,5 +1,7 @@
 'use client';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import ClickSpark from './ui/ClickSpark';
+import TargetCursor from './ui/TargetCursor';
 import { useRef } from 'react';
 import SpotlightCard from './ui/SpotlightCard';
 
@@ -14,7 +16,7 @@ const CLOUD = ['AWS', 'Vercel', 'Render', 'Railway', 'Docker', 'Git'];
 function TiltCard({ children, className = "", style = {} }) {
   return (
     <SpotlightCard 
-      className={`bento-card ${className}`}
+      className={`bento-card cursor-target ${className}`}
       style={style}
     >
       {children}
@@ -46,7 +48,24 @@ export default function About() {
 
       <p className="section-eyebrow">About Me</p>
 
-      <div className="bento-grid">
+      
+
+      <TargetCursor
+        targetSelector=".cursor-target"
+        spinDuration={3}
+        hideDefaultCursor={true}
+        parallaxOn={true}
+        cursorColor="rgba(147, 51, 234, 1)"
+      />
+
+      <ClickSpark
+        sparkColor="rgba(147, 51, 234, 0.8)"
+        sparkSize={12}
+        sparkRadius={25}
+        sparkCount={8}
+        duration={500}
+      >
+<div className="bento-grid">
         {/* Photo Tile */}
         <TiltCard className="bento-photo" style={{ padding: 0, overflow: 'hidden', minHeight: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <RippleDistortion
@@ -153,6 +172,12 @@ export default function About() {
           </div>
         </TiltCard>
       </div>
+      </ClickSpark>
     </section>
   );
 }
+
+
+
+
+
