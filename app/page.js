@@ -39,7 +39,7 @@ export default function Home() {
           
           <section style={{ position: 'relative', zIndex: 30, background: 'var(--bg-base)' }}>
             <ScrollExpand
-              src="/images/appcompiler.jpg"
+              src="/images/engineered_scale.jpg"
               title="Engineered for Scale"
               scrollHint="Scroll to reveal"
               useWindowScroll
@@ -84,4 +84,5 @@ export default function Home() {
     </>
   );
 }
+
 
