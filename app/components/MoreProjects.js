@@ -48,7 +48,7 @@ export default function MoreProjects() {
                 <h4 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-heading)', marginBottom: '8px' }}>{p.title}</h4>
                 <p style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>{p.subtitle}</p>
               </div>
-              <p style={{ fontSize: '15px', color: 'var(--text-main)', lineHeight: 1.6, flex: 1, marginTop: '16px' }}>{p.desc}</p>
+              <p style={{ fontSize: '15px', color: 'var(--text-body)', lineHeight: 1.6, flex: 1, marginTop: '16px' }}>{p.desc}</p>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '24px' }}>
                 {p.tags.map(t => (
                   <span key={t} style={{

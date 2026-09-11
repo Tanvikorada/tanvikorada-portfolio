@@ -16,8 +16,8 @@ export default function TechStack() {
       }}
     >
       <div style={{ zIndex: 2, pointerEvents: 'auto' }}>
-        <h2 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-serif)' }}>Tech Stack</h2>
-        <p style={{ marginTop: '12px', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>(Right-click for emoji bomb)</p>
+        <h2 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)' }}>Tech Stack</h2>
+        <p style={{ marginTop: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>(Right-click for emoji bomb)</p>
       </div>
     </section>
   );

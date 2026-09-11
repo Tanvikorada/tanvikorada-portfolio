@@ -23,7 +23,7 @@ export default function Contact() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <span className="contact-avail-dot">●</span>
+          <span className="contact-avail-dot">•</span>
           Open to internships, collaborations &amp; exciting projects
         </motion.div>
 

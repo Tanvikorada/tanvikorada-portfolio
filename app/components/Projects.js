@@ -25,7 +25,7 @@ const PROJECTS = [
     bullets: [
       '4-stage LLM pipeline converting natural language into complete DB, API, UI & Auth schemas',
       'Custom repair engine that fixes inconsistent schema layers without full retry',
-      'Published first-author research paper — DOI 10.5281/zenodo.20644045 · 85–90% success rate',
+      'Published first-author research paper - DOI 10.5281/zenodo.20644045 - 85-90% success rate',
     ],
     url: 'https://appcompiler-ten.vercel.app',
     image: '/images/appcompiler.jpg',

@@ -13,7 +13,7 @@ const Spline = dynamic(() => import('@splinetool/react-spline'), {
 
 gsap.registerPlugin(ScrollTrigger);
 
-const BOMB_EMOJIS = ['😸', '🚀', '🔥', '⚡', '💻', '🎉', '💖', '👀'];
+const BOMB_EMOJIS = ['💣', '💥', '🧨', '✨', '🔥', '🌟', '💢', '💨'];
 
 let thockAudio = null;
 let releaseAudio = null;

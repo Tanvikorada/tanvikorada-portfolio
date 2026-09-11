@@ -36,10 +36,10 @@ export default function About() {
       
       {/* Floating abstract decorative elements */}
       <motion.div style={{ position: 'absolute', top: '10%', left: '5%', y: floatY1, rotate: floatRotate, fontSize: '4rem', opacity: 0.1, pointerEvents: 'none' }}>
-        ✦
+        ✨
       </motion.div>
       <motion.div style={{ position: 'absolute', bottom: '20%', right: '5%', y: floatY2, rotate: floatRotate, fontSize: '6rem', opacity: 0.05, pointerEvents: 'none' }}>
-        ❖
+        ✦
       </motion.div>
 
       <p className="section-eyebrow">About Me</p>
