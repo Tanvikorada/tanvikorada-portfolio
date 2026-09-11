@@ -1,19 +1,26 @@
 'use client';
 import { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { InstancedMesh, Object3D, MathUtils } from 'three';
+import { Object3D, MathUtils } from 'three';
 
-const GRID_SIZE = 30; // 30x30 grid
-const SPACING = 1.1;
+const GRID_SIZE = 35; // 35x35 grid
+const CUBE_SIZE = 1.0;
+const SPACING = 1.02; // very slight gap like the screenshot
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
   const dummy = useMemo(() => new Object3D(), []);
   const count = GRID_SIZE * GRID_SIZE;
+  
+  // Track each cube's target rotation/position for smooth spring physics
+  const states = useMemo(() => Array.from({ length: count }, () => ({
+    rX: 0, rY: 0, rZ: 0,
+    trX: 0, trY: 0, trZ: 0,
+    pY: 0, tpY: 0
+  })), [count]);
 
-  // Track mouse
   const mouse = useRef({ x: 0, y: 0 });
-  const targetMouse = useRef({ x: 0, y: 0 });
+  const targetMouse = useRef({ x: -100, y: -100 });
 
   useEffect(() => {
     const onMove = (e) => {
@@ -28,43 +35,49 @@ function Cubes({ isNight }) {
     const { clock } = state;
     const time = clock.getElapsedTime();
 
-    // Smooth mouse
-    mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.05);
-    mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.05);
+    mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.1);
+    mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.1);
 
     if (meshRef.current) {
       let i = 0;
       const offset = (GRID_SIZE * SPACING) / 2;
+      
+      const mouseWorldX = mouse.current.x * 25;
+      const mouseWorldY = mouse.current.y * 15;
 
       for (let x = 0; x < GRID_SIZE; x++) {
-        for (let z = 0; z < GRID_SIZE; z++) {
+        for (let y = 0; y < GRID_SIZE; y++) {
           const px = x * SPACING - offset;
-          const pz = z * SPACING - offset;
+          const py = y * SPACING - offset;
 
-          // Distance from mouse in world space (roughly)
-          const mouseWorldX = mouse.current.x * 20;
-          const mouseWorldZ = -mouse.current.y * 20 - 5; // offset center
-          
           const dx = px - mouseWorldX;
-          const dz = pz - mouseWorldZ;
-          const dist = Math.sqrt(dx * dx + dz * dz);
+          const dy = py - mouseWorldY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
 
-          // Base wave + cursor ripple
-          const wave = Math.sin(px * 0.4 + time) * 0.4 + Math.cos(pz * 0.4 + time) * 0.4;
-          const ripple = Math.max(0, 1 - dist / 6) * 3.5; // elevate cubes near cursor
-          
-          const py = wave + ripple - 3; // lower the grid slightly
+          const cubeState = states[i];
 
-          dummy.position.set(px, py, pz);
-          
-          // Rotate cubes slightly based on wave and ripple
-          dummy.rotation.x = wave * 0.1;
-          dummy.rotation.z = ripple * 0.2;
-          
-          // Scale cubes up near cursor
-          const scale = 1 + ripple * 0.2;
-          dummy.scale.set(scale, scale, scale);
+          // If mouse is close, flip the cube
+          if (dist < 3.5) {
+            // Push it back slightly and rotate
+            cubeState.tpY = -0.5;
+            cubeState.trX = Math.PI; 
+            cubeState.trY = Math.PI / 4;
+          } else {
+            // Subtle ambient wave when far
+            const wave = Math.sin(px * 0.2 + time * 1.5) * 0.1 + Math.cos(py * 0.2 + time * 1.5) * 0.1;
+            cubeState.tpY = wave;
+            cubeState.trX = 0;
+            cubeState.trY = 0;
+          }
 
+          // Spring interpolation
+          cubeState.pY = MathUtils.lerp(cubeState.pY, cubeState.tpY, 0.08);
+          cubeState.rX = MathUtils.lerp(cubeState.rX, cubeState.trX, 0.1);
+          cubeState.rY = MathUtils.lerp(cubeState.rY, cubeState.trY, 0.1);
+
+          dummy.position.set(px, py, cubeState.pY);
+          dummy.rotation.set(cubeState.rX, cubeState.rY, 0);
+          
           dummy.updateMatrix();
           meshRef.current.setMatrixAt(i++, dummy.matrix);
         }
@@ -73,25 +86,24 @@ function Cubes({ isNight }) {
     }
   });
 
-  const cubeColor = isNight ? '#1e293b' : '#cbd5e1';
+  const cubeColor = isNight ? '#0f172a' : '#ffffff';
 
   return (
     <instancedMesh ref={meshRef} args={[null, null, count]}>
-      <boxGeometry args={[0.85, 0.85, 0.85]} />
+      <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]} />
       <meshStandardMaterial 
         color={cubeColor} 
-        roughness={0.15} 
-        metalness={0.6} 
+        roughness={0.1} 
+        metalness={0.1}
       />
     </instancedMesh>
   );
 }
 
 export default function HeroBg() {
+  const [mounted, setMounted] = useState(false);
   const [isNight, setIsNight] = useState(false);
 
-  const [mounted, setMounted] = useState(false);
-  
   useEffect(() => {
     setMounted(true);
     setIsNight(document.body.classList.contains('night'));
@@ -105,15 +117,16 @@ export default function HeroBg() {
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -2, pointerEvents: 'none' }}>
       <div style={{ position: 'absolute', inset: 0, background: isNight ? '#020617' : '#fafafa', zIndex: -1 }} />
-      <Canvas camera={{ position: [0, 8, 16], fov: 45 }}>
-        <ambientLight intensity={isNight ? 0.3 : 0.9} />
-        <directionalLight position={[10, 20, 10]} intensity={isNight ? 2 : 3} color={isNight ? '#818cf8' : '#ffffff'} />
-        <pointLight position={[-10, 5, -10]} intensity={isNight ? 3 : 1} color={isNight ? '#f472b6' : '#94a3b8'} />
+      <Canvas camera={{ position: [0, 0, 18], fov: 50 }}>
+        <ambientLight intensity={isNight ? 0.5 : 1.2} />
+        {/* Soft, studio-like lighting to make the white cubes look premium */}
+        <directionalLight position={[5, 10, 15]} intensity={isNight ? 2 : 2.5} color={isNight ? '#818cf8' : '#ffffff'} castShadow />
+        <directionalLight position={[-15, -10, -10]} intensity={isNight ? 1 : 1.5} color={isNight ? '#c084fc' : '#e2e8f0'} />
+        <pointLight position={[0, 0, 5]} intensity={isNight ? 1 : 0.5} color={isNight ? '#38bdf8' : '#ffffff'} />
         
         <Cubes isNight={isNight} />
         
-        {/* Soft fog to blend the edges of the grid */}
-        <fog attach="fog" args={[isNight ? '#020617' : '#fafafa', 10, 26]} />
+        <fog attach="fog" args={[isNight ? '#020617' : '#fafafa', 12, 28]} />
       </Canvas>
     </div>
   );

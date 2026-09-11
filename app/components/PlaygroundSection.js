@@ -176,16 +176,35 @@ export default function PlaygroundSection() {
 
   }, []);
 
+  const handleWaterGarden = () => {
+    // Trigger growth animation
+    plantsRef.current.forEach(p => {
+      // Randomly scale up between 1.3x and 1.6x of base size
+      const targetScale = p.g0 * (1.3 + Math.random() * 0.3);
+      p.el.style.transform = `scale(${targetScale.toFixed(3)})`;
+    });
+
+    // Reset after 3 seconds
+    setTimeout(() => {
+      plantsRef.current.forEach(p => {
+        p.el.style.transform = `scale(${p.g0.toFixed(3)})`;
+      });
+    }, 3000);
+  };
+
   return (
     <section 
       id="playground" 
+      onClick={handleWaterGarden}
+      className="garden-container"
       style={{ 
         position: 'relative', 
         width: '100%', 
         height: '60vh',
         overflow: 'hidden',
         background: 'var(--bg-base)',
-        borderTop: '1px solid var(--border)'
+        borderTop: '1px solid var(--border)',
+        cursor: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\"><text x=\"0\" y=\"24\" font-size=\"24\">🚿</text></svg>') 0 24, pointer"
       }}
     >
       <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', zIndex: 5, paddingBottom: '15vh' }}>
@@ -195,24 +214,49 @@ export default function PlaygroundSection() {
         <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(3rem, 7vw, 6rem)', color: 'var(--text-heading)', lineHeight: 1, margin: 0, opacity: 0.1 }}>
           The Garden
         </h2>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', marginTop: '1rem', color: 'var(--text-heading)', animation: 'pulse 2s infinite' }}>
+          CLICK TO GROW
+        </p>
       </div>
 
-      {/* The Garden Bed using exact reference code */}
+      {/* The Garden Bed */}
       <div 
         ref={containerRef} 
         style={{ 
           position: 'absolute', 
-          bottom: 20, 
+          bottom: 25, 
           left: 0, 
           right: 0, 
           height: '250px', 
           zIndex: 10,
-          pointerEvents: 'auto'
+          pointerEvents: 'none' // Let clicks pass to the section
         }} 
       />
 
-      {/* Soil / Meadow Base */}
-      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40px', background: '#3b4234', zIndex: 5, borderTopLeftRadius: '50% 10px', borderTopRightRadius: '50% 10px' }} />
+      {/* Wavy Meadow Base (replaces flat soil) */}
+      <svg 
+        viewBox="0 0 100 20" 
+        preserveAspectRatio="none" 
+        style={{ 
+          position: 'absolute', 
+          bottom: -5, 
+          left: 0, 
+          width: '100%', 
+          height: '60px', 
+          zIndex: 5 
+        }}
+      >
+        <path d="M0,15 Q25,5 50,15 T100,10 L100,20 L0,20 Z" fill="#2a2e24" />
+        <path d="M0,12 Q30,2 60,12 T100,8 L100,20 L0,20 Z" fill="#3b4234" opacity="0.8" />
+      </svg>
+      
+      <style>{`
+        @keyframes pulse {
+          0% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.8; transform: scale(1.05); }
+          100% { opacity: 0.3; transform: scale(1); }
+        }
+      `}</style>
     </section>
   );
 }
