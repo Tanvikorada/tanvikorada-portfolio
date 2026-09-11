@@ -27,10 +27,17 @@ export default function PaperPlane() {
       if (!containerRef.current) return;
       
       const w = document.documentElement.clientWidth;
-      const h = containerRef.current.offsetHeight;
+      const containerH = containerRef.current.offsetHeight;
+      let targetH = containerH;
+      const playground = document.getElementById('playground');
+      if (playground) {
+        targetH = playground.offsetTop;
+      }
       
       const svg = trailRef.current.closest('svg');
-      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      svg.setAttribute('viewBox', `0 0 ${w} ${containerH}`);
+      
+      const h = targetH;
       
       // Build an elegant asymmetric swooping path down the page
       const loops = Math.max(3, Math.floor(h / 800)); // Dynamic loops based on height
@@ -219,3 +226,4 @@ export default function PaperPlane() {
     </div>
   );
 }
+

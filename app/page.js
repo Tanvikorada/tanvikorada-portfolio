@@ -80,7 +80,7 @@ export default function Home() {
             <Contact />
           </section>
 
-          <section id="playground" style={{ position: 'relative', zIndex: 40 }}>
+          <section style={{ position: 'relative', zIndex: 40 }}>
             <PlaygroundSection />
           </section>
         </div>
@@ -88,6 +88,7 @@ export default function Home() {
     </>
   );
 }
+
 
 
 
