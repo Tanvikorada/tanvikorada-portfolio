@@ -14,8 +14,8 @@ function Cubes({ isNight }) {
   const count = GRID_SIZE * GRID_SIZE;
   
   const tempColor = useMemo(() => new Color(), []);
-  const cBaseLight = useMemo(() => new Color('#fafafa'), []); // Off-white / pure clean base
-  const cRippleLight = useMemo(() => new Color('#e9d5ff'), []); // Light lavender ripple
+  const cBaseLight = useMemo(() => new Color('#fafafa'), []); // Off-white
+  const cRippleLight = useMemo(() => new Color('#e9d5ff'), []); // Light lavender
   const cBaseNight = useMemo(() => new Color('#020617'), []);
   const cRippleNight = useMemo(() => new Color('#3b0764'), []);
 
@@ -23,7 +23,7 @@ function Cubes({ isNight }) {
     rX: 0, rY: 0, rZ: 0,
     trX: 0, trY: 0, trZ: 0,
     pY: 0, tpY: 0,
-    colorVal: 0 // Tracks color blend for smooth fading
+    colorVal: 0
   })), [count]);
 
   const mouse = useRef({ x: 0, y: 0 });
@@ -38,7 +38,6 @@ function Cubes({ isNight }) {
     return () => window.removeEventListener('mousemove', onMove);
   }, []);
 
-  // Initialize instance colors so they aren't black on frame 1
   useEffect(() => {
     if (meshRef.current) {
       const initialColor = isNight ? cBaseNight : cBaseLight;
@@ -80,37 +79,39 @@ function Cubes({ isNight }) {
 
           const cubeState = states[i];
 
+          // 1. Determine the color glow based on a soft distance radius
           if (dist < maxDist) {
-            // Smooth bell curve for the ripple
             const normalizedDist = dist / maxDist;
-            const strength = Math.pow(1 - normalizedDist, 1.8);
-            
-            // Push cubes down like a physical ripple
-            cubeState.tpY = -2.5 * strength; 
-            
-            // Tilt them outwards from the cursor
-            cubeState.trX = (dy / maxDist) * strength * Math.PI * 0.25;
-            cubeState.trY = -(dx / maxDist) * strength * Math.PI * 0.25;
-            
+            const strength = Math.pow(1 - normalizedDist, 1.5);
             cubeState.colorVal = strength;
           } else {
-            const wave = 0; // Flat surface until hovered!
-            cubeState.tpY = wave;
-            cubeState.trX = 0;
-            cubeState.trY = 0;
-            // Smoothly fade color out
             cubeState.colorVal = MathUtils.lerp(cubeState.colorVal, 0, 0.05);
           }
 
-          // Spring interpolation
-          cubeState.pY = MathUtils.lerp(cubeState.pY, cubeState.tpY, 0.15);
-          cubeState.rX = MathUtils.lerp(cubeState.rX, cubeState.trX, 0.15);
-          cubeState.rY = MathUtils.lerp(cubeState.rY, cubeState.trY, 0.15);
+          // 2. Restore the ORIGINAL physics movement you liked (flipping vs ambient wave)
+          if (dist < 3.5) {
+            // The original hard flip when the cursor touches it
+            cubeState.tpY = -0.5;
+            cubeState.trX = Math.PI; 
+            cubeState.trY = Math.PI / 4;
+          } else {
+            // The original subtle ambient wave that gently floats the grid
+            const wave = Math.sin(px * 0.2 + time * 1.5) * 0.1 + Math.cos(py * 0.2 + time * 1.5) * 0.1;
+            cubeState.tpY = wave;
+            cubeState.trX = 0;
+            cubeState.trY = 0;
+          }
+
+          // Original spring interpolation speeds
+          cubeState.pY = MathUtils.lerp(cubeState.pY, cubeState.tpY, 0.08);
+          cubeState.rX = MathUtils.lerp(cubeState.rX, cubeState.trX, 0.1);
+          cubeState.rY = MathUtils.lerp(cubeState.rY, cubeState.trY, 0.1);
 
           // Apply Color
           tempColor.copy(cBase).lerp(cRipple, cubeState.colorVal);
           meshRef.current.setColorAt(i, tempColor);
 
+          // Apply Positions
           dummy.position.set(px, py, cubeState.pY);
           dummy.rotation.set(cubeState.rX, cubeState.rY, 0);
           
@@ -169,5 +170,3 @@ export default function HeroBg() {
     </motion.div>
   );
 }
-
-
