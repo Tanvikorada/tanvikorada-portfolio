@@ -1,159 +1,179 @@
 'use client';
-import { useEffect, useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 
-// Basic random utils
-const rnd = (min, max) => min + Math.random() * (max - min);
-const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
-// Palettes
+// Exact palettes from reference
 const STEM = ['#5e6955', '#6b7960', '#76876a'];
 const LAV = ['#8f73b8', '#9e85c4', '#a890cc', '#b9a5d8', '#7b62a1'];
+const OLIVE = ['#3b4234', '#464d3f', '#4f5647'];
 const CREAM = ['#f5efe5', '#faf4ed', '#fef9f2'];
+const LEAFG = ['#4a5441', '#545d4b', '#5c6553'];
 const DISC = '#c97a22';
-
-function Leaf({ x, y, ang, len, color }) {
-  const tx = Math.sin((ang * Math.PI) / 180) * len;
-  const ty = -Math.cos((ang * Math.PI) / 180) * len;
-  return (
-    <path
-      d={`M${x} ${y} Q ${x + tx / 2 + rnd(-3, 3)} ${y + ty / 2} ${x + tx} ${y + ty}`}
-      stroke={color}
-      strokeWidth={rnd(2, 4)}
-      fill="none"
-      strokeLinecap="round"
-    />
-  );
-}
-
-function Petal({ w, len, color }) {
-  return (
-    <path
-      d={`M0 0 C ${-w} ${-len * 0.42} ${-w * 0.55} ${-len} 0 ${-len} C ${w * 0.55} ${-len} ${w} ${-len * 0.42} 0 0 Z`}
-      fill={color}
-      stroke="rgba(0,0,0,0.05)"
-    />
-  );
-}
-
-function Daisy({ h }) {
-  const cx = 50, top = 20, bend = rnd(-10, 10);
-  const n = Math.floor(rnd(10, 15));
-  
-  return (
-    <svg viewBox={`0 0 100 ${h}`} style={{ overflow: 'visible', width: '100%', height: '100%' }}>
-      <path
-        d={`M${cx} ${h} C ${cx + bend} ${h * 0.6} ${cx - bend} ${h * 0.3} ${cx} ${top + 6}`}
-        stroke={pick(STEM)}
-        strokeWidth={4}
-        fill="none"
-        strokeLinecap="round"
-      />
-      <g transform={`translate(${cx}, ${top})`}>
-        {Array.from({ length: n }).map((_, i) => (
-          <g key={i} transform={`rotate(${(360 / n) * i + rnd(-5, 5)})`}>
-            <Petal w={rnd(6, 9)} len={rnd(25, 32)} color={pick(CREAM)} />
-          </g>
-        ))}
-        <circle cx={0} cy={0} r={9} fill={DISC} />
-      </g>
-    </svg>
-  );
-}
-
-function Lavender({ h }) {
-  const cx = 50;
-  const green = pick(STEM);
-  const rows = Math.floor(rnd(12, 18));
-  
-  return (
-    <svg viewBox={`0 0 100 ${h}`} style={{ overflow: 'visible', width: '100%', height: '100%' }}>
-      <path
-        d={`M${cx} ${h} C ${cx + rnd(-5, 5)} ${h * 0.6} ${cx + rnd(-5, 5)} ${h * 0.3} ${cx} 20`}
-        stroke={green}
-        strokeWidth={3}
-        fill="none"
-        strokeLinecap="round"
-      />
-      <Leaf x={cx} y={h} ang={rnd(-30, -15)} len={rnd(40, 60)} color={green} />
-      <Leaf x={cx} y={h} ang={rnd(15, 30)} len={rnd(40, 60)} color={green} />
-      
-      {Array.from({ length: rows }).map((_, i) => {
-        const t = i / rows;
-        const yy = 20 + (h * 0.4 - 20) * t;
-        const spread = (1 - t) * 6 + 2;
-        return (
-          <g key={i}>
-            {Array.from({ length: Math.floor(rnd(2, 4)) }).map((_, k) => (
-              <circle
-                key={k}
-                cx={cx + rnd(-spread, spread)}
-                cy={yy + rnd(-4, 4)}
-                r={rnd(2, 4.5)}
-                fill={pick(LAV)}
-                opacity={rnd(0.7, 1)}
-              />
-            ))}
-          </g>
-        );
-      })}
-    </svg>
-  );
-}
-
-function Plant({ type, left, defaultScale }) {
-  const [scale, setScale] = useState(defaultScale);
-  const h = type === 'daisy' ? rnd(150, 200) : rnd(130, 180);
-
-  return (
-    <motion.div
-      style={{
-        position: 'absolute',
-        left: `${left}%`,
-        bottom: 0,
-        width: '60px',
-        height: `${h}px`,
-        transformOrigin: 'bottom center',
-        zIndex: Math.floor(rnd(10, 20)),
-      }}
-      animate={{ scale: scale, rotate: [rnd(-3, 0), rnd(0, 3)] }}
-      transition={{ 
-        rotate: { repeat: Infinity, repeatType: 'reverse', duration: rnd(3, 6), ease: 'easeInOut' },
-        scale: { type: 'spring', damping: 15 }
-      }}
-      onMouseMove={() => setScale(Math.min(1.5, scale + 0.15))}
-      onMouseLeave={() => setTimeout(() => setScale(defaultScale), 1500)}
-    >
-      {type === 'daisy' ? <Daisy h={h} /> : <Lavender h={h} />}
-    </motion.div>
-  );
-}
+const DISC_HI = '#d68c36';
+const DISC_SH = '#b86616';
+const PETAL_EDGE = 'rgba(0,0,0,0.05)';
 
 export default function PlaygroundSection() {
-  const [isNight, setIsNight] = useState(false);
-  const [mouse, setMouse] = useState({ x: -100, y: -100 });
-  const [winH, setWinH] = useState(800);
+  const containerRef = useRef(null);
 
   useEffect(() => {
-    setIsNight(document.body.classList.contains('night'));
-    const obs = new MutationObserver(() => setIsNight(document.body.classList.contains('night')));
-    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    setWinH(window.innerHeight);
-    const handleResize = () => setWinH(window.innerHeight);
-    window.addEventListener('resize', handleResize);
-    return () => {
-      obs.disconnect();
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+    if (!containerRef.current) return;
+    const garden = containerRef.current;
+    
+    // Clear any existing plants (for strict mode)
+    garden.innerHTML = '';
 
-  const plants = useMemo(() => {
-    return Array.from({ length: 45 }).map((_, i) => ({
-      id: i,
-      type: Math.random() > 0.4 ? 'daisy' : 'lavender',
-      left: rnd(2, 98),
-      scale: rnd(0.5, 0.9),
-    }));
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    const phoneMQ = window.matchMedia('(max-width: 640px)');
+    const compactMQ = window.matchMedia('(max-width: 1100px)');
+
+    // ---- inline-SVG plant builders ----
+    function petalPath(len, w, col, extra) {
+      return `<path d="M0 0 C ${-w} ${(-len * 0.42).toFixed(1)} ${(-w * 0.55).toFixed(1)} ${-len} 0 ${-len} C ${(w * 0.55).toFixed(1)} ${-len} ${w} ${(-len * 0.42).toFixed(1)} 0 0 Z" fill="${col}" ${extra || ''}/>`;
+    }
+    function blade(x, y, ang, len, col) {
+      const tx = x + Math.sin(ang * Math.PI / 180) * len, ty = y - Math.cos(ang * Math.PI / 180) * len;
+      return `<path d="M${x} ${y} Q ${((x + tx) / 2 + rnd(-3, 3)).toFixed(1)} ${((y + ty) / 2).toFixed(1)} ${tx.toFixed(1)} ${ty.toFixed(1)}" stroke="${col}" stroke-width="${rnd(2.4, 3.6).toFixed(1)}" fill="none" stroke-linecap="round"/>`;
+    }
+    function frond(x, y, ang, len, col) {
+      const fingers = 3 + ((Math.random() * 3) | 0);
+      let g = `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${ang.toFixed(1)})">`;
+      for (let i = 0; i < fingers; i++) {
+        const fa = (i - (fingers - 1) / 2) * rnd(15, 21);
+        const fl = len * (1 - Math.abs(i - (fingers - 1) / 2) * 0.1) * rnd(0.8, 1);
+        g += `<g transform="rotate(${fa.toFixed(1)})">${petalPath(fl, rnd(6, 9), col)}</g>`;
+      }
+      return g + '</g>';
+    }
+    function wrap(w, h, inner) {
+      return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><g filter="url(#ft-paint)">${inner}</g></svg>`;
+    }
+
+    function buildDaisy() {
+      const h = rnd(165, 245), w = 96, cx = w / 2, top = 28, bend = rnd(-15, 15);
+      const stemC = pick(STEM), olive = pick(OLIVE), cream = pick(CREAM);
+      const stem = `<path d="M${cx} ${h} C ${(cx + bend).toFixed(1)} ${(h * 0.6).toFixed(1)} ${(cx - bend).toFixed(1)} ${(h * 0.34).toFixed(1)} ${cx} ${top + 6}" stroke="${stemC}" stroke-width="${rnd(3.4, 4.6).toFixed(1)}" fill="none" stroke-linecap="round"/>`;
+      let base = frond(cx + rnd(-4, 4), h - 2, rnd(-42, -22), rnd(48, 70), olive)
+               + frond(cx + rnd(-4, 4), h - 2, rnd(22, 42), rnd(48, 70), olive)
+               + frond(cx + rnd(-3, 3), h - 2, rnd(-10, 10), rnd(40, 58), olive);
+      const calyx = `<path d="M${cx - 11} ${top + 2} q11 15 22 0 q-3 12 -11 12 q-8 0 -11 -12 z" fill="${olive}"/>`;
+      const n = 11 + ((Math.random() * 4) | 0);
+      let petals = '';
+      for (let i = 0; i < n; i++) {
+        const a = 360 / n * i + rnd(-4, 4), L = rnd(27, 35);
+        petals += `<g transform="translate(${cx} ${top}) rotate(${a.toFixed(1)})">${petalPath(L, rnd(7, 10), cream, `stroke="${PETAL_EDGE}" stroke-width="1"`)}</g>`;
+      }
+      const cr = rnd(8.5, 10.5);
+      let disc = `<circle cx="${cx}" cy="${top}" r="${cr.toFixed(1)}" fill="${DISC}"/>`;
+      for (let i = 0; i < 16; i++) { const aa = rnd(0, 6.28), rr = rnd(0, cr * 0.82); disc += `<circle cx="${(cx + Math.cos(aa) * rr).toFixed(1)}" cy="${(top + Math.sin(aa) * rr).toFixed(1)}" r="${rnd(0.8, 1.6).toFixed(1)}" fill="${Math.random() < 0.5 ? DISC_HI : DISC_SH}"/>`; }
+      const head = `<g class="head">${calyx}${petals}${disc}</g>`;
+      return { svg: wrap(w, h, base + stem + head), h };
+    }
+
+    function buildLavender() {
+      const h = rnd(150, 215), w = 56, cx = w / 2;
+      const green = pick(LEAFG);
+      const stem = `<path d="M${cx} ${h} C ${(cx + rnd(-6, 6)).toFixed(1)} ${(h * 0.6).toFixed(1)} ${(cx + rnd(-4, 4)).toFixed(1)} ${(h * 0.42).toFixed(1)} ${cx} ${(h * 0.3).toFixed(1)}" stroke="${green}" stroke-width="2.8" fill="none" stroke-linecap="round"/>`;
+      const leaves = blade(cx, h, rnd(-32, -18), rnd(46, 66), green) + blade(cx, h, rnd(18, 32), rnd(46, 66), green);
+      const spikeBot = h * 0.34, spikeTop = 12;
+      let florets = '';
+      const rows = 11 + ((Math.random() * 6) | 0);
+      for (let i = 0; i <= rows; i++) {
+        const t = i / rows, yy = spikeBot + (spikeTop - spikeBot) * t, spread = (1 - t) * 7 + 3;
+        for (let k = 0; k < 2 + ((Math.random() * 2) | 0); k++)
+          florets += `<circle cx="${(cx + rnd(-spread, spread)).toFixed(1)}" cy="${(yy + rnd(-3, 3)).toFixed(1)}" r="${rnd(2.6, 4.3).toFixed(1)}" fill="${pick(LAV)}" opacity="${rnd(0.78, 1).toFixed(2)}"/>`;
+      }
+      return { svg: wrap(w, h, leaves + stem + `<g class="head">${florets}</g>`), h };
+    }
+
+    function buildFoliage() {
+      const h = rnd(80, 130), w = 110, cx = w / 2;
+      const olive = pick(OLIVE);
+      let g = '';
+      const n = 4 + ((Math.random() * 3) | 0);
+      for (let i = 0; i < n; i++) g += frond(cx + rnd(-10, 10), h - 2, (i - (n - 1) / 2) * rnd(20, 30), rnd(h * 0.7, h * 1.05), olive);
+      return { svg: wrap(w, h, `<g class="head">${g}</g>`), h };
+    }
+
+    // shared paint filter
+    const defs = document.createElement('div');
+    defs.setAttribute('aria-hidden', 'true');
+    defs.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+    defs.innerHTML = `<svg><defs><filter id="ft-paint" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.028 0.04" numOctaves="2" seed="6" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+    </filter></defs></svg>`;
+    garden.appendChild(defs);
+
+    const N = 20, plants = [];
+    const nc = 5 + ((Math.random() * 2) | 0);
+    const centers = [];
+    for (let c = 0; c < nc; c++) centers.push(clamp((c + 0.5) / nc * 100 + rnd(-5, 5), 7, 93));
+
+    // Simple flat ridge since we don't have the image
+    const plantY = (pct, depth) => 20 + depth; 
+
+    for (let i = 0; i < N; i++) {
+      const roll = Math.random();
+      const built = roll < 0.5 ? buildDaisy() : roll < 0.78 ? buildLavender() : buildFoliage();
+      const el = document.createElement('div');
+      
+      // Inline the CSS classes from reference
+      el.style.position = 'absolute';
+      el.style.transformOrigin = 'bottom center';
+      el.style.transform = 'scale(var(--g))';
+      el.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      el.style.willChange = 'transform';
+
+      const xPct = clamp(centers[i % nc] + rnd(-6, 6), 2, 98);
+      const depthPx = compactMQ.matches ? rnd(4, 28) : rnd(4, 15);
+      const baseY = plantY(xPct / 100, depthPx);
+      
+      el.style.left = xPct + '%';
+      el.style.bottom = baseY + 'px';
+      el.style.zIndex = String(1 + ((Math.random() * 2) | 0) + Math.round(depthPx / 12));
+      
+      const g0 = phoneMQ.matches ? rnd(0.4, 0.7) : rnd(0.65, 1.0);
+      el.style.setProperty('--g', g0.toFixed(3));
+      
+      const stalk = document.createElement('div');
+      // Adding sway CSS inline to avoid needing the exact site.css
+      stalk.style.transformOrigin = 'bottom center';
+      stalk.style.animation = `willow-sway var(--sway) ease-in-out infinite alternate`;
+      stalk.style.animationDelay = `var(--sway-d)`;
+      
+      stalk.style.cssText += `--swayA:${rnd(1.4, 3.4).toFixed(1)}deg;--sway:${rnd(4, 7).toFixed(1)}s;--sway-d:${rnd(-3, 0).toFixed(1)}s;`;
+      stalk.innerHTML = built.svg;
+      
+      // Interactive scale
+      el.addEventListener('mouseenter', () => { el.style.setProperty('--g', (g0 * 1.3).toFixed(3)); });
+      el.addEventListener('mouseleave', () => { el.style.setProperty('--g', g0.toFixed(3)); });
+
+      el.appendChild(stalk);
+      garden.appendChild(el);
+      plants.push({ el, g: g0, max: 1.75, fullH: built.h, xPct, baseY, depthPx });
+    }
+
+    // Add CSS for the sway
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes willow-sway {
+        from { transform: skewX(calc(var(--swayA) * -1)) translateX(-1%); }
+        to   { transform: skewX(var(--swayA)) translateX(1%); }
+      }
+      .head {
+        transform-origin: 50% 30px;
+        animation: head-nod 6s ease-in-out infinite alternate;
+      }
+      @keyframes head-nod {
+        from { transform: rotate(-3deg); }
+        to   { transform: rotate(3deg); }
+      }
+    `;
+    garden.appendChild(style);
+
   }, []);
 
   return (
@@ -162,54 +182,36 @@ export default function PlaygroundSection() {
       style={{ 
         position: 'relative', 
         width: '100%', 
-        height: '80vh',
+        height: '60vh',
         overflow: 'hidden',
-        background: isNight ? '#020617' : '#fafafa',
-        transition: 'background 0.5s ease',
-        cursor: 'none', 
         borderTop: '1px solid var(--border)'
       }}
-      onMouseMove={(e) => setMouse({ x: e.clientX, y: e.clientY })}
-      onMouseLeave={() => setMouse({ x: -100, y: -100 })}
     >
-      {/* Title */}
-      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', zIndex: 5, paddingBottom: '10vh' }}>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '4px', textTransform: 'uppercase', color: isNight ? 'rgba(148,163,184,0.5)' : 'rgba(100,116,139,0.5)', marginBottom: '16px' }}>
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', zIndex: 5, paddingBottom: '15vh' }}>
+        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '16px' }}>
           Interactive Playground
         </p>
-        <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(3rem, 7vw, 6rem)', color: isNight ? 'rgba(248,250,252,0.06)' : 'rgba(15,23,42,0.04)', lineHeight: 1, margin: 0 }}>
+        <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(3rem, 7vw, 6rem)', color: 'var(--text-heading)', lineHeight: 1, margin: 0, opacity: 0.1 }}>
           The Garden
         </h2>
       </div>
 
-      {/* The Garden Bed */}
-      <div style={{ position: 'absolute', bottom: '0px', left: 0, right: 0, height: '250px', zIndex: 10 }}>
-        {plants.map((p) => (
-          <Plant 
-            key={p.id} 
-            type={p.type} 
-            left={p.left} 
-            defaultScale={p.scale} 
-          />
-        ))}
-        {/* Soil line */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '10px', background: isNight ? '#0f172a' : '#e2e8f0', zIndex: 30 }} />
-      </div>
+      {/* The Garden Bed using exact reference code */}
+      <div 
+        ref={containerRef} 
+        style={{ 
+          position: 'absolute', 
+          bottom: 0, 
+          left: 0, 
+          right: 0, 
+          height: '250px', 
+          zIndex: 10,
+          pointerEvents: 'auto'
+        }} 
+      />
 
-      {/* Watering Can Cursor FX */}
-      <motion.div
-        style={{
-          position: 'fixed',
-          top: 0, left: 0,
-          pointerEvents: 'none',
-          zIndex: 9999,
-          opacity: mouse.x > 0 ? 1 : 0,
-        }}
-        animate={{ x: mouse.x - 16, y: mouse.y - 16, rotate: mouse.y > winH * 0.6 ? -20 : 0 }}
-        transition={{ type: 'tween', ease: 'backOut', duration: 0.1 }}
-      >
-        <span style={{ fontSize: '32px', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))' }}>🚿</span>
-      </motion.div>
+      {/* Soil line */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '20px', background: 'var(--text-heading)', zIndex: 5 }} />
     </section>
   );
 }
