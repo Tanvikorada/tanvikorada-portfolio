@@ -86,15 +86,16 @@ function Cubes({ isNight }) {
     }
   });
 
-  const cubeColor = isNight ? '#0f172a' : '#ffffff';
+  // In light mode, the user requested a premium light lavender accent for the cubes!
+  const cubeColor = isNight ? '#0f172a' : '#f3e8ff'; // Very soft lavender base
 
   return (
     <instancedMesh ref={meshRef} args={[null, null, count]}>
       <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]} />
       <meshStandardMaterial 
         color={cubeColor} 
-        roughness={0.4} 
-        metalness={0.05}
+        roughness={0.2} 
+        metalness={0.1}
       />
     </instancedMesh>
   );
@@ -118,11 +119,11 @@ export default function HeroBg() {
     <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -2, pointerEvents: 'none' }}>
       <div style={{ position: 'absolute', inset: 0, background: isNight ? '#020617' : '#fafafa', zIndex: -1 }} />
       <Canvas camera={{ position: [0, -15, 15], fov: 45, rotation: [0.6, 0, 0] }}>
-        <ambientLight intensity={isNight ? 0.5 : 1.2} />
-        {/* Soft, studio-like lighting to make the white cubes look premium */}
-        <directionalLight position={[5, 10, 15]} intensity={isNight ? 2 : 2.5} color={isNight ? '#818cf8' : '#ffffff'} castShadow />
-        <directionalLight position={[-15, -10, -10]} intensity={isNight ? 1 : 1.5} color={isNight ? '#c084fc' : '#e2e8f0'} />
-        <pointLight position={[0, 0, 5]} intensity={isNight ? 1 : 0.5} color={isNight ? '#38bdf8' : '#ffffff'} />
+        <ambientLight intensity={isNight ? 0.5 : 1.2} color={isNight ? '#ffffff' : '#f5f3ff'} />
+        {/* Soft, studio-like lighting to make the white cubes look premium, tinted lavender for light mode */}
+        <directionalLight position={[5, 10, 15]} intensity={isNight ? 2 : 2.5} color={isNight ? '#818cf8' : '#e0e7ff'} castShadow />
+        <directionalLight position={[-15, -10, -10]} intensity={isNight ? 1 : 1.5} color={isNight ? '#c084fc' : '#d8b4fe'} />
+        <pointLight position={[0, 0, 5]} intensity={isNight ? 1 : 0.8} color={isNight ? '#38bdf8' : '#c4b5fd'} />
         
         <Cubes isNight={isNight} />
         

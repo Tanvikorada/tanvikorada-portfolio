@@ -184,7 +184,7 @@ export default function PaperPlane() {
         <path
           ref={trailRef}
           fill="none"
-          stroke="var(--accent)"
+          stroke="var(--gold, #c9961a)"
           strokeWidth="2.5"
           strokeDasharray="8 8"
           strokeLinecap="round"
