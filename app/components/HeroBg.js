@@ -14,8 +14,8 @@ function Cubes({ isNight }) {
   const count = GRID_SIZE * GRID_SIZE;
   
   const tempColor = useMemo(() => new Color(), []);
-  const cBaseLight = useMemo(() => new Color('#fafafa'), []); // Off-white
-  const cRippleLight = useMemo(() => new Color('#e9d5ff'), []); // Light lavender
+  const cBaseLight = useMemo(() => new Color('#ffffff'), []); // Pure White
+  const cRippleLight = useMemo(() => new Color('#e9d5ff'), []); // Light lavender ripple
   const cBaseNight = useMemo(() => new Color('#020617'), []);
   const cRippleNight = useMemo(() => new Color('#3b0764'), []);
 
@@ -66,7 +66,6 @@ function Cubes({ isNight }) {
 
       const cBase = isNight ? cBaseNight : cBaseLight;
       const cRipple = isNight ? cRippleNight : cRippleLight;
-      const maxDist = 6.0;
 
       for (let x = 0; x < GRID_SIZE; x++) {
         for (let y = 0; y < GRID_SIZE; y++) {
@@ -79,30 +78,23 @@ function Cubes({ isNight }) {
 
           const cubeState = states[i];
 
-          // 1. Determine the color glow: ONLY cubes directly touched by the cursor!
-          const touchDist = 1.2;
-          if (dist < touchDist) {
-            cubeState.colorVal = 1.0;
-          } else {
-            // Fade out smoothly to leave a nice trail
-            cubeState.colorVal = MathUtils.lerp(cubeState.colorVal, 0, 0.04);
-          }
-
-          // 2. Restore the ORIGINAL physics movement you liked (flipping vs ambient wave)
+          // Threshold matches exactly the cubes that are flipping
           if (dist < 3.5) {
-            // The original hard flip when the cursor touches it
+            cubeState.colorVal = 1.0;
             cubeState.tpY = -0.5;
             cubeState.trX = Math.PI; 
             cubeState.trY = Math.PI / 4;
           } else {
-            // The original subtle ambient wave that gently floats the grid
+            // Fade out color
+            cubeState.colorVal = MathUtils.lerp(cubeState.colorVal, 0, 0.05);
+            // Subtle ambient wave when far
             const wave = Math.sin(px * 0.2 + time * 1.5) * 0.1 + Math.cos(py * 0.2 + time * 1.5) * 0.1;
             cubeState.tpY = wave;
             cubeState.trX = 0;
             cubeState.trY = 0;
           }
 
-          // Original spring interpolation speeds
+          // Original spring interpolation
           cubeState.pY = MathUtils.lerp(cubeState.pY, cubeState.tpY, 0.08);
           cubeState.rX = MathUtils.lerp(cubeState.rX, cubeState.trX, 0.1);
           cubeState.rY = MathUtils.lerp(cubeState.rY, cubeState.trY, 0.1);
@@ -127,10 +119,11 @@ function Cubes({ isNight }) {
   return (
     <instancedMesh ref={meshRef} args={[null, null, count]}>
       <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]} />
+      {/* High brightness, low roughness for brilliant white */}
       <meshStandardMaterial 
         color="#ffffff" 
-        roughness={0.25} 
-        metalness={0.05}
+        roughness={0.1} 
+        metalness={0.0}
       />
     </instancedMesh>
   );
@@ -156,18 +149,18 @@ export default function HeroBg() {
 
   return (
     <motion.div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -2, pointerEvents: 'none', filter: filterStyle }}>
-      <div style={{ position: 'absolute', inset: 0, background: isNight ? '#020617' : '#fafafa', zIndex: -1 }} />
+      <div style={{ position: 'absolute', inset: 0, background: isNight ? '#020617' : '#ffffff', zIndex: -1 }} />
       <Canvas camera={{ position: [0, 0, 18], fov: 50 }}>
-        <ambientLight intensity={isNight ? 0.5 : 1.2} color={isNight ? '#ffffff' : '#f5f3ff'} />
-        <directionalLight position={[5, 10, 15]} intensity={isNight ? 2 : 2.5} color={isNight ? '#ffffff' : '#ffffff'} castShadow />
-        <directionalLight position={[-15, -10, -10]} intensity={isNight ? 1 : 1.5} color={isNight ? '#ffffff' : '#ffffff'} />
-        <pointLight position={[0, 0, 5]} intensity={isNight ? 1 : 0.8} color={isNight ? '#ffffff' : '#ffffff'} />
+        {/* Crank up lighting for brilliant pure white background */}
+        <ambientLight intensity={isNight ? 0.5 : 2.5} color="#ffffff" />
+        <directionalLight position={[5, 10, 15]} intensity={isNight ? 2 : 2.5} color="#ffffff" castShadow />
+        <directionalLight position={[-15, -10, -10]} intensity={isNight ? 1 : 1.5} color="#ffffff" />
+        <pointLight position={[0, 0, 5]} intensity={isNight ? 1 : 1.0} color="#ffffff" />
         
         <Cubes isNight={isNight} />
         
-        <fog attach="fog" args={[isNight ? '#020617' : '#fafafa', 12, 28]} />
+        <fog attach="fog" args={[isNight ? '#020617' : '#ffffff', 12, 28]} />
       </Canvas>
     </motion.div>
   );
 }
-
