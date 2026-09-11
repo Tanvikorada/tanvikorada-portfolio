@@ -1,24 +1,10 @@
 'use client';
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import Image from 'next/image';
 import SpotlightCard from './ui/SpotlightCard';
 import HalftoneReveal from './ui/HalftoneReveal';
 
 const PROJECTS = [
-  {
-    id: 'physio',
-    title: 'Physio',
-    tags: ['MediaPipe', 'Groq', 'React Three Fiber', 'PWA'],
-    bullets: [
-      'Real-time exercise form correction via phone camera using MediaPipe pose estimation',
-      'Detects compensatory movement patterns and rep-by-rep form degradation in-browser',
-      'Interactive 3D exercise demonstrations with react-three-fiber alongside live camera',
-    ],
-    url: 'https://physio-by-tanvi.vercel.app',
-    image: '/images/physio.png', // The user uploaded physio as a png!
-    color: '#f0fdf4',
-  },
   {
     id: 'appcompiler',
     title: 'AppCompiler',
@@ -33,30 +19,43 @@ const PROJECTS = [
     color: '#f3f0ff',
   },
   {
-    id: 'studentos',
-    title: 'StudentOS',
-    tags: ['Groq LLaMA', 'OpenAI', 'Hackathon', 'Next.js'],
+    id: 'satyalabel',
+    title: 'SatyaLabel',
+    tags: ['Gemini Vision', 'Next.js', 'PostgreSQL', 'SIH 2026'],
     bullets: [
-      'Built solo in 7 days for OpenAI × Outskill AI Builders Hackathon — Final Round',
-      '19 AI-powered panels in one deployed full-stack app with sub-second Groq responses',
-      'Full localStorage state persistence; shipped live on Vercel end-to-end',
+      'AI Compliance Checker built for Ministry of Consumer Affairs; placed 8th in SRMIST SIH round',
+      'Scans packaged product labels via OCR and validates mandatory declarations against rules',
+      'Mobile-first PWA on a zero-cost stack using Tesseract OCR with Gemini Vision as fallback',
     ],
-    url: 'https://studentos-alpha.vercel.app',
-    image: '/images/studentos.jpg',
+    url: 'https://satyalabel.vercel.app',
+    image: 'https://images.unsplash.com/photo-1586528116311-ad8ed7c83636?q=80&w=1200&auto=format&fit=crop',
     color: '#eff6ff',
   },
   {
-    id: 'ingredientiq',
-    title: 'IngredientIQ',
-    tags: ['Gemini Vision', 'Supabase', 'React', 'PWA'],
+    id: 'shrimpcount',
+    title: 'ShrimpCount',
+    tags: ['Computer Vision', 'YOLO', 'Python', 'Freelance'],
     bullets: [
-      'Scans food, cosmetic & household labels — scores ingredient safety across all categories',
-      'Switched from Tesseract.js to Gemini Vision for dramatically higher extraction accuracy',
-      'Migrated to Supabase PostgreSQL + Auth for persistent user accounts and scan history',
+      'Automated YOLO-based computer vision system to estimate shrimp population density',
+      'Designed data pipeline for model training on real hatchery image data',
+      'Targeting deployment for MAS Aqua Techniks, a commercial shrimp hatchery',
     ],
-    url: 'https://ingredientiq-by-tanvi.vercel.app',
-    image: '/images/ingredientiq.jpg',
+    url: '#',
+    image: 'https://images.unsplash.com/photo-1549615286-90b1464fb2bc?q=80&w=1200&auto=format&fit=crop',
     color: '#fef9ee',
+  },
+  {
+    id: 'physio',
+    title: 'Physio',
+    tags: ['MediaPipe', 'Groq', 'React Three Fiber', 'PWA'],
+    bullets: [
+      'Real-time exercise form correction via phone camera using MediaPipe pose estimation',
+      'Detects compensatory movement patterns and rep-by-rep form degradation in-browser',
+      'Interactive 3D exercise demonstrations with react-three-fiber alongside live camera',
+    ],
+    url: 'https://physio-by-tanvi.vercel.app',
+    image: '/images/physio.png',
+    color: '#f0fdf4',
   },
 ];
 
@@ -71,7 +70,6 @@ function ProjectCard({ project, i, progress, range, targetScale }) {
         className="project-card"
         style={{ scale, top: `calc(-10% + ${i * 25}px)` }}
       >
-        {/* Content Side */}
         <div className="project-content-side">
           <div className="project-tags">
             {project.tags.map(t => (
@@ -87,21 +85,22 @@ function ProjectCard({ project, i, progress, range, targetScale }) {
               </li>
             ))}
           </ul>
-          <a
-            href={project.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="project-link"
-            aria-label={`View live demo for ${project.title}`}
-          >
-            Live Demo
-            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-              <path d="M1 13 L13 1 M6 1 H13 V8" />
-            </svg>
-          </a>
+          {project.url !== '#' && (
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="project-link"
+              aria-label={`View live demo for ${project.title}`}
+            >
+              Live Demo
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <path d="M1 13 L13 1 M6 1 H13 V8" />
+              </svg>
+            </a>
+          )}
         </div>
         
-        {/* Image Side */}
         <div className="project-image-side" style={{ padding: '0', background: 'var(--bg-surface)', position: 'relative' }}>
           <HalftoneReveal
             src={project.image}

@@ -3,6 +3,13 @@ import { motion } from 'framer-motion';
 
 const EXPERIENCES = [
   {
+    role: 'Software Development Intern',
+    company: 'ATRIBS Software Systems Pvt Ltd',
+    date: 'Sep 2026 - Oct 2026',
+    desc: 'Progressive Web App (PWA) development — building installable, mobile-first web applications with offline capability and app-like UX in a live production environment.',
+    tag: 'Full-Stack / PWA',
+  },
+  {
     role: 'Prompt Engineering Intern',
     company: 'Future Interns',
     date: 'Dec 2025 – Jan 2026',
@@ -112,3 +119,4 @@ export default function Experience() {
     </section>
   );
 }
+
