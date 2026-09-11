@@ -2,7 +2,7 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import SpotlightCard from './ui/SpotlightCard';
-import HalftoneReveal from './ui/HalftoneReveal';
+import PixelSwap from './ui/PixelSwap';
 
 const PROJECTS = [
   {
@@ -102,14 +102,28 @@ function ProjectCard({ project, i, progress, range, targetScale }) {
         </div>
         
         <div className="project-image-side" style={{ padding: '0', background: 'var(--bg-surface)', position: 'relative' }}>
-          <HalftoneReveal
-            src={project.image}
-            mode="color"
-            inkColor="#1c1917"
-            paperColor="#fff9f1"
-            dotDensity={80}
-            revealRadius={0.4}
-            borderRadius="0px"
+          <PixelSwap
+            firstContent={
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-base)', flexDirection: 'column', gap: '10px' }}>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', letterSpacing: '2px', textTransform: 'uppercase' }}>Hover to Reveal</span>
+              </div>
+            }
+            secondContent={
+              <img src={project.image} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            }
+            pixelSize={64}
+            gap={0}
+            pixelRadius={0}
+            pixelSpin={0}
+            pixelScale={0.35}
+            duration={900}
+            pixelDuration={400}
+            pattern="random"
+            randomness={1}
+            fade={true}
+            trigger="hover"
+            style={{ width: '100%', height: '100%' }}
           />
         </div>
       </SpotlightCard>
@@ -147,3 +161,4 @@ export default function Projects() {
     </section>
   );
 }
+
