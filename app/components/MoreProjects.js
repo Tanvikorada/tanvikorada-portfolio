@@ -30,7 +30,7 @@ const EXTRA_PROJECTS = [
 
 const SLIDER_ITEMS = [
   { image: '/images/gallery_2.jpg', label: 'Student Achievement Certificate - ATRIBS Software Systems' },
-  { image: '/images/gallery_5.jpg', label: 'OpenAI x Outskill AI Builders Hackathon' },
+  { image: '/images/gallery_5.jpg', label: 'SIH Internal Hackathon' },
   { image: '/images/gallery_4.jpg', label: 'ATRIBS Software Systems - Internship' },
   { image: '/images/gallery_3.jpg', label: 'SIH 2026 Team & Mentors - SRM Easwari Engineering' },
   { image: '/images/gallery_1.jpg', label: 'Awards Ceremony & Events' }
@@ -88,7 +88,7 @@ export default function MoreProjects() {
       {/* Morph Slider Gallery */}
       <div style={{ maxWidth: '1400px', margin: '60px auto 0', padding: '0 8vw' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>Behind the Code</h3>
+          <h3 style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>Highlights & Milestones</h3>
           <span style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--accent)' }}>Interactive</span>
         </div>
         <div style={{ width: '100%', boxShadow: 'var(--shadow-md)' }}>
@@ -161,6 +161,7 @@ export default function MoreProjects() {
     </section>
   );
 }
+
 
 
 
