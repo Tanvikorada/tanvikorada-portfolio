@@ -1,11 +1,11 @@
 'use client';
 import { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Object3D, MathUtils } from 'three';
+import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 const GRID_SIZE = 45; // Grid large enough to fill screen
-const CUBE_SIZE = 1.05; // Matches SPACING for zero gap
+const CUBE_SIZE = 1.051; // Matches SPACING for zero gap
 const SPACING = 1.05; 
 
 function Cubes({ isNight }) {
@@ -13,10 +13,17 @@ function Cubes({ isNight }) {
   const dummy = useMemo(() => new Object3D(), []);
   const count = GRID_SIZE * GRID_SIZE;
   
+  const tempColor = useMemo(() => new Color(), []);
+  const cBaseLight = useMemo(() => new Color('#fafafa'), []); // Off-white / pure clean base
+  const cRippleLight = useMemo(() => new Color('#e9d5ff'), []); // Light lavender ripple
+  const cBaseNight = useMemo(() => new Color('#020617'), []);
+  const cRippleNight = useMemo(() => new Color('#3b0764'), []);
+
   const states = useMemo(() => Array.from({ length: count }, () => ({
     rX: 0, rY: 0, rZ: 0,
     trX: 0, trY: 0, trZ: 0,
-    pY: 0, tpY: 0
+    pY: 0, tpY: 0,
+    colorVal: 0 // Tracks color blend for smooth fading
   })), [count]);
 
   const mouse = useRef({ x: 0, y: 0 });
@@ -31,6 +38,19 @@ function Cubes({ isNight }) {
     return () => window.removeEventListener('mousemove', onMove);
   }, []);
 
+  // Initialize instance colors so they aren't black on frame 1
+  useEffect(() => {
+    if (meshRef.current) {
+      const initialColor = isNight ? cBaseNight : cBaseLight;
+      for (let i = 0; i < count; i++) {
+        meshRef.current.setColorAt(i, initialColor);
+      }
+      if (meshRef.current.instanceColor) {
+        meshRef.current.instanceColor.needsUpdate = true;
+      }
+    }
+  }, [isNight, count, cBaseNight, cBaseLight]);
+
   useFrame((state) => {
     const { clock } = state;
     const time = clock.getElapsedTime();
@@ -38,12 +58,16 @@ function Cubes({ isNight }) {
     mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.1);
     mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.1);
 
-    if (meshRef.current) {
+    if (meshRef.current && meshRef.current.instanceColor) {
       let i = 0;
       const offset = (GRID_SIZE * SPACING) / 2;
       
       const mouseWorldX = mouse.current.x * 25;
       const mouseWorldY = mouse.current.y * 15;
+
+      const cBase = isNight ? cBaseNight : cBaseLight;
+      const cRipple = isNight ? cRippleNight : cRippleLight;
+      const maxDist = 6.0;
 
       for (let x = 0; x < GRID_SIZE; x++) {
         for (let y = 0; y < GRID_SIZE; y++) {
@@ -56,20 +80,36 @@ function Cubes({ isNight }) {
 
           const cubeState = states[i];
 
-          if (dist < 3.5) {
-            cubeState.tpY = -0.5;
-            cubeState.trX = Math.PI; 
-            cubeState.trY = Math.PI / 4;
+          if (dist < maxDist) {
+            // Smooth bell curve for the ripple
+            const normalizedDist = dist / maxDist;
+            const strength = Math.pow(1 - normalizedDist, 1.8);
+            
+            // Push cubes down like a physical ripple
+            cubeState.tpY = -2.5 * strength; 
+            
+            // Tilt them outwards from the cursor
+            cubeState.trX = (dy / maxDist) * strength * Math.PI * 0.25;
+            cubeState.trY = -(dx / maxDist) * strength * Math.PI * 0.25;
+            
+            cubeState.colorVal = strength;
           } else {
-            const wave = Math.sin(px * 0.2 + time * 1.5) * 0.1 + Math.cos(py * 0.2 + time * 1.5) * 0.1;
+            const wave = 0; // Flat surface until hovered!
             cubeState.tpY = wave;
             cubeState.trX = 0;
             cubeState.trY = 0;
+            // Smoothly fade color out
+            cubeState.colorVal = MathUtils.lerp(cubeState.colorVal, 0, 0.05);
           }
 
-          cubeState.pY = MathUtils.lerp(cubeState.pY, cubeState.tpY, 0.08);
-          cubeState.rX = MathUtils.lerp(cubeState.rX, cubeState.trX, 0.1);
-          cubeState.rY = MathUtils.lerp(cubeState.rY, cubeState.trY, 0.1);
+          // Spring interpolation
+          cubeState.pY = MathUtils.lerp(cubeState.pY, cubeState.tpY, 0.15);
+          cubeState.rX = MathUtils.lerp(cubeState.rX, cubeState.trX, 0.15);
+          cubeState.rY = MathUtils.lerp(cubeState.rY, cubeState.trY, 0.15);
+
+          // Apply Color
+          tempColor.copy(cBase).lerp(cRipple, cubeState.colorVal);
+          meshRef.current.setColorAt(i, tempColor);
 
           dummy.position.set(px, py, cubeState.pY);
           dummy.rotation.set(cubeState.rX, cubeState.rY, 0);
@@ -78,19 +118,18 @@ function Cubes({ isNight }) {
           meshRef.current.setMatrixAt(i++, dummy.matrix);
         }
       }
+      meshRef.current.instanceColor.needsUpdate = true;
       meshRef.current.instanceMatrix.needsUpdate = true;
     }
   });
-
-  const cubeColor = isNight ? '#0f172a' : '#f3e8ff';
 
   return (
     <instancedMesh ref={meshRef} args={[null, null, count]}>
       <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]} />
       <meshStandardMaterial 
-        color={cubeColor} 
-        roughness={0.2} 
-        metalness={0.1}
+        color="#ffffff" 
+        roughness={0.25} 
+        metalness={0.05}
       />
     </instancedMesh>
   );
@@ -119,9 +158,9 @@ export default function HeroBg() {
       <div style={{ position: 'absolute', inset: 0, background: isNight ? '#020617' : '#fafafa', zIndex: -1 }} />
       <Canvas camera={{ position: [0, 0, 18], fov: 50 }}>
         <ambientLight intensity={isNight ? 0.5 : 1.2} color={isNight ? '#ffffff' : '#f5f3ff'} />
-        <directionalLight position={[5, 10, 15]} intensity={isNight ? 2 : 2.5} color={isNight ? '#818cf8' : '#e0e7ff'} castShadow />
-        <directionalLight position={[-15, -10, -10]} intensity={isNight ? 1 : 1.5} color={isNight ? '#c084fc' : '#d8b4fe'} />
-        <pointLight position={[0, 0, 5]} intensity={isNight ? 1 : 0.8} color={isNight ? '#38bdf8' : '#c4b5fd'} />
+        <directionalLight position={[5, 10, 15]} intensity={isNight ? 2 : 2.5} color={isNight ? '#ffffff' : '#ffffff'} castShadow />
+        <directionalLight position={[-15, -10, -10]} intensity={isNight ? 1 : 1.5} color={isNight ? '#ffffff' : '#ffffff'} />
+        <pointLight position={[0, 0, 5]} intensity={isNight ? 1 : 0.8} color={isNight ? '#ffffff' : '#ffffff'} />
         
         <Cubes isNight={isNight} />
         
@@ -130,6 +169,5 @@ export default function HeroBg() {
     </motion.div>
   );
 }
-
 
 
