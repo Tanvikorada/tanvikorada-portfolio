@@ -39,7 +39,7 @@ export default function Home() {
         <div style={{ position: 'relative', pointerEvents: 'auto' }}>
           
           <section style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', zIndex: 10, borderTop: '1px solid var(--border)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', zIndex: 10, borderTop: '1px solid var(--border)' }} />
             <div style={{ position: 'relative', zIndex: 30 }}>
               <Projects />
             </div>
@@ -50,7 +50,7 @@ export default function Home() {
           </section>
 
           <section style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', zIndex: 10, borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', zIndex: 10, borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }} />
             <div style={{ position: 'relative', zIndex: 30 }}>
               <Experience />
               <Education />

@@ -195,14 +195,13 @@ export default function PlaygroundSection() {
   return (
     <section 
       id="playground" 
-      onClick={handleWaterGarden}
       className="garden-container"
       style={{ 
         position: 'relative', 
         width: '100%', 
         height: '60vh',
         overflow: 'hidden',
-        background: 'var(--bg-base)',
+        background: '#fff9f1', /* Solid background to block the cubes flowing behind it */
         borderTop: '1px solid var(--border)',
         cursor: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\"><text x=\"0\" y=\"24\" font-size=\"24\">🚿</text></svg>') 0 24, pointer"
       }}
@@ -222,6 +221,7 @@ export default function PlaygroundSection() {
       {/* The Garden Bed */}
       <div 
         ref={containerRef} 
+        onClick={handleWaterGarden}
         style={{ 
           position: 'absolute', 
           bottom: 25, 
@@ -229,7 +229,8 @@ export default function PlaygroundSection() {
           right: 0, 
           height: '250px', 
           zIndex: 10,
-          pointerEvents: 'none' // Let clicks pass to the section
+          pointerEvents: 'auto', // Important for clicks
+          cursor: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\"><text x=\"0\" y=\"24\" font-size=\"24\">🚿</text></svg>') 0 24, pointer"
         }} 
       />
 
