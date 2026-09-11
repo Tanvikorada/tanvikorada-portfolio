@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 
 import SpotlightCard from './ui/SpotlightCard';
 import AccordionGallery from './ui/AccordionGallery';
+import DomeGallery from './ui/DomeGallery';
 
 const EXTRA_PROJECTS = [
   {
@@ -82,6 +83,11 @@ export default function MoreProjects() {
           <span style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--accent)' }}>Interactive</span>
         </div>
         <div style={{ width: '100%', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ marginBottom: '40px', width: '100%', height: '500px', borderRadius: '24px', overflow: 'hidden', position: 'relative' }}>
+            <p style={{ textAlign: 'center', marginBottom: '10px', color: 'var(--text-muted)' }}>Dome Gallery (Preview)</p>
+            <DomeGallery images={['/images/gallery_2.jpg', '/images/gallery_5.jpg', '/images/gallery_4.jpg', '/images/gallery_3.jpg', '/images/gallery_1.jpg']} />
+          </div>
+
           <AccordionGallery
             items={SLIDER_ITEMS}
             defaultIndex={2}
@@ -147,6 +153,7 @@ export default function MoreProjects() {
     </section>
   );
 }
+
 
 
 
