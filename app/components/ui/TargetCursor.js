@@ -32,6 +32,7 @@ const getContainingBlockOffset = block => {
 
 const TargetCursor = ({
   targetSelector = '.cursor-target',
+  boundarySelector = null,
   spinDuration = 2,
   hideDefaultCursor = true,
   hoverDuration = 0.2,
@@ -83,9 +84,7 @@ const TargetCursor = ({
     if (isMobile || !cursorRef.current) return;
 
     const originalCursor = document.body.style.cursor;
-    if (hideDefaultCursor) {
-      document.body.style.cursor = 'none';
-    }
+    // Managed in moveHandler if boundarySelector is provided
 
     const cursor = cursorRef.current;
     cornersRef.current = cursor.querySelectorAll('.target-cursor-corner');
@@ -159,7 +158,32 @@ const TargetCursor = ({
 
     tickerFnRef.current = tickerFn;
 
-    const moveHandler = e => moveCursor(e.clientX, e.clientY);
+        let isInsideBoundary = !boundarySelector;
+    if (boundarySelector) {
+      gsap.set(cursor, { opacity: 0 });
+      if (hideDefaultCursor) document.body.style.cursor = 'auto';
+    } else {
+      if (hideDefaultCursor) document.body.style.cursor = 'none';
+    }
+
+    const moveHandler = e => {
+      moveCursor(e.clientX, e.clientY);
+      
+      if (boundarySelector) {
+        const el = document.elementFromPoint(e.clientX, e.clientY);
+        const inside = el ? !!el.closest(boundarySelector) : false;
+        
+        if (inside && !isInsideBoundary) {
+          isInsideBoundary = true;
+          gsap.to(cursor, { opacity: 1, duration: 0.2 });
+          if (hideDefaultCursor) document.body.style.cursor = 'none';
+        } else if (!inside && isInsideBoundary) {
+          isInsideBoundary = false;
+          gsap.to(cursor, { opacity: 0, duration: 0.2 });
+          if (hideDefaultCursor) document.body.style.cursor = 'auto';
+        }
+      }
+    };
     window.addEventListener('mousemove', moveHandler);
 
     const scrollHandler = () => {
@@ -414,3 +438,4 @@ const TargetCursor = ({
 };
 
 export default TargetCursor;
+

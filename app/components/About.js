@@ -51,6 +51,7 @@ export default function About() {
       
 
       <TargetCursor
+        boundarySelector="#about"
         targetSelector=".cursor-target"
         spinDuration={3}
         hideDefaultCursor={true}
@@ -69,7 +70,7 @@ export default function About() {
         {/* Photo Tile */}
         <TiltCard className="bento-photo" style={{ padding: 0, overflow: 'hidden', minHeight: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <RippleDistortion
-            src="/images/profile.jpg"
+            src="/images/about-profile.jpg"
             grayscale={true}
             swirl={1}
             strength={0.25}
@@ -176,6 +177,8 @@ export default function About() {
     </section>
   );
 }
+
+
 
 
 
