@@ -48,10 +48,10 @@ export default function Nav() {
           logo="/images/about-profile.jpg"
           logoAlt="Tanvi"
           items={navItems}
-          baseColor={isNight ? '#020617' : '#ffffff'}
-          pillColor={isNight ? '#ffffff' : '#120F17'}
-          hoveredPillTextColor={isNight ? '#000000' : '#ffffff'}
-          pillTextColor={isNight ? '#ffffff' : '#000000'}
+          baseColor={isNight ? '#0f172a' : '#ffffff'}
+          pillColor={isNight ? '#ffffff' : '#0f172a'}
+          hoveredPillTextColor={isNight ? '#ffffff' : '#000000'}
+          pillTextColor={isNight ? '#000000' : '#ffffff'}
         />
 
         {/* Theme toggle detached from PillNav but floating next to it */}
@@ -84,3 +84,4 @@ export default function Nav() {
     </motion.header>
   );
 }
+
