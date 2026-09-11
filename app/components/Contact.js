@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
+import ParticleText from './ui/ParticleText';
 
 export default function Contact() {
   return (
@@ -27,17 +28,32 @@ export default function Contact() {
           Open to internships, collaborations &amp; exciting projects
         </motion.div>
 
-        <motion.h2
+        <motion.div
           className="contact-title"
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7, delay: 0.15 }}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
         >
-          Let&apos;s build something
-          <br />
-          <span className="contact-title-accent">thoughtful</span> together
-        </motion.h2>
+          <span>Let&apos;s build something</span>
+          <div style={{ width: '100%', height: '1.2em', position: 'relative', margin: '0.2em 0' }}>
+            <ParticleText
+              text="thoughtful"
+              particleSize={2}
+              density={4}
+              color="#ff6b00"
+              highlightColor="#ff9a55"
+              trigger="hover"
+              idleDrift={0.5}
+              fontSize="1em"
+              fontWeight={800}
+              className="contact-title-accent"
+              style={{ position: 'absolute', inset: 0 }}
+            />
+          </div>
+          <span>together</span>
+        </motion.div>
 
         {/* The Robot Mascot */}
         <motion.div

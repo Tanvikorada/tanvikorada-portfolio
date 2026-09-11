@@ -3,6 +3,8 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import SpotlightCard from './ui/SpotlightCard';
 
+import RippleDistortion from './ui/RippleDistortion';
+
 const AI_SKILLS = ['OpenAI API', 'Groq API', 'Claude API', 'Gemini API', 'LangChain', 'LangGraph', 'MediaPipe', 'YOLO', 'Computer Vision', 'Prompt Engineering'];
 const FRONTEND = ['React', 'Next.js', 'Tailwind CSS', 'Three.js (R3F)', 'HTML/CSS'];
 const BACKEND = ['Node.js', 'REST APIs', 'Next.js API Routes', 'Python'];
@@ -45,6 +47,18 @@ export default function About() {
       <p className="section-eyebrow">About Me</p>
 
       <div className="bento-grid">
+        {/* Photo Tile */}
+        <TiltCard className="bento-photo" style={{ padding: 0, overflow: 'hidden', minHeight: '240px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <RippleDistortion
+            src="/images/profile.jpg"
+            grayscale={true}
+            swirl={1}
+            strength={0.25}
+            trigger="hover"
+            style={{ position: 'absolute', inset: 0 }}
+          />
+        </TiltCard>
+
         {/* Bio */}
         <TiltCard className="bento-bio">
           <p className="bento-label">Who I am</p>

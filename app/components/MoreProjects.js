@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 
 import SpotlightCard from './ui/SpotlightCard';
+import MorphSlider from './ui/MorphSlider';
 
 const EXTRA_PROJECTS = [
   {
@@ -23,6 +24,13 @@ const EXTRA_PROJECTS = [
     tags: ['Full Stack', 'LLM', 'React'],
     desc: 'App evolved from PrepOS. Generates complete, trackable study plans from natural language goals with dynamic dashboards.',
   },
+];
+
+const SLIDER_ITEMS = [
+  { image: '/images/physio.png', caption: 'Physio - Real-time form correction' },
+  { image: '/images/appcompiler.jpg', caption: 'AppCompiler - LLM Pipeline' },
+  { image: '/images/studentos.jpg', caption: 'StudentOS - AI OS' },
+  { image: '/images/ingredientiq.jpg', caption: 'IngredientIQ - Gemini Vision' }
 ];
 
 export default function MoreProjects() {
@@ -65,6 +73,23 @@ export default function MoreProjects() {
             </SpotlightCard>
           ))}
         </div>
+
+      {/* Morph Slider Gallery */}
+      <div style={{ maxWidth: '1400px', margin: '60px auto 0', padding: '0 8vw' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <h3 style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>Featured Gallery</h3>
+          <span style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--accent)' }}>Interactive</span>
+        </div>
+        <div style={{ width: '100%', aspectRatio: '16/9', maxHeight: '600px', borderRadius: '24px', overflow: 'hidden', boxShadow: 'var(--shadow-md)' }}>
+          <MorphSlider 
+            items={SLIDER_ITEMS} 
+            transition="melt" 
+            intensity={0.55} 
+            overlayColor="#020617" 
+            autoplay={true}
+          />
+        </div>
+      </div>
 
       <style jsx>{`
         .more-projects-scroll {
