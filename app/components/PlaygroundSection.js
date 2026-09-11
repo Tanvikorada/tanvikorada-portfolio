@@ -201,9 +201,8 @@ export default function PlaygroundSection() {
         width: '100%', 
         height: '60vh',
         overflow: 'hidden',
-        background: '#fff9f1', /* Solid background to block the cubes flowing behind it */
-        borderTop: '1px solid var(--border)',
-        cursor: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\"><text x=\"0\" y=\"24\" font-size=\"24\">🚿</text></svg>') 0 24, pointer"
+        background: 'transparent', /* Let the grid flow through! */
+        borderTop: '1px solid rgba(139, 92, 246, 0.1)'
       }}
     >
       <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', zIndex: 5, paddingBottom: '15vh' }}>
@@ -224,12 +223,12 @@ export default function PlaygroundSection() {
         onClick={handleWaterGarden}
         style={{ 
           position: 'absolute', 
-          bottom: 25, 
+          bottom: 0,  /* Start at bottom of section */
           left: 0, 
           right: 0, 
           height: '250px', 
           zIndex: 10,
-          pointerEvents: 'auto', // Important for clicks
+          pointerEvents: 'auto',
           cursor: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\"><text x=\"0\" y=\"24\" font-size=\"24\">🚿</text></svg>') 0 24, pointer"
         }} 
       />
@@ -240,15 +239,15 @@ export default function PlaygroundSection() {
         preserveAspectRatio="none" 
         style={{ 
           position: 'absolute', 
-          bottom: -5, 
+          bottom: -2, /* Slightly overflow bottom */
           left: 0, 
           width: '100%', 
-          height: '60px', 
-          zIndex: 5 
+          height: '100px', /* Much taller so it covers the base of the plants */
+          zIndex: 15 /* RENDER ABOVE PLANTS TO HIDE THEIR BASES */
         }}
       >
-        <path d="M0,15 Q25,5 50,15 T100,10 L100,20 L0,20 Z" fill="#2a2e24" />
-        <path d="M0,12 Q30,2 60,12 T100,8 L100,20 L0,20 Z" fill="#3b4234" opacity="0.8" />
+        <path d="M0,15 Q25,2 50,15 T100,5 L100,22 L0,22 Z" fill="#2a2e24" />
+        <path d="M0,12 Q30,0 60,12 T100,8 L100,22 L0,22 Z" fill="#3b4234" opacity="0.85" />
       </svg>
       
       <style>{`

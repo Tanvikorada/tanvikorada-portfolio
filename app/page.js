@@ -59,12 +59,12 @@ export default function Home() {
             </div>
           </section>
 
-          <section style={{ position: 'relative', zIndex: 30 }}>
-            <Contact />
-          </section>
-
           <section id="playground" style={{ position: 'relative', zIndex: 40, marginTop: '2rem' }}>
             <PlaygroundSection />
+          </section>
+
+          <section style={{ position: 'relative', zIndex: 30 }}>
+            <Contact />
           </section>
         </div>
       </main>
