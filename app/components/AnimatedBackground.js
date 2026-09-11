@@ -386,6 +386,15 @@ export default function AnimatedBackground() {
     
     // Make actual keycaps visible! Otherwise it looks like a plain blank keyboard block.
     const allObjects = splineApp.getAllObjects();
+    
+    // Force hide any grid, axes, or floor helpers that might be exported with the Spline scene!
+    allObjects.forEach(obj => {
+      const lowerName = (obj.name || '').toLowerCase();
+      if (lowerName.includes('grid') || lowerName.includes('axis') || lowerName.includes('axes') || lowerName.includes('helper')) {
+        obj.visible = false;
+      }
+    });
+
     const isMobile = window.innerWidth < 768;
     
     // Add pop-in drop animation for the keys
