@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
+import ParticleText from './ui/ParticleText';
 
 export default function Contact() {
   return (
@@ -36,15 +37,7 @@ export default function Contact() {
           style={{ textAlign: 'center', lineHeight: 1.2, maxWidth: '900px', margin: '0 auto', fontSize: 'clamp(3rem, 6vw, 5.5rem)', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}
         >
           Let&apos;s build something <br/>
-          <span style={{ 
-            fontStyle: 'italic', 
-            background: 'linear-gradient(135deg, #ff6b00, #ff9a55)', 
-            WebkitBackgroundClip: 'text', 
-            WebkitTextFillColor: 'transparent',
-            display: 'inline-block'
-          }}>
-            thoughtful
-          </span> together.
+          <ParticleText text="thoughtful" /> together.
         </motion.div>
 
         <motion.a

@@ -1,11 +1,12 @@
 'use client';
-import { useRef, useMemo, useEffect } from 'react';
+import { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
-const GRID_SIZE = 26; 
-const CUBE_SIZE = 2.005; 
-const SPACING = 2.0; 
+const GRID_SIZE = 24; // Grid large enough to fill screen
+const CUBE_SIZE = 2.002; // Matches SPACING for zero gap
+const SPACING = 2.0;
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -14,86 +15,103 @@ function Cubes({ isNight }) {
   
   const tempColor = useMemo(() => new Color(), []);
   
-  const cBaseLight = useMemo(() => new Color('#e2e8f0'), []); // slate-200
-  const cRippleLight = useMemo(() => new Color('#818cf8'), []); // indigo-400
+  // Dezprox-style styling:
+  const cBaseLight = useMemo(() => new Color('#f8fafc'), []); 
+  const cRippleLight = useMemo(() => new Color('#94a3b8'), []); // Silver/slate ripple
   
-  const cBaseNight = useMemo(() => new Color('#0f172a'), []); // slate-900
-  const cRippleNight = useMemo(() => new Color('#38bdf8'), []); // sky-400
+  const cBaseNight = useMemo(() => new Color('#020617'), []); // Deep black
+  const cRippleNight = useMemo(() => new Color('#fbbf24'), []); // Gold accent!
 
   const states = useMemo(() => Array.from({ length: count }, () => ({
     pY: 0, tpY: 0,
     colorVal: 0
   })), [count]);
 
-  const mouse = useRef({ x: -100, y: -100 });
-  const targetMouse = useRef({ x: -100, y: -100 });
-
+  const mouse = useRef({ x: 0, y: 0 });
+  const targetMouse = useRef({ x: 0, y: 0 });
+  
   useEffect(() => {
-    const onMove = (e) => {
+    const handleMove = (e) => {
       targetMouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
       targetMouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
     };
-    const onLeave = () => {
-      targetMouse.current.x = -100;
-      targetMouse.current.y = -100;
-    };
-    window.addEventListener('mousemove', onMove, { passive: true });
-    document.body.addEventListener('mouseleave', onLeave);
-    return () => {
-      window.removeEventListener('mousemove', onMove);
-      document.body.removeEventListener('mouseleave', onLeave);
-    };
+    window.addEventListener('mousemove', handleMove);
+    return () => window.removeEventListener('mousemove', handleMove);
   }, []);
 
-  useFrame(() => {
+  useEffect(() => {
+    if (meshRef.current) {
+      for (let i = 0; i < count; i++) {
+        dummy.position.set(
+          (i % GRID_SIZE - GRID_SIZE / 2) * SPACING,
+          0,
+          (Math.floor(i / GRID_SIZE) - GRID_SIZE / 2) * SPACING
+        );
+        dummy.updateMatrix();
+        meshRef.current.setMatrixAt(i, dummy.matrix);
+        meshRef.current.setColorAt(i, isNight ? cBaseNight : cBaseLight);
+      }
+      meshRef.current.instanceMatrix.needsUpdate = true;
+      if (meshRef.current.instanceColor) {
+        meshRef.current.instanceColor.needsUpdate = true;
+      }
+    }
+  }, [isNight, count, cBaseNight, cBaseLight]);
+
+  useFrame((state) => {
+    const { clock } = state;
+    const time = clock.getElapsedTime();
+
     mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.1);
     mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.1);
 
-    if (meshRef.current && meshRef.current.instanceColor) {
-      let i = 0;
-      const offset = (GRID_SIZE * SPACING) / 2;
+    // Camera follow (NO ROTATION per user request)
+    state.camera.position.x = MathUtils.lerp(state.camera.position.x, mouse.current.x * 2, 0.05);
+    state.camera.position.z = MathUtils.lerp(state.camera.position.z, 20 + mouse.current.y * 2, 0.05);
+    state.camera.lookAt(0, -2, 0);
+
+    let needsUpdate = false;
+
+    // Convert mouse screen to world pos roughly
+    const mx = mouse.current.x * 25;
+    const mz = -mouse.current.y * 25;
+
+    for (let i = 0; i < count; i++) {
+      const ix = (i % GRID_SIZE - GRID_SIZE / 2) * SPACING;
+      const iz = (Math.floor(i / GRID_SIZE) - GRID_SIZE / 2) * SPACING;
       
-      const mouseWorldX = mouse.current.x * 25;
-      const mouseWorldY = mouse.current.y * 15;
+      const dx = ix - mx;
+      const dz = iz - mz;
+      const dist = Math.sqrt(dx * dx + dz * dz);
 
-      const cBase = isNight ? cBaseNight : cBaseLight;
-      const cRipple = isNight ? cRippleNight : cRippleLight;
+      // Ripple interaction
+      const ripple = Math.max(0, 1 - dist / 8);
+      
+      states[i].tpY = -ripple * 1.5;
+      states[i].pY = MathUtils.lerp(states[i].pY, states[i].tpY, 0.1);
+      
+      dummy.position.set(ix, states[i].pY, iz);
+      dummy.updateMatrix();
+      meshRef.current.setMatrixAt(i, dummy.matrix);
 
-      for (let x = 0; x < GRID_SIZE; x++) {
-        for (let y = 0; y < GRID_SIZE; y++) {
-          const px = x * SPACING - offset;
-          const py = y * SPACING - offset;
-
-          const dx = px - mouseWorldX;
-          const dy = py - mouseWorldY;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          const cubeState = states[i];
-
-          const maxDist = 6.0;
-          if (dist < maxDist) {
-            const intensity = Math.exp(-Math.pow(dist, 2) / 8.0);
-            cubeState.tpY = -2.0 * intensity;
-            cubeState.colorVal = intensity; 
-          } else {
-            cubeState.tpY = 0;
-            cubeState.colorVal = 0;
-          }
-
-          cubeState.pY = MathUtils.lerp(cubeState.pY, cubeState.tpY, 0.08);
-
-          dummy.position.set(px, py, cubeState.pY);
-          dummy.updateMatrix();
-          meshRef.current.setMatrixAt(i, dummy.matrix);
-
-          tempColor.copy(cBase).lerp(cRipple, MathUtils.clamp(cubeState.colorVal, 0, 1));
-          meshRef.current.setColorAt(i, tempColor);
-
-          i++;
+      if (meshRef.current.instanceColor) {
+        // Softly mix colors
+        const mix = ripple;
+        if (isNight) {
+          tempColor.copy(cBaseNight).lerp(cRippleNight, mix);
+        } else {
+          tempColor.copy(cBaseLight).lerp(cRippleLight, mix);
         }
+        meshRef.current.setColorAt(i, tempColor);
       }
+      needsUpdate = true;
+    }
+
+    if (needsUpdate) {
       meshRef.current.instanceMatrix.needsUpdate = true;
-      meshRef.current.instanceColor.needsUpdate = true;
+      if (meshRef.current.instanceColor) {
+        meshRef.current.instanceColor.needsUpdate = true;
+      }
     }
   });
 
@@ -101,38 +119,60 @@ function Cubes({ isNight }) {
     <instancedMesh ref={meshRef} args={[null, null, count]}>
       <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 0.8]} />
       <meshStandardMaterial 
-        roughness={0.6} 
+        roughness={1} // Very diffuse, flat lighting look
         metalness={0.1}
       />
     </instancedMesh>
   );
 }
 
-export default function HeroBg({ isNight = false }) {
+export default function HeroBg() {
+  const [isNight, setIsNight] = useState(false);
+  const { scrollY } = useScroll();
+  const yBg = useTransform(scrollY, [0, 1000], [0, 300]);
+  const opacityBg = useTransform(scrollY, [0, 600], [1, 0.1]);
+
+  useEffect(() => {
+    const checkTheme = () => {
+      setIsNight(document.body.classList.contains('night'));
+    };
+    checkTheme();
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0, left: 0, right: 0, bottom: 0,
-      zIndex: 0,
-      pointerEvents: 'none',
-      background: isNight ? '#020617' : '#f8fafc'
-    }}>
-      <Canvas 
-        camera={{ position: [0, 0, 20], fov: 40 }}
-        dpr={[1, 2]}
+    <motion.div 
+      className="hero-bg-container"
+      style={{
+        position: 'fixed',
+        top: 0, left: 0, right: 0, bottom: 0,
+        zIndex: 0,
+        y: yBg,
+        opacity: opacityBg,
+        pointerEvents: 'none',
+        background: isNight ? '#020617' : '#f8fafc',
+        transition: 'background 0.5s ease'
+      }}
+    >
+      <Canvas
+        camera={{ position: [0, 8, 20], fov: 45 }}
+        gl={{ antialias: true, alpha: true }}
       >
-        <ambientLight intensity={isNight ? 1.0 : 1.2} />
-        <directionalLight position={[10, 20, 15]} intensity={isNight ? 1.5 : 1.8} />
+        <ambientLight intensity={isNight ? 2 : 2.5} />
+        <directionalLight position={[10, 20, 10]} intensity={isNight ? 1 : 1.5} color={isNight ? '#ffffff' : '#ffffff'} />
+        
         <Cubes isNight={isNight} />
       </Canvas>
-      
+
       <div style={{
-        position: 'absolute',
-        bottom: 0, left: 0, right: 0,
-        height: '40vh',
-        background: 'linear-gradient(to bottom, transparent, var(--bg-base))',
-        pointerEvents: 'none'
+        position: 'absolute', inset: 0,
+        background: isNight 
+          ? 'linear-gradient(to bottom, rgba(2,6,23,0) 0%, rgba(2,6,23,0.8) 70%, #020617 100%)'
+          : 'linear-gradient(to bottom, rgba(248,250,252,0) 0%, rgba(248,250,252,0.8) 70%, #f8fafc 100%)',
+        zIndex: 2, pointerEvents: 'none'
       }} />
-    </div>
+    </motion.div>
   );
 }

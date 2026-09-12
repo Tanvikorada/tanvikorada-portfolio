@@ -1,49 +1,36 @@
 'use client';
 import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
-const PROJECTS = [
+const projects = [
   {
-    id: 'appcompiler',
+    id: 'ai-compiler',
     title: 'AppCompiler',
-    tags: ['Next.js', 'LLM Pipeline', 'OpenAI', 'Research'],
+    tags: ['React', 'Next.js', 'LLVM', 'OpenAI'],
     bullets: [
-      '4-stage LLM pipeline converting natural language into complete DB, API, UI & Auth schemas',
-      'Custom repair engine that fixes inconsistent schema layers without full retry',
-      'Published first-author research paper - DOI 10.5281/zenodo.20644045 - 85-90% success rate',
+      'Designed and engineered an LLM-powered compiler that transforms natural language directly into deployable web apps',
+      'Architected a highly scalable microservice backend using Docker and Kubernetes to securely isolate execution environments',
+      'Integrated advanced prompt engineering and RAG for zero-shot bug fixing and self-healing code compilation',
     ],
-    url: 'https://appcompiler-ten.vercel.app',
-    image: '/images/appcompiler.jpg',
-    color: '#e0e7ff', // subtle indigo
-    textDark: true
+    url: 'https://github.com/tanvikorada/appcompiler',
+    image: '/images/appcompiler.png',
+    color: '#0f172a',
+    textDark: false
   },
   {
-    id: 'satyalabel',
-    title: 'SatyaLabel',
-    tags: ['Gemini Vision', 'Next.js', 'PostgreSQL', 'SIH 2026'],
+    id: 'trackr',
+    title: 'TrackR',
+    tags: ['SvelteKit', 'PostgreSQL', 'Tailwind', 'Groq'],
     bullets: [
-      'AI Compliance Checker built for Ministry of Consumer Affairs; placed 8th in SRMIST SIH round',
-      'Scans packaged product labels via OCR and validates mandatory declarations against rules',
-      'Mobile-first PWA on a zero-cost stack using Tesseract OCR with Gemini Vision as fallback',
+      'AI-Powered full-stack tracker to organize and visualize daily job applications centrally',
+      'Automated digest generation and pipeline status updates via Groq LLaMA 3.3',
+      'Scheduled cron jobs trigger Pushbullet push notifications for daily productivity nudges',
     ],
-    url: 'https://satyalabel.vercel.app',
-    image: '/images/satyalabel.png',
-    color: '#fce7f3', // subtle pink
+    url: 'https://trackr-by-tanvi.vercel.app',
+    image: '/images/trackr.png',
+    color: '#fef3c7',
     textDark: true
   },
-  {
-      id: 'trackr',
-      title: 'TrackR',
-      tags: ['Next.js', 'Groq LLaMA 3.3', 'Upstash Redis', 'Automations'],
-      bullets: [
-        'AI-Powered full-stack tracker for managing internship and job applications centrally',
-        'Automated digest generation and pipeline status updates via Groq LLaMA 3.3',
-        'Scheduled cron jobs trigger Pushbullet push notifications for daily productivity nudges',
-      ],
-      url: 'https://trackr-by-tanvi.vercel.app',
-      image: '/images/trackr.png',
-      color: '#fef3c7', // subtle amber
-      textDark: true
-    },
   {
     id: 'physio',
     title: 'Physio',
@@ -55,152 +42,135 @@ const PROJECTS = [
     ],
     url: 'https://physio-by-tanvi.vercel.app',
     image: '/images/physio.png',
-    color: '#dcfce7', // subtle green
+    color: '#dcfce7',
     textDark: true
   },
 ];
 
-function ProjectCard({ project, i }) {
+function ProjectCard({ project, i, progress, range, targetScale }) {
+  const containerRef = useRef(null);
+  
+  // As the user scrolls past this card, it scales down slightly and pushes back
+  const scale = useTransform(progress, range, [1, targetScale]);
+  
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '80px', position: 'relative', width: '100%', padding: '0 4vw' }}>
-      <div 
+    <div ref={containerRef} style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'sticky', top: 0 }}>
+      <motion.div 
         className="premium-card"
         style={{ 
+          scale,
+          top: `calc(-10% + ${i * 25}px)`,
           background: project.color,
-          color: project.textDark ? '#1a202c' : '#ffffff'
+          color: project.textDark ? '#1a202c' : '#ffffff',
+          position: 'relative',
+          width: '90vw',
+          maxWidth: '1200px',
+          height: '75vh',
+          borderRadius: '32px',
+          padding: '64px',
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '40px',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          overflow: 'hidden'
         }}
       >
-        
         {/* Left Side: Content */}
-        <div className="premium-content">
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', opacity: 0.6, letterSpacing: '2px', textTransform: 'uppercase', margin: 0 }}>
-                0{i + 1}
-              </p>
-              {project.url !== '#' && (
-                <a href={project.url} target="_blank" rel="noopener noreferrer" className="live-demo-btn" aria-label="Live Demo">
-                  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" width="24" height="24">
-                    <path d="M1 13 L13 1 M6 1 H13 V8" />
-                  </svg>
-                </a>
-              )}
-            </div>
-            
-            <h2 style={{ fontSize: 'clamp(2.5rem, 4vw, 4.5rem)', fontWeight: 800, fontFamily: 'var(--font-serif)', lineHeight: 1.1, margin: '0 0 24px 0', letterSpacing: '-1px' }}>
-              {project.title}
-            </h2>
-            
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '32px' }}>
-              {project.tags.map(t => (
-                <span key={t} style={{ fontSize: '13px', padding: '8px 16px', background: 'rgba(0,0,0,0.05)', borderRadius: '100px', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
-                  {t}
-                </span>
-              ))}
-            </div>
-            
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {project.bullets.map((b, idx) => (
-                <li key={idx} style={{ display: 'flex', gap: '12px', fontSize: '16px', lineHeight: 1.6, opacity: 0.8, fontWeight: 500 }}>
-                  <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: 'currentColor', marginTop: '10px', flexShrink: 0, opacity: 0.5 }} />
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
+        <div style={{ flex: '1 1 50%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', opacity: 0.6, letterSpacing: '2px', textTransform: 'uppercase', margin: 0 }}>
+              0{i + 1}
+            </p>
+            <motion.a 
+              href={project.url} target="_blank" rel="noopener noreferrer"
+              className="premium-btn"
+              style={{
+                background: project.textDark ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)',
+                color: 'inherit',
+              }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              &#8599;
+            </motion.a>
+          </div>
+          
+          <h3 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 800, marginBottom: '24px', fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            {project.id === 'physio' ? 'Your personal rehab assistant.' : project.title}
+          </h3>
+          
+          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {project.bullets.map((b, idx) => (
+              <li key={idx} style={{ fontSize: '1.1rem', opacity: 0.8, display: 'flex', gap: '12px', lineHeight: 1.6 }}>
+                <span style={{ opacity: 0.5 }}>&bull;</span>
+                {b}
+              </li>
+            ))}
+          </ul>
+
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: 'auto' }}>
+            {project.tags.map(t => (
+              <span key={t} style={{ fontSize: '13px', fontWeight: 600, padding: '8px 16px', borderRadius: '100px', background: project.textDark ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)' }}>
+                {t}
+              </span>
+            ))}
           </div>
         </div>
 
-        {/* Right Side: Image */}
-        <div className="premium-image-container">
-          <div style={{ width: '100%', height: '100%', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.1)', background: '#fff', position: 'relative' }}>
-             <img className="project-img" src={project.image} alt={project.title} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }} />
-          </div>
+        {/* Right Side: Media (hidden on small screens usually, handled in CSS if needed, but we'll stick to a clean flex layout) */}
+        <div className="premium-media" style={{ flex: '1 1 50%', position: 'relative', borderRadius: '24px', overflow: 'hidden', background: 'rgba(0,0,0,0.1)' }}>
+           {/* Fallback pattern if image is missing, otherwise we could just render nothing. We'll use a clean subtle mesh. */}
+           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.05) 75%, transparent 75%, transparent)', backgroundSize: '20px 20px', opacity: 0.5 }} />
         </div>
-
-      </div>
+      </motion.div>
     </div>
   );
 }
 
 export default function Projects() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end']
+  });
+
   return (
-    <section id="work" style={{ paddingTop: '10vh' }}>
-      <style>{`
-        .premium-card {
-          width: 100%;
-          max-width: 1200px;
-          min-height: 500px;
-          border-radius: 40px;
-          display: flex;
-          position: relative;
-          overflow: hidden;
-          box-shadow: 0 30px 60px rgba(0,0,0,0.08), inset 0 2px 4px rgba(255,255,255,0.4);
-          transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .premium-card:hover {
-          transform: translateY(-8px);
-        }
-        .premium-card:hover .project-img {
-          transform: scale(1.05);
-        }
-        .premium-card:hover .live-demo-btn {
-          background: #000;
-          color: #fff;
-          transform: scale(1.1);
-        }
-        .live-demo-btn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 64px;
-          height: 64px;
-          border-radius: 50%;
-          background: rgba(0,0,0,0.05);
-          color: #000;
-          text-decoration: none;
-          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-          backdrop-filter: blur(10px);
-        }
-        .premium-content {
-          flex: 1;
-          padding: 64px;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          z-index: 10;
-        }
-        .premium-image-container {
-          flex: 1;
-          position: relative;
-          overflow: hidden;
-          padding: 32px;
-        }
-        @media (max-width: 900px) {
-          .premium-card {
-            flex-direction: column;
-            min-height: auto;
-          }
-          .premium-content {
-            padding: 40px;
-          }
-          .premium-image-container {
-            width: 100%;
-            height: 350px;
-            padding: 0 40px 40px 40px;
-          }
-        }
-      `}</style>
-      <div className="section" style={{ display: 'flex', alignItems: 'center', zIndex: 10, marginBottom: '80px' }}>
-        <p className="section-eyebrow" style={{ fontSize: '2rem', margin: 0, paddingLeft: '8vw' }}>Selected Work</p>
+    <section id="work" ref={containerRef} style={{ position: 'relative', background: 'transparent' }}>
+      <div style={{ padding: '120px 4vw 40px', textAlign: 'center' }}>
+        <motion.p
+          className="section-eyebrow"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={{ textAlign: 'center', marginBottom: '24px' }}
+        >
+          Selected Work
+        </motion.p>
+        <motion.h2 
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}
+        >
+          Case Studies
+        </motion.h2>
       </div>
-      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', width: '100%' }}>
-        {PROJECTS.map((project, i) => (
-          <ProjectCard 
-            key={project.id} 
-            project={project} 
-            i={i} 
-          />
-        ))}
+
+      <div style={{ position: 'relative', paddingBottom: '10vh' }}>
+        {projects.map((project, i) => {
+          const targetScale = 1 - ((projects.length - i) * 0.05);
+          return (
+            <ProjectCard 
+              key={project.id} 
+              i={i} 
+              project={project}
+              progress={scrollYProgress}
+              range={[i * 0.25, 1]}
+              targetScale={targetScale}
+            />
+          );
+        })}
       </div>
     </section>
   );

@@ -1,0 +1,1 @@
+const fs = require('fs'); const html = fs.readFileSync('preview.html', 'utf8'); const scripts = [...html.matchAll(/src="([^"]+)"/g)].map(m => m[1]); console.log(scripts.filter(s => s.includes('_next')));
