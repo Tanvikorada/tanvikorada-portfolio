@@ -3,92 +3,147 @@ import { motion } from 'framer-motion';
 
 const EDUCATION_DATA = [
   {
-    institution: 'Ravindra Bharathi School',
-    short: 'Class X · BSEAP',
-    timeline: '2022',
-    score: '88%',
-    label: 'Secondary School',
-    color: '#34d399',
+    institution: 'SRMIST Chennai',
+    short: 'B.Tech — CSE (Cloud Computing)',
+    timeline: '2024 - 2028',
+    score: '9.27 / 10',
+    label: 'Undergraduate',
   },
   {
     institution: 'Tirumala Junior College',
-    short: 'Class XII (MPC) · BIEAP',
-    timeline: '2024',
+    short: 'Class XII (MPC) — BIEAP',
+    timeline: '2022 - 2024',
     score: '95.2%',
     label: 'Higher Secondary',
-    color: '#60a5fa',
   },
   {
-    institution: 'SRMIST Chennai',
-    short: 'B.Tech · CSE (Cloud Computing)',
-    timeline: '2024 – 2028',
-    score: '9.27 / 10',
-    label: 'Undergraduate',
-    color: '#f59e0b',
-  },
+    institution: 'Ravindra Bharathi School',
+    short: 'Class X — BSEAP',
+    timeline: '2021 - 2022',
+    score: '88%',
+    label: 'Secondary School',
+  }
 ];
 
 export default function Education() {
   return (
-    <section id="education" style={{ padding: '10vh 8vw', position: 'relative', zIndex: 10 }}>
-      <div style={{ maxWidth: '1300px', margin: '0 auto' }}>
+    <section id="education" style={{ padding: '15vh 8vw', position: 'relative', zIndex: 10 }}>
+      <style>{`
+        .edu-row {
+          display: grid;
+          grid-template-columns: 1fr 2fr 1fr;
+          padding: 64px 0;
+          border-bottom: 1px solid var(--border-mid);
+          align-items: center;
+          position: relative;
+          overflow: hidden;
+        }
+        .edu-row:first-of-type {
+          border-top: 1px solid var(--border-mid);
+        }
+        @media (max-width: 900px) {
+          .edu-row {
+            grid-template-columns: 1fr;
+            gap: 32px;
+            padding: 48px 0;
+          }
+          .edu-score {
+            text-align: left !important;
+            align-items: flex-start !important;
+          }
+          .edu-year {
+            flex-direction: row !important;
+            align-items: center;
+            gap: 16px;
+          }
+        }
+      `}</style>
+      
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-10%' }}
+          viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          style={{ marginBottom: '5rem' }}
+          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '80px' }}
         >
-          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '16px' }}>
-            Academic Journey
-          </p>
-          <h2 style={{ fontSize: 'clamp(2.8rem, 5.5vw, 4.5rem)', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', lineHeight: 1.1 }}>
-            Education
-          </h2>
+          <div>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '24px' }}>
+              Academic Journey
+            </p>
+            <h2 style={{ fontSize: 'clamp(3.5rem, 7vw, 6.5rem)', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', lineHeight: 1, margin: 0 }}>
+              Education.
+            </h2>
+          </div>
         </motion.div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+        <div>
           {EDUCATION_DATA.map((edu, i) => (
             <motion.div
-              key={edu.institution}
-              initial={{ opacity: 0, x: -32 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: '-5%' }}
-              transition={{ duration: 0.6, delay: i * 0.12 }}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '120px 1px 1fr',
-                gap: '0 40px',
-                position: 'relative',
-                paddingBottom: i < EDUCATION_DATA.length - 1 ? '3.5rem' : 0,
-              }}
+              key={i}
+              initial="initial"
+              whileHover="hover"
+              viewport={{ once: true }}
+              className="edu-row"
             >
-              <div style={{ textAlign: 'right', paddingTop: '4px' }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '13px', color: 'var(--text-muted)', letterSpacing: '1px' }}>
+              <motion.div 
+                variants={{
+                  initial: { height: '0%' },
+                  hover: { height: '100%' }
+                }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                style={{
+                  position: 'absolute',
+                  bottom: 0, left: 0, right: 0,
+                  background: 'var(--border)', // subtle background highlight
+                  zIndex: 0
+                }}
+              />
+              
+              {/* Year */}
+              <div className="edu-year" style={{ zIndex: 1, display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'flex-start' }}>
+                <span style={{ fontSize: 'clamp(1.5rem, 2vw, 2rem)', fontWeight: 300, fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
                   {edu.timeline}
+                </span>
+                <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--text-heading)', padding: '6px 12px', border: '1px solid var(--border-mid)', borderRadius: '100px' }}>
+                  {edu.label}
                 </span>
               </div>
 
-              <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: edu.color, flexShrink: 0, marginTop: '6px', boxShadow: '0 0 0 3px ' + edu.color + '33' }} />
-                {i < EDUCATION_DATA.length - 1 && (
-                  <div style={{ width: '1px', flex: 1, background: 'var(--border)', marginTop: '8px' }} />
-                )}
+              {/* Institution */}
+              <div style={{ zIndex: 1 }}>
+                <motion.h3 
+                  variants={{
+                    initial: { x: 0 },
+                    hover: { x: 16 }
+                  }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ fontSize: 'clamp(2rem, 3.5vw, 3.5rem)', fontWeight: 700, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)', margin: '0 0 16px 0', lineHeight: 1.1 }}
+                >
+                  {edu.institution}
+                </motion.h3>
+                <motion.p
+                  variants={{
+                    initial: { x: 0 },
+                    hover: { x: 16 }
+                  }}
+                  transition={{ duration: 0.4, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ fontSize: '18px', color: 'var(--text-muted)', margin: 0 }}
+                >
+                  {edu.short}
+                </motion.p>
               </div>
 
-              <div>
-                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase', color: edu.color, marginBottom: '8px' }}>
-                  {edu.label}
+              {/* Score */}
+              <div className="edu-score" style={{ zIndex: 1, textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                <p style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--text-muted)', margin: 0 }}>
+                  Score
                 </p>
-                <h3 style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', fontWeight: 700, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', marginBottom: '8px', lineHeight: 1.2 }}>
-                  {edu.institution}
-                </h3>
-                <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '16px' }}>{edu.short}</p>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 16px', borderRadius: '100px', border: '1px solid ' + edu.color + '44', background: edu.color + '0d' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: edu.color, display: 'inline-block' }} />
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', fontWeight: 600, color: edu.color }}>{edu.score}</span>
-                </div>
+                <p style={{ fontSize: 'clamp(2rem, 3vw, 3rem)', fontWeight: 300, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)', margin: 0 }}>
+                  {edu.score}
+                </p>
               </div>
+
             </motion.div>
           ))}
         </div>
