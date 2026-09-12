@@ -8,7 +8,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 const GRID_W = 24; 
 const GRID_H = 14;
 const SPACING = 4.0;
-const CUBE_SIZE = 3.95; // 0.05 gap for perfectly precise grid lines
+const CUBE_SIZE = 3.99; // Ultra-thin 0.01 gap for a sleek 1px hairline border
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -70,7 +70,7 @@ function Cubes({ isNight }) {
 
     let needsUpdate = false;
 
-    // We map mouse to the grid dimensions mathematically
+    // Map mouse to grid coords
     const mx = mouse.current.x * (GRID_W * SPACING / 2);
     const my = mouse.current.y * (GRID_H * SPACING / 2);
 
@@ -85,10 +85,10 @@ function Cubes({ isNight }) {
       const dy = iy - my;
       const dist = Math.hypot(dx, dy);
 
-      // Very subtle ripple radius
-      if (dist < 10) {
-        // Tiny push! Just enough to catch the light, NOT break the wall.
-        const force = (1 - dist / 10) * 0.15; 
+      // Super smooth, wide ripple radius (20) so there are no blocky cliffs
+      if (dist < 20) {
+        // Quadratic falloff makes the ripple transition beautiful and seamless
+        const force = Math.pow(1 - dist / 20, 2) * 0.08; 
         states[i].vZ -= force;
       }
 
@@ -101,13 +101,16 @@ function Cubes({ isNight }) {
         states[i].vZ *= damping;
         states[i].pZ += states[i].vZ;
 
-        dummy.position.set(ix, iy, states[i].pZ);
+        // Cap maximum depth so sides never get exposed
+        const safeZ = Math.max(-0.5, states[i].pZ);
+
+        dummy.position.set(ix, iy, safeZ);
         dummy.updateMatrix();
         meshRef.current.setMatrixAt(i, dummy.matrix);
 
-        // Color mapping focuses heavily on the ripple highlight rather than extreme depth
-        const pressDepth = Math.abs(states[i].pZ);
-        const intensity = Math.max(0, Math.min(1, pressDepth * 1.5));
+        // Color intensity scales with depth
+        const pressDepth = Math.abs(safeZ);
+        const intensity = Math.max(0, Math.min(1, pressDepth * 2.5));
         
         const base = isNight ? cBaseNight : cBaseLight;
         const ripple = isNight ? cRippleNight : cRippleLight;
@@ -124,8 +127,8 @@ function Cubes({ isNight }) {
 
   return (
     <instancedMesh ref={meshRef} args={[null, null, count]}>
-      {/* 0.1 depth ensures it's a Flat Tile wall, preventing any gap illusions */}
-      <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 0.1]} />
+      {/* Reduced thickness to absolute minimum to ensure it's a 2D tile */}
+      <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 0.01]} />
       <meshStandardMaterial roughness={0.3} metalness={0.1} />
     </instancedMesh>
   );
@@ -148,13 +151,15 @@ export default function HeroBg() {
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: 'none' }}>
       <Canvas 
-        gl={{ alpha: false, antialias: true }} 
+        gl={{ alpha: true, antialias: true }} // alpha: true PREVENTS THE BLACK VOID GRID LINES
         dpr={[1, 1.5]} 
-        camera={{ position: [0, 0, 150], fov: 15 }} // Perfectly centered, tight FOV creates a flush 2D architectural look
+        camera={{ position: [0, 0, 150], fov: 15 }} 
         style={{ width: '100vw', height: '100vh', background: isNight ? '#020617' : '#ffffff', transition: 'background 0.5s ease' }}
       >
+        {/* Fill the WebGL background explicitly to match the CSS background, destroying the black border issue */}
+        <color attach="background" args={[isNight ? '#020617' : '#ffffff']} />
+        
         <ambientLight intensity={isNight ? 0.7 : 1.2} />
-        {/* Lights designed to perfectly cast a tiny shadow on the top-left edge, making them look 3D despite being flat tiles */}
         <directionalLight position={[10, -10, 20]} intensity={isNight ? 1.0 : 1.5} color="#ffffff" />
         <directionalLight position={[-10, 10, 15]} intensity={isNight ? 0.4 : 0.6} color={isNight ? '#fbbf24' : '#dcfce7'} />
         
