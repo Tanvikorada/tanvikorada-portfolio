@@ -1,8 +1,5 @@
 'use client';
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import SpotlightCard from './ui/SpotlightCard';
-import PixelSwap from './ui/PixelSwap';
 
 const PROJECTS = [
   {
@@ -16,7 +13,8 @@ const PROJECTS = [
     ],
     url: 'https://appcompiler-ten.vercel.app',
     image: '/images/appcompiler.jpg',
-    color: '#f3f0ff',
+    color: '#e0e7ff', // subtle indigo
+    textDark: true
   },
   {
     id: 'satyalabel',
@@ -29,7 +27,8 @@ const PROJECTS = [
     ],
     url: 'https://satyalabel.vercel.app',
     image: '/images/satyalabel.png',
-    color: '#eff6ff',
+    color: '#fce7f3', // subtle pink
+    textDark: true
   },
   {
       id: 'trackr',
@@ -42,7 +41,8 @@ const PROJECTS = [
       ],
       url: 'https://trackr-by-tanvi.vercel.app',
       image: '/images/trackr.png',
-      color: '#f8fafc',
+      color: '#fef3c7', // subtle amber
+      textDark: true
     },
   {
     id: 'physio',
@@ -55,112 +55,153 @@ const PROJECTS = [
     ],
     url: 'https://physio-by-tanvi.vercel.app',
     image: '/images/physio.png',
-    color: '#f0fdf4',
+    color: '#dcfce7', // subtle green
+    textDark: true
   },
 ];
 
-function ProjectCard({ project, i, progress, range, targetScale }) {
-  const containerRef = useRef(null);
-  
-  const scale = useTransform(progress, range, [1, targetScale]);
-  
+function ProjectCard({ project, i }) {
   return (
-    <div ref={containerRef} style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'sticky', top: 0 }}>
-      <SpotlightCard 
-        className="project-card"
-        style={{ scale, top: `calc(-10% + ${i * 25}px)` }}
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '80px', position: 'relative', width: '100%', padding: '0 4vw' }}>
+      <div 
+        className="premium-card"
+        style={{ 
+          background: project.color,
+          color: project.textDark ? '#1a202c' : '#ffffff'
+        }}
       >
-        <div className="project-content-side">
-          <div className="project-tags">
-            {project.tags.map(t => (
-              <span key={t} className="project-tag">{t}</span>
-            ))}
-          </div>
-          <h2 className="project-title">{project.title}</h2>
-          <ul className="project-bullets">
-            {project.bullets.map((b, idx) => (
-              <li key={idx}>
-                <span className="bullet-dot" />
-                <span>{b}</span>
-              </li>
-            ))}
-          </ul>
-          {project.url !== '#' && (
-            <a
-              href={project.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="project-link"
-              aria-label={`View live demo for ${project.title}`}
-            >
-              Live Demo
-              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                <path d="M1 13 L13 1 M6 1 H13 V8" />
-              </svg>
-            </a>
-          )}
-        </div>
         
-        <div className="project-image-side" style={{ padding: '0', background: 'var(--bg-surface)', position: 'relative' }}>
-          <PixelSwap
-            firstContent={
-              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-base)', flexDirection: 'column', gap: '10px' }}>
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', letterSpacing: '2px', textTransform: 'uppercase' }}>Hover to Reveal</span>
-              </div>
-            }
-            secondContent={
-              <img src={project.image} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            }
-            pixelSize={64}
-            gap={0}
-            pixelRadius={0}
-            pixelSpin={0}
-            pixelScale={0.35}
-            duration={900}
-            pixelDuration={400}
-            pattern="random"
-            randomness={1}
-            fade={true}
-            trigger="hover"
-            style={{ width: '100%', height: '100%' }}
-          />
+        {/* Left Side: Content */}
+        <div className="premium-content">
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', opacity: 0.6, letterSpacing: '2px', textTransform: 'uppercase', margin: 0 }}>
+                0{i + 1}
+              </p>
+              {project.url !== '#' && (
+                <a href={project.url} target="_blank" rel="noopener noreferrer" className="live-demo-btn" aria-label="Live Demo">
+                  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" width="24" height="24">
+                    <path d="M1 13 L13 1 M6 1 H13 V8" />
+                  </svg>
+                </a>
+              )}
+            </div>
+            
+            <h2 style={{ fontSize: 'clamp(2.5rem, 4vw, 4.5rem)', fontWeight: 800, fontFamily: 'var(--font-serif)', lineHeight: 1.1, margin: '0 0 24px 0', letterSpacing: '-1px' }}>
+              {project.title}
+            </h2>
+            
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '32px' }}>
+              {project.tags.map(t => (
+                <span key={t} style={{ fontSize: '13px', padding: '8px 16px', background: 'rgba(0,0,0,0.05)', borderRadius: '100px', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                  {t}
+                </span>
+              ))}
+            </div>
+            
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {project.bullets.map((b, idx) => (
+                <li key={idx} style={{ display: 'flex', gap: '12px', fontSize: '16px', lineHeight: 1.6, opacity: 0.8, fontWeight: 500 }}>
+                  <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: 'currentColor', marginTop: '10px', flexShrink: 0, opacity: 0.5 }} />
+                  <span>{b}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      </SpotlightCard>
+
+        {/* Right Side: Image */}
+        <div className="premium-image-container">
+          <div style={{ width: '100%', height: '100%', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.1)', background: '#fff', position: 'relative' }}>
+             <img className="project-img" src={project.image} alt={project.title} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }} />
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }
 
 export default function Projects() {
-  const container = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: container,
-    offset: ['start start', 'end end']
-  });
-
   return (
-    <section id="work" ref={container} style={{ marginTop: '10vh' }}>
-      <div className="section" style={{ position: 'sticky', top: 0, height: '100px', display: 'flex', alignItems: 'center', zIndex: 10 }}>
+    <section id="work" style={{ paddingTop: '10vh' }}>
+      <style>{`
+        .premium-card {
+          width: 100%;
+          max-width: 1200px;
+          min-height: 500px;
+          border-radius: 40px;
+          display: flex;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 30px 60px rgba(0,0,0,0.08), inset 0 2px 4px rgba(255,255,255,0.4);
+          transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .premium-card:hover {
+          transform: translateY(-8px);
+        }
+        .premium-card:hover .project-img {
+          transform: scale(1.05);
+        }
+        .premium-card:hover .live-demo-btn {
+          background: #000;
+          color: #fff;
+          transform: scale(1.1);
+        }
+        .live-demo-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 64px;
+          height: 64px;
+          border-radius: 50%;
+          background: rgba(0,0,0,0.05);
+          color: #000;
+          text-decoration: none;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          backdrop-filter: blur(10px);
+        }
+        .premium-content {
+          flex: 1;
+          padding: 64px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          z-index: 10;
+        }
+        .premium-image-container {
+          flex: 1;
+          position: relative;
+          overflow: hidden;
+          padding: 32px;
+        }
+        @media (max-width: 900px) {
+          .premium-card {
+            flex-direction: column;
+            min-height: auto;
+          }
+          .premium-content {
+            padding: 40px;
+          }
+          .premium-image-container {
+            width: 100%;
+            height: 350px;
+            padding: 0 40px 40px 40px;
+          }
+        }
+      `}</style>
+      <div className="section" style={{ display: 'flex', alignItems: 'center', zIndex: 10, marginBottom: '80px' }}>
         <p className="section-eyebrow" style={{ fontSize: '2rem', margin: 0, paddingLeft: '8vw' }}>Selected Work</p>
       </div>
-      <div style={{ position: 'relative' }}>
-        {PROJECTS.map((project, i) => {
-          const targetScale = 1 - ( (PROJECTS.length - i) * 0.05);
-          return (
-            <ProjectCard 
-              key={project.id} 
-              project={project} 
-              i={i} 
-              progress={scrollYProgress} 
-              range={[i * 0.25, 1]} 
-              targetScale={targetScale} 
-            />
-          );
-        })}
+      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', width: '100%' }}>
+        {PROJECTS.map((project, i) => (
+          <ProjectCard 
+            key={project.id} 
+            project={project} 
+            i={i} 
+          />
+        ))}
       </div>
     </section>
   );
 }
-
-
-

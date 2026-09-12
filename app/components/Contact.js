@@ -1,6 +1,5 @@
 'use client';
 import { motion } from 'framer-motion';
-import ParticleText from './ui/ParticleText';
 
 export default function Contact() {
   return (
@@ -24,7 +23,7 @@ export default function Contact() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <span className="contact-avail-dot">•</span>
+          <span className="contact-avail-dot"> </span>
           Open to internships, collaborations &amp; exciting projects
         </motion.div>
 
@@ -34,53 +33,18 @@ export default function Contact() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7, delay: 0.15 }}
-          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+          style={{ textAlign: 'center', lineHeight: 1.2, maxWidth: '900px', margin: '0 auto', fontSize: 'clamp(3rem, 6vw, 5.5rem)', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}
         >
-          <span>Let&apos;s build something</span>
-          <div style={{ width: '100%', height: '1.2em', position: 'relative', margin: '0.2em 0' }}>
-            <ParticleText
-              text="thoughtful"
-              particleSize={2}
-              density={4}
-              color="#ff6b00"
-              highlightColor="#ff9a55"
-              trigger="hover"
-              idleDrift={0.5}
-              fontSize="1em"
-              fontWeight={800}
-              style={{ position: 'absolute', inset: 0 }}
-            />
-          </div>
-          <span>together</span>
-        </motion.div>
-
-        {/* The Robot Mascot */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          style={{
-            position: 'absolute',
-            bottom: '10%',
-            right: '10%',
-            width: '120px',
-            pointerEvents: 'none'
-          }}
-        >
-          <motion.img
-            src="/assets/robot.png"
-            alt="Friendly Robot"
-            style={{ width: '100%', height: 'auto', filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.1))' }}
-            animate={{
-              y: [0, -15, 0],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
+          Let&apos;s build something <br/>
+          <span style={{ 
+            fontStyle: 'italic', 
+            background: 'linear-gradient(135deg, #ff6b00, #ff9a55)', 
+            WebkitBackgroundClip: 'text', 
+            WebkitTextFillColor: 'transparent',
+            display: 'inline-block'
+          }}>
+            thoughtful
+          </span> together.
         </motion.div>
 
         <motion.a
@@ -94,7 +58,7 @@ export default function Contact() {
           transition={{ duration: 0.5, delay: 0.25 }}
           whileHover={{ scale: 1.03, y: -2 }}
           whileTap={{ scale: 0.97 }}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: 'pointer', marginTop: '40px' }}
         >
           <span>&#9993;</span>
           tanvikorada@gmail.com
@@ -106,7 +70,7 @@ export default function Contact() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          style={{ textAlign: 'center', marginBottom: '0', marginTop: '24px' }}
+          style={{ textAlign: 'center', marginBottom: '0', marginTop: '40px' }}
         >
           Also find me on
         </motion.p>
