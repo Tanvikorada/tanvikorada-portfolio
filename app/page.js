@@ -7,12 +7,12 @@ import HeroBg from './components/HeroBg';
 import TechStack from './components/TechStack';
 import Projects from './components/Projects';
 import MoreProjects from './components/MoreProjects';
-import Experience from './components/Experience';
+import Journey from './components/Journey';
 import Certs from './components/Certs';
 import About from './components/About';
 import CursorFX from './components/CursorFX';
 import Contact from './components/Contact';
-import Education from './components/Education';
+
 import Preloader from './components/Preloader';
 import PaperPlane from './components/PaperPlane';
 import PlaygroundSection from './components/PlaygroundSection';
@@ -52,8 +52,7 @@ export default function Home() {
           <section style={{ position: 'relative' }}>
             <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', zIndex: 10, borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }} />
             <div style={{ position: 'relative', zIndex: 30 }}>
-              <Experience />
-              <Education />
+              <Journey />
               <Certs />
               <About />
             </div>
@@ -71,3 +70,4 @@ export default function Home() {
     </>
   );
 }
+
