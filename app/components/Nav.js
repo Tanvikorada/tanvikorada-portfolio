@@ -31,22 +31,36 @@ export default function Nav() {
 
   return (
     <motion.header 
-      className="fixed top-0 left-0 right-0 z-[1000] flex justify-center p-4 pointer-events-none"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
       style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
-        display: 'flex', justifyContent: 'center', padding: '16px 24px', pointerEvents: 'none'
+        display: 'flex', justifyContent: 'center', pointerEvents: 'none'
       }}
     >
       <motion.nav 
         className="nav-pill"
+        initial={false}
         animate={{
-          padding: scrolled ? '6px 10px' : '8px 12px',
-          boxShadow: scrolled ? 'var(--shadow-md)' : 'var(--shadow-lift)'
+          width: scrolled ? 'auto' : '100%',
+          padding: scrolled ? '6px 10px' : '32px 8vw',
+          borderRadius: scrolled ? '100px' : '0px',
+          backgroundColor: scrolled ? 'var(--nav-bg)' : 'transparent',
+          borderColor: scrolled ? 'var(--border-mid)' : 'transparent',
+          boxShadow: scrolled ? 'var(--shadow-md)' : 'none',
+          marginTop: scrolled ? '20px' : '0px',
+          gap: scrolled ? '2px' : '4vw',
+          backdropFilter: scrolled ? 'blur(20px) saturate(180%)' : 'blur(0px)'
         }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          pointerEvents: 'auto',
+          WebkitBackdropFilter: scrolled ? 'blur(20px) saturate(180%)' : 'blur(0px)'
+        }}
       >
         {/* Logo */}
         <Link href="/" className="nav-logo">
@@ -99,3 +113,4 @@ export default function Nav() {
     </motion.header>
   );
 }
+

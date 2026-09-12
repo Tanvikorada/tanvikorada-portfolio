@@ -66,67 +66,74 @@ function ProjectCard({ project, i, progress, range, targetScale }) {
   
   return (
     <div ref={containerRef} style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'sticky', top: 0 }}>
-      <SpotlightCard 
-        className="project-card"
-        style={{ scale, top: `calc(-10% + ${i * 25}px)` }}
+      <motion.div 
+        style={{ 
+          scale, 
+          top: `calc(-10% + ${i * 25}px)`,
+          width: '85vw',
+          maxWidth: '1200px',
+          height: '70vh',
+          background: 'var(--bg-surface)',
+          borderRadius: '32px',
+          border: '1px solid var(--border-mid)',
+          padding: '64px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          position: 'relative',
+          overflow: 'hidden'
+        }}
       >
-        <div className="project-content-side">
-          <div className="project-tags">
-            {project.tags.map(t => (
-              <span key={t} className="project-tag">{t}</span>
-            ))}
+        {/* Minimalist Top Row */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid var(--border)', paddingBottom: '32px' }}>
+          <div>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--accent)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '16px' }}>
+              0{i + 1}
+            </p>
+            <h2 style={{ fontSize: 'clamp(3rem, 6vw, 5rem)', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)', lineHeight: 1, margin: 0 }}>
+              {project.title}
+            </h2>
           </div>
-          <h2 className="project-title">{project.title}</h2>
-          <ul className="project-bullets">
-            {project.bullets.map((b, idx) => (
-              <li key={idx}>
-                <span className="bullet-dot" />
-                <span>{b}</span>
-              </li>
-            ))}
-          </ul>
           {project.url !== '#' && (
             <a
               href={project.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="project-link"
-              aria-label={`View live demo for ${project.title}`}
+              style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center', 
+                width: '64px', height: '64px', borderRadius: '50%', border: '1px solid var(--border)', 
+                color: 'var(--text-heading)', textDecoration: 'none', transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--text-heading)'; e.currentTarget.style.color = 'var(--bg-surface)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-heading)'; }}
             >
-              Live Demo
-              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" width="24" height="24">
                 <path d="M1 13 L13 1 M6 1 H13 V8" />
               </svg>
             </a>
           )}
         </div>
-        
-        <div className="project-image-side" style={{ padding: '0', background: 'var(--bg-surface)', position: 'relative' }}>
-          <PixelSwap
-            firstContent={
-              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-base)', flexDirection: 'column', gap: '10px' }}>
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', letterSpacing: '2px', textTransform: 'uppercase' }}>Hover to Reveal</span>
-              </div>
-            }
-            secondContent={
-              <img src={project.image} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            }
-            pixelSize={64}
-            gap={0}
-            pixelRadius={0}
-            pixelSpin={0}
-            pixelScale={0.35}
-            duration={900}
-            pixelDuration={400}
-            pattern="random"
-            randomness={1}
-            fade={true}
-            trigger="hover"
-            style={{ width: '100%', height: '100%' }}
-          />
+
+        {/* Minimalist Bottom Row */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', alignItems: 'end' }}>
+          <div>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
+              {project.tags.map(t => (
+                <span key={t} style={{ fontSize: '12px', padding: '6px 14px', border: '1px solid var(--border-mid)', borderRadius: '100px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
+                  {t}
+                </span>
+              ))}
+            </div>
+            <p style={{ fontSize: '18px', color: 'var(--text-muted)', lineHeight: 1.6, margin: 0, maxWidth: '500px' }}>
+              {project.bullets[0]}
+            </p>
+          </div>
+          
+          <div style={{ height: '250px', width: '100%', borderRadius: '16px', overflow: 'hidden', background: project.color }}>
+            <img src={project.image} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9, mixBlendMode: 'multiply' }} />
+          </div>
         </div>
-      </SpotlightCard>
+      </motion.div>
     </div>
   );
 }
