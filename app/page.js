@@ -7,6 +7,7 @@ import HeroBg from './components/HeroBg';
 import TechStack from './components/TechStack';
 import Projects from './components/Projects';
 import MoreProjects from './components/MoreProjects';
+import EngineeredForScale from './components/EngineeredForScale';
 import Journey from './components/Journey';
 import Certs from './components/Certs';
 import About from './components/About';
@@ -46,6 +47,7 @@ export default function Home() {
           </section>
 
           <section style={{ position: 'relative', zIndex: 30 }}>
+            <EngineeredForScale />
             <MoreProjects />
           </section>
 
@@ -70,4 +72,5 @@ export default function Home() {
     </>
   );
 }
+
 
