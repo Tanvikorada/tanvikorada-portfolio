@@ -4,11 +4,11 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-// Dezprox uses very large, flat tiles.
-const GRID_W = 24; 
-const GRID_H = 14;
+// Perfectly flush grid
+const GRID_W = 44; 
+const GRID_H = 26;
 const SPACING = 4.0;
-const CUBE_SIZE = 3.9; // Slight gap creates the tile lines
+const CUBE_SIZE = 3.95; // 0.05 gap for perfectly precise grid lines
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -17,8 +17,8 @@ function Cubes({ isNight }) {
   
   const tempColor = useMemo(() => new Color(), []);
   
-  const cBaseLight = useMemo(() => new Color('#f8fafc'), []); // Very light subtle gray/white
-  const cRippleLight = useMemo(() => new Color('#dcfce7'), []); // Subtle green Dezprox tint
+  const cBaseLight = useMemo(() => new Color('#f8fafc'), []); 
+  const cRippleLight = useMemo(() => new Color('#dcfce7'), []); 
   
   const cBaseNight = useMemo(() => new Color('#020617'), []); 
   const cRippleNight = useMemo(() => new Color('#fbbf24'), []); 
@@ -68,19 +68,19 @@ function Cubes({ isNight }) {
     mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.1);
     mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.1);
 
-    // Subtle camera parallax
-    state.camera.position.x = MathUtils.lerp(state.camera.position.x, mouse.current.x * 2.0, 0.05);
-    state.camera.position.y = MathUtils.lerp(state.camera.position.y, mouse.current.y * 2.0, 0.05);
+    // FIXED CAMERA. No parallax. Perfectly head-on flush view.
+    state.camera.position.set(0, 0, 100);
     state.camera.lookAt(0, 0, 0);
 
     let needsUpdate = false;
 
     // Convert mouse to world coordinates perfectly based on visible area
-    const mx = mouse.current.x * (GRID_W * SPACING / 2);
-    const my = mouse.current.y * (GRID_H * SPACING / 2);
+    // The screen maps perfectly because the camera never moves.
+    const mx = mouse.current.x * (state.viewport.width / 2);
+    const my = mouse.current.y * (state.viewport.height / 2);
 
-    const tension = 0.03;
-    const damping = 0.88; // highly viscous fluid feel
+    const tension = 0.04;
+    const damping = 0.85;
 
     for (let i = 0; i < count; i++) {
       const ix = (i % GRID_W - GRID_W / 2) * SPACING;
@@ -90,8 +90,10 @@ function Cubes({ isNight }) {
       const dy = iy - my;
       const dist = Math.hypot(dx, dy);
 
-      if (dist < 12) {
-        const force = (1 - dist / 12) * 1.5; // Stronger push for larger cubes
+      // Very subtle ripple radius
+      if (dist < 10) {
+        // Tiny push! Just enough to catch the light, NOT break the wall.
+        const force = (1 - dist / 10) * 0.15; 
         states[i].vZ -= force;
       }
 
@@ -104,14 +106,13 @@ function Cubes({ isNight }) {
         states[i].vZ *= damping;
         states[i].pZ += states[i].vZ;
 
-        // The blocks push backward on Z
         dummy.position.set(ix, iy, states[i].pZ);
         dummy.updateMatrix();
         meshRef.current.setMatrixAt(i, dummy.matrix);
 
-        // Color mapping
+        // Color mapping focuses heavily on the ripple highlight rather than extreme depth
         const pressDepth = Math.abs(states[i].pZ);
-        const intensity = Math.max(0, Math.min(1, pressDepth * 0.15));
+        const intensity = Math.max(0, Math.min(1, pressDepth * 1.5));
         
         const base = isNight ? cBaseNight : cBaseLight;
         const ripple = isNight ? cRippleNight : cRippleLight;
@@ -128,9 +129,9 @@ function Cubes({ isNight }) {
 
   return (
     <instancedMesh ref={meshRef} args={[null, null, count]}>
-      <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]} />
-      {/* High metalness/smoothness makes them look sleek and reflective like Dezprox */}
-      <meshStandardMaterial roughness={0.2} metalness={0.1} />
+      {/* 0.1 depth! They are Flat Tiles, not massive deep boxes! */}
+      <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 0.1]} />
+      <meshStandardMaterial roughness={0.3} metalness={0.1} />
     </instancedMesh>
   );
 }
@@ -153,15 +154,15 @@ export default function HeroBg() {
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: 'none' }}>
       <Canvas 
         gl={{ alpha: false, antialias: true }} 
-        dpr={[1, 1.5]} // Slight bump in quality for the large cubes
+        dpr={[1, 1.5]} 
         style={{ background: isNight ? '#020617' : '#ffffff', transition: 'background 0.5s ease' }}
       >
-        {/* Orthographic Camera completely removes perspective warping, making blocks perfectly flush */}
-        <orthographicCamera makeDefault position={[0, 0, 100]} zoom={18} />
+        <orthographicCamera makeDefault position={[0, 0, 100]} zoom={20} />
         
-        <ambientLight intensity={isNight ? 0.8 : 1.5} />
-        <directionalLight position={[20, 20, 30]} intensity={isNight ? 1.0 : 1.5} color="#ffffff" />
-        <directionalLight position={[-20, -20, 30]} intensity={isNight ? 0.5 : 0.8} color={isNight ? '#fbbf24' : '#dcfce7'} />
+        <ambientLight intensity={isNight ? 0.7 : 1.2} />
+        {/* Lights designed to perfectly cast a tiny shadow on the top-left edge, making them look 3D despite being flat tiles */}
+        <directionalLight position={[10, -10, 20]} intensity={isNight ? 1.0 : 1.5} color="#ffffff" />
+        <directionalLight position={[-10, 10, 15]} intensity={isNight ? 0.4 : 0.6} color={isNight ? '#fbbf24' : '#dcfce7'} />
         
         <Cubes isNight={isNight} />
       </Canvas>
