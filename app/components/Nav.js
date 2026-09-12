@@ -5,7 +5,6 @@ import Link from 'next/link';
 
 export default function Nav() {
   const [isNight, setIsNight] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('theme');
@@ -13,9 +12,6 @@ export default function Nav() {
       setIsNight(true);
       document.body.classList.add('night');
     }
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const toggleTheme = () => {
@@ -35,35 +31,27 @@ export default function Nav() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
       style={{
-        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
+        position: 'fixed', top: '24px', left: 0, right: 0, zIndex: 1000,
         display: 'flex', justifyContent: 'center', pointerEvents: 'none'
       }}
     >
-      <motion.nav 
-        className="nav-pill"
-        initial={false}
-        animate={{
-          width: scrolled ? 'auto' : '100%',
-          padding: scrolled ? '6px 10px' : '32px 8vw',
-          borderRadius: scrolled ? '100px' : '0px',
-          backgroundColor: scrolled ? 'var(--nav-bg)' : 'transparent',
-          borderColor: scrolled ? 'var(--border-mid)' : 'transparent',
-          boxShadow: scrolled ? 'var(--shadow-md)' : 'none',
-          marginTop: scrolled ? '20px' : '0px',
-          gap: scrolled ? '2px' : '4vw',
-          backdropFilter: scrolled ? 'blur(20px) saturate(180%)' : 'blur(0px)'
-        }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      <nav 
         style={{
           display: 'flex',
-          justifyContent: 'space-between',
           alignItems: 'center',
+          gap: '8px',
+          padding: '8px 12px',
+          borderRadius: '100px',
+          background: 'var(--nav-bg)',
+          border: '1px solid var(--border-mid)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.08), inset 0 1px 1px rgba(255,255,255,0.1)',
           pointerEvents: 'auto',
-          WebkitBackdropFilter: scrolled ? 'blur(20px) saturate(180%)' : 'blur(0px)'
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)'
         }}
       >
         {/* Logo */}
-        <Link href="/" className="nav-logo">
+        <Link href="/" className="nav-logo" style={{ padding: '4px 12px 4px 8px' }}>
           <span className="nav-logo-dot" />
           <span style={{ fontWeight: 800, letterSpacing: '-0.5px' }}>Tanvi</span>
         </Link>
@@ -77,9 +65,9 @@ export default function Nav() {
           <button className="nav-link" onClick={() => scrollTo('playground')}>Playground</button>
         </div>
 
-        <div className="nav-right">
-          <span className="nav-divider" />
+        <span className="nav-divider" />
 
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {/* Theme toggle */}
           <button className="theme-btn" onClick={toggleTheme} aria-label="Toggle theme">
             <AnimatePresence mode="wait">
@@ -109,8 +97,7 @@ export default function Nav() {
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </a>
         </div>
-      </motion.nav>
+      </nav>
     </motion.header>
   );
 }
-
