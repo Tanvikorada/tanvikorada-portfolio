@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
 export default function PlaygroundSection() {
@@ -8,8 +8,6 @@ export default function PlaygroundSection() {
   const plantsRef = useRef([]);
   const dropsRef = useRef([]);
   const animationRef = useRef(null);
-  
-  // Custom cursor references
   const cursorRef = useRef(null);
   
   useEffect(() => {
@@ -21,6 +19,7 @@ export default function PlaygroundSection() {
     const rnd = (min, max) => Math.random() * (max - min) + min;
     const pick = arr => arr[(Math.random() * arr.length) | 0];
 
+    // Ensure overflow visible just in case, but increased heights prevent clipping
     function wrap(w, h, inner) {
       return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">${inner}</svg>`;
     }
@@ -54,12 +53,13 @@ export default function PlaygroundSection() {
     }
 
     function buildDaisy() {
-      const w = 120, h = 180, cx = 60;
+      // Increased height to 240 and lowered top to completely prevent cropping
+      const w = 140, h = 240, cx = 70;
       let base = '', stem = '', calyx = '';
-      for (let i = 0; i < 3; i++) base += frond(cx, h - 2, 90 + rnd(-35, 35), rnd(h * 0.3, h * 0.6), leafColor);
+      for (let i = 0; i < 3; i++) base += frond(cx, h - 2, 90 + rnd(-35, 35), rnd(h * 0.3, h * 0.5), leafColor);
       
-      const top = rnd(h * 0.2, h * 0.4);
-      stem = `<path d="M${cx},${h} Q${cx + rnd(-15, 15)},${h * 0.7} ${cx},${top}" stroke="${stemColor}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+      const top = rnd(h * 0.35, h * 0.5); // Safely down at 84-120
+      stem = `<path d="M${cx},${h} Q${cx + rnd(-15, 15)},${h * 0.7} ${cx},${top}" stroke="${stemColor}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
       calyx = `<circle cx="${cx}" cy="${top + 2}" r="6" fill="${leafColor}"/>`;
       
       const n = 11 + ((Math.random() * 4) | 0);
@@ -78,12 +78,13 @@ export default function PlaygroundSection() {
     }
 
     function buildLavender() {
-      const w = 80, h = 160, cx = 40;
+      // Increased height safely
+      const w = 100, h = 220, cx = 50;
       let leaves = '', stem = '';
-      for (let i = 0; i < 2; i++) leaves += frond(cx, h - 2, 90 + rnd(-25, 25), rnd(h * 0.4, h * 0.7), leafColor);
+      for (let i = 0; i < 2; i++) leaves += frond(cx, h - 2, 90 + rnd(-25, 25), rnd(h * 0.4, h * 0.6), leafColor);
       
-      const spikeBot = rnd(h * 0.5, h * 0.7), spikeTop = rnd(h * 0.1, h * 0.2);
-      stem = `<path d="M${cx},${h} Q${cx + rnd(-10, 10)},${h * 0.7} ${cx},${spikeTop}" stroke="${stemColor}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+      const spikeBot = rnd(h * 0.5, h * 0.7), spikeTop = rnd(h * 0.2, h * 0.3); // Safe top
+      stem = `<path d="M${cx},${h} Q${cx + rnd(-10, 10)},${h * 0.7} ${cx},${spikeTop}" stroke="${stemColor}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
       
       let florets = '';
       const rows = 18;
@@ -97,26 +98,24 @@ export default function PlaygroundSection() {
     }
 
     function buildFoliage() {
-      const w = 100, h = 140, cx = 50, n = 4 + ((Math.random() * 3) | 0);
+      const w = 120, h = 180, cx = 60, n = 4 + ((Math.random() * 3) | 0);
       let g = '';
       for (let i = 0; i < n; i++) g += frond(cx + rnd(-10, 10), h - 2, (i - (n - 1) / 2) * rnd(20, 30), rnd(h * 0.7, h * 1.05), olive);
       return { svg: wrap(w, h, `<g>${g}</g>`), h };
     }
 
     // --- Plant Garden Layout ---
-    // Clear any previous plants (for React strict mode)
     while (garden.firstChild) garden.removeChild(garden.firstChild);
     plantsRef.current = [];
     
-    // We create tight clumps exactly like the reference site
-    const N = window.innerWidth > 900 ? 25 : 15;
+    const N = window.innerWidth > 900 ? 30 : 15;
     const nc = 5 + ((Math.random() * 2) | 0); // 5-6 clumps
     const centers = [];
     for (let c = 0; c < nc; c++) centers.push(clamp((c + 0.5) / nc * 100 + rnd(-5, 5), 7, 93));
 
     let storedScales = Array(N).fill(1.0);
     try {
-      const s = localStorage.getItem('gardenScales_ref');
+      const s = localStorage.getItem('gardenScales_ref2');
       if (s) {
         const parsed = JSON.parse(s);
         if (parsed.length === N) storedScales = parsed;
@@ -124,31 +123,33 @@ export default function PlaygroundSection() {
     } catch(e) {}
 
     const isMobile = window.innerWidth <= 768;
+    const SOIL_HEIGHT = 100; // Large soil bed at the bottom
 
     for (let i = 0; i < N; i++) {
       const roll = Math.random();
       const built = roll < 0.5 ? buildDaisy() : roll < 0.78 ? buildLavender() : buildFoliage();
       
-      const xPct = clamp(centers[i % nc] + rnd(-8, 8), 2, 98); // tight clump around center
+      const xPct = clamp(centers[i % nc] + rnd(-8, 8), 2, 98); 
       
       const el = document.createElement('div');
       el.style.position = 'absolute';
       el.style.left = xPct + '%';
       
-      // Sink slightly below the ridge so they read planted
-      const depthPx = rnd(4, 28);
-      const baseY = isMobile ? 120 + depthPx : 60 + depthPx;
+      // Sink roots DEEP into the 100px soil block (depthPx 20-50 means 50-80px remaining exposed)
+      // This guarantees they emerge from the ground naturally.
+      const depthPx = rnd(20, 50);
+      const baseY = SOIL_HEIGHT - depthPx;
       el.style.bottom = `${baseY}px`;
-      el.style.zIndex = Math.round(100 - depthPx);
       
-      // Set growth scale
-      let g0 = (isMobile ? rnd(0.4, 0.7) : rnd(0.55, 0.95)) * storedScales[i];
+      // Z-index: Soil is 50. Plants must be 10-30 so they sit BEHIND the front soil layer!
+      el.style.zIndex = Math.round(30 - (depthPx / 2));
+      
+      let g0 = (isMobile ? rnd(0.4, 0.6) : rnd(0.5, 0.8)) * storedScales[i];
       el.style.setProperty('--g', g0.toFixed(3));
       el.style.transformOrigin = 'bottom center';
       el.style.transform = 'scale(var(--g))';
       el.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
       
-      // Sway animation wrapper
       const stalk = document.createElement('div');
       stalk.innerHTML = built.svg;
       const swayA = rnd(1.4, 3.4).toFixed(1);
@@ -161,10 +162,10 @@ export default function PlaygroundSection() {
       el.appendChild(stalk);
       garden.appendChild(el);
       
-      plantsRef.current.push({ el, g: g0, max: 1.75, fullH: built.h, xPct, baseY, baseScale: g0 / storedScales[i], idx: i });
+      plantsRef.current.push({ el, g: g0, max: 1.5, fullH: built.h, xPct, baseY, baseScale: g0 / storedScales[i], idx: i });
     }
 
-    // --- Droplet Particle System (like reference emit) ---
+    // --- Droplet Particle System ---
     const drops = dropsRef.current;
     const GRAV = 0.42;
 
@@ -179,7 +180,7 @@ export default function PlaygroundSection() {
         d.style.background = 'rgba(255,255,255,0.7)';
         d.style.borderRadius = '50%';
         d.style.pointerEvents = 'none';
-        d.style.zIndex = 200;
+        d.style.zIndex = 200; // Water goes above everything
         d.style.boxShadow = '0 0 4px rgba(56, 189, 248, 0.5)';
         
         garden.appendChild(d);
@@ -188,14 +189,13 @@ export default function PlaygroundSection() {
     }
 
     function tick() {
-      const gw = garden.clientWidth;
-      const gh = garden.clientHeight;
+      const gh = containerRef.current?.clientHeight || 0;
       for (let i = drops.length - 1; i >= 0; i--) {
         const d = drops[i];
         d.vy += GRAV; d.x += d.vx; d.y += d.vy;
         
-        // Dissolve when it hits the ground plane
-        const soilLevel = gh - (isMobile ? 120 : 60); 
+        // Splash on the top edge of the soil
+        const soilLevel = gh - SOIL_HEIGHT; 
         if (d.y >= soilLevel) { 
           d.y = soilLevel; 
           d.a -= 0.16; 
@@ -218,46 +218,39 @@ export default function PlaygroundSection() {
 
     // --- Pointer Interactions ---
     const toGarden = e => { 
-      const r = garden.getBoundingClientRect(); 
+      const r = containerRef.current.getBoundingClientRect(); 
       return { x: e.clientX - r.left, y: e.clientY - r.top, r }; 
     };
 
     let lastSpray = 0;
     
     const handleMove = e => {
-      // Update custom cursor
       if (cursorRef.current) {
         cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
       }
-      
       const now = performance.now();
       if (now - lastSpray > 120) {
         lastSpray = now;
         const p = toGarden(e);
-        // Subtle continuous mist while moving
         emit(p.x, p.y + 10, 1, 0.5, 0.4);
       }
     };
 
     const handleDown = e => {
       const p = toGarden(e);
-      // Click burst
       emit(p.x, p.y + 10, 16, 2.6, 0.6);
       
       const gw = p.r.width;
       const gh = p.r.height;
       
-      // Check distance to plants
       let changed = false;
       plantsRef.current.forEach(pl => {
         const bx = gw * (pl.xPct / 100);
-        const by = gh - pl.baseY; // actual pixel Y on screen
-        
-        // Nearest point on stem
+        const by = gh - pl.baseY; 
         const cy = clamp(p.y, by - (pl.fullH * pl.g) - 8, by);
         const dist = Math.hypot(p.x - bx, p.y - cy);
         
-        if (dist < 100) {
+        if (dist < 120) {
           if (pl.g < pl.max) {
             pl.g = Math.min(pl.max, pl.g + rnd(0.14, 0.24));
             pl.el.style.setProperty('--g', pl.g.toFixed(3));
@@ -268,13 +261,13 @@ export default function PlaygroundSection() {
       });
       
       if (changed) {
-        try { localStorage.setItem('gardenScales_ref', JSON.stringify(storedScales)); } catch(e) {}
+        try { localStorage.setItem('gardenScales_ref2', JSON.stringify(storedScales)); } catch(e) {}
       }
     };
     
     const handleEnter = () => {
       if (cursorRef.current) cursorRef.current.style.opacity = 1;
-      document.body.style.cursor = 'none'; // hide default cursor over garden
+      document.body.style.cursor = 'none';
     };
     
     const handleLeave = () => {
@@ -282,18 +275,19 @@ export default function PlaygroundSection() {
       document.body.style.cursor = ''; 
     };
 
-    containerRef.current.addEventListener('pointermove', handleMove, { passive: true });
-    containerRef.current.addEventListener('pointerdown', handleDown);
-    containerRef.current.addEventListener('pointerenter', handleEnter);
-    containerRef.current.addEventListener('pointerleave', handleLeave);
+    const c = containerRef.current;
+    c.addEventListener('pointermove', handleMove, { passive: true });
+    c.addEventListener('pointerdown', handleDown);
+    c.addEventListener('pointerenter', handleEnter);
+    c.addEventListener('pointerleave', handleLeave);
 
     return () => {
       cancelAnimationFrame(animationRef.current);
-      if (containerRef.current) {
-        containerRef.current.removeEventListener('pointermove', handleMove);
-        containerRef.current.removeEventListener('pointerdown', handleDown);
-        containerRef.current.removeEventListener('pointerenter', handleEnter);
-        containerRef.current.removeEventListener('pointerleave', handleLeave);
+      if (c) {
+        c.removeEventListener('pointermove', handleMove);
+        c.removeEventListener('pointerdown', handleDown);
+        c.removeEventListener('pointerenter', handleEnter);
+        c.removeEventListener('pointerleave', handleLeave);
       }
       document.body.style.cursor = '';
       dropsRef.current.forEach(d => d.el.remove());
@@ -303,7 +297,6 @@ export default function PlaygroundSection() {
 
   return (
     <>
-      {/* Required keyframes injected for the sway */}
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes sway {
           from { transform: skewX(calc(var(--swayA) * -1)) }
@@ -311,7 +304,6 @@ export default function PlaygroundSection() {
         }
       `}} />
       
-      {/* Custom Garden Sprayer Cursor */}
       <div 
         ref={cursorRef} 
         style={{
@@ -330,29 +322,37 @@ export default function PlaygroundSection() {
         </div>
       </div>
 
+      {/* Increased height so the background grid has room to be blurred gracefully */}
       <section 
         id="playground" 
         ref={containerRef}
         style={{ 
-          position: 'relative', width: '100%', height: '50vh', 
+          position: 'relative', width: '100%', height: '65vh', 
           background: 'transparent', overflow: 'hidden', 
           padding: 0, cursor: 'none'
         }}
       >
-        {/* Ground/Soil layer at the bottom */}
-        <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0,
-          height: '60px', background: 'var(--bg-solid, #020617)',
-          zIndex: 50, borderTop: '1px solid rgba(255,255,255,0.05)'
+        {/* Background Blur Overlay to blur the HeroBg Grid specifically in this section */}
+        <div style={{ 
+          position: 'absolute', inset: 0, zIndex: 0, 
+          backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+          background: 'var(--bg-glass)',
+          maskImage: 'linear-gradient(to bottom, transparent, black 15%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%)'
         }} />
-        
-        <div style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', top: '-10vh' }}>
+
+        {/* Text Container properly pushed to the top so it doesn't mix with flowers */}
+        <div style={{ 
+          position: 'absolute', top: '15%', left: 0, right: 0, 
+          zIndex: 60, pointerEvents: 'none', 
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' 
+        }}>
           <motion.p
             className="section-eyebrow"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            style={{ marginBottom: '24px' }}
+            style={{ marginBottom: '16px', background: 'var(--bg-glass)', padding: '4px 16px', borderRadius: '100px', backdropFilter: 'blur(8px)' }}
           >
             Let's grow together
           </motion.p>
@@ -360,13 +360,26 @@ export default function PlaygroundSection() {
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}
+            style={{ 
+              fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', fontWeight: 800, fontFamily: 'var(--font-serif)', 
+              color: 'var(--text-heading)', textAlign: 'center',
+              textShadow: '0 4px 12px var(--bg-base)' // extra legibility
+            }}
           >
             Click to water the garden
           </motion.h2>
         </div>
+
+        {/* The solid soil block. Plants are zIndex 10-30, Soil is zIndex 50. 
+            This visually buries the roots underground so they emerge perfectly. */}
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          height: '100px', background: 'var(--bg-surface)',
+          zIndex: 50, borderTop: '1px solid var(--border)',
+          boxShadow: '0 -10px 40px rgba(0,0,0,0.1)'
+        }} />
         
-        {/* The actual garden bed where plants and drops go */}
+        {/* The garden bed where SVG plants and drops render */}
         <div ref={gardenRef} style={{ position: 'absolute', inset: 0, zIndex: 10, pointerEvents: 'none' }} />
       </section>
     </>
