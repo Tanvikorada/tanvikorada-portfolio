@@ -127,9 +127,9 @@ export default function PlaygroundSection() {
       el.className = 'garden-plant';
       el.innerHTML = built.svg;
       
-      const xPct = clamp(rnd(2, 98), 2, 98);
+      const xPct = (i / N) * 100 + rnd(-3, 3);
       // Make the plants fill the entire vertical height of the section!
-      const depthPx = rnd(10, window.innerHeight * 0.7); 
+      const depthPx = rnd(-10, 40); 
       
       el.style.position = 'absolute';
       el.style.left = xPct + '%';
@@ -188,5 +188,6 @@ export default function PlaygroundSection() {
     </section>
   );
 }
+
 
 
