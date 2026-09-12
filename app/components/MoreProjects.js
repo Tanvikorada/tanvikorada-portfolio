@@ -24,7 +24,7 @@ const EXTRA_PROJECTS = [
 ];
 
 const SLIDER_ITEMS = [
-  { image: '/images/gallery_2.jpg', label: 'Student Achievement Certificate - ATRIBS Software Systems' },
+  { image: '/images/gallery_2.jpg', label: 'Photography Competition Winner' },
   { image: '/images/gallery_5.jpg', label: 'SIH Internal Hackathon' },
   { image: '/images/gallery_4.jpg', label: 'ATRIBS Software Systems - Internship' },
   { image: '/images/gallery_3.jpg', label: 'SIH 2026 Team & Mentors - SRM Easwari Engineering' },
