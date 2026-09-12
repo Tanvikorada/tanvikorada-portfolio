@@ -4,10 +4,10 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-const GRID_W = 50; 
-const GRID_H = 30;
-const SPACING = 1.0;
-const CUBE_SIZE = 0.98; // Creates the thin border lines between cubes
+const GRID_W = 40; 
+const GRID_H = 24;
+const SPACING = 2.0;
+const CUBE_SIZE = 2.0; // Flush edges, no gaps!
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -17,7 +17,7 @@ function Cubes({ isNight }) {
   const tempColor = useMemo(() => new Color(), []);
   
   // Dezprox-style subtle colors
-  const cBaseLight = useMemo(() => new Color('#f8fafc'), []); 
+  const cBaseLight = useMemo(() => new Color('#ffffff'), []); // Pure white cubes
   const cRippleLight = useMemo(() => new Color('#e2e8f0'), []); 
   
   const cBaseNight = useMemo(() => new Color('#020617'), []); // Deep black
@@ -25,8 +25,8 @@ function Cubes({ isNight }) {
   
   // Create static noise map for Dezprox "blocky wall" look
   const states = useMemo(() => Array.from({ length: count }, () => {
-    // Random base displacement between -0.3 and +0.3
-    const baseZ = (Math.random() - 0.5) * 0.6;
+    // Random base displacement. Cubes are perfectly flush, so Z displacement creates the "grid lines" via shadows
+    const baseZ = (Math.random() - 0.5) * 1.2;
     return { 
       baseZ, 
       pZ: baseZ, 
@@ -67,9 +67,9 @@ function Cubes({ isNight }) {
     mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.1);
     mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.1);
 
-    // Subtle parallax on the whole wall, matching Dezprox style
-    state.camera.position.x = MathUtils.lerp(state.camera.position.x, mouse.current.x * 2, 0.05);
-    state.camera.position.y = MathUtils.lerp(state.camera.position.y, mouse.current.y * 2, 0.05);
+    // Extremely subtle parallax so it feels like a solid wall, not a floating room
+    state.camera.position.x = MathUtils.lerp(state.camera.position.x, mouse.current.x * 0.5, 0.05);
+    state.camera.position.y = MathUtils.lerp(state.camera.position.y, mouse.current.y * 0.5, 0.05);
     state.camera.lookAt(0, 0, 0);
 
     let needsUpdate = false;
@@ -87,9 +87,9 @@ function Cubes({ isNight }) {
       const dist = Math.sqrt(dx * dx + dy * dy);
 
       // Ripple interaction pushing cubes outward (Z-axis)
-      const ripple = Math.max(0, 1 - dist / 6);
+      const ripple = Math.max(0, 1 - dist / 8);
       
-      states[i].tpZ = states[i].baseZ + ripple * 1.5;
+      states[i].tpZ = states[i].baseZ + ripple * 2.0;
       states[i].pZ = MathUtils.lerp(states[i].pZ, states[i].tpZ, 0.1);
       
       dummy.position.set(ix, iy, states[i].pZ);
@@ -118,14 +118,14 @@ function Cubes({ isNight }) {
 
   return (
     <instancedMesh ref={meshRef} args={[null, null, count]}>
+      {/* Box geometry with slight beveling/segments to catch light softer */}
       <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]} />
       {/* 
-        Roughness 0.8 and Metalness 0.1 gives that beautiful matte Dezprox finish.
-        The random Z displacement will catch the directional light and create the "grid blocks" look.
+        Roughness 0.9 and Metalness 0.0 gives that chalky/matte Dezprox finish.
       */}
       <meshStandardMaterial 
-        roughness={0.8} 
-        metalness={0.1}
+        roughness={0.9} 
+        metalness={0.0}
       />
     </instancedMesh>
   );
@@ -157,18 +157,19 @@ export default function HeroBg() {
         y: yBg,
         opacity: opacityBg,
         pointerEvents: 'none',
-        background: isNight ? '#020617' : '#f8fafc',
+        background: isNight ? '#020617' : '#ffffff',
         transition: 'background 0.5s ease'
       }}
     >
       <Canvas
-        camera={{ position: [0, 0, 18], fov: 50 }}
+        // Narrow FOV (15) and placed far back (z=75) creates the nearly-orthographic flat wall look
+        camera={{ position: [0, 0, 75], fov: 15 }}
         gl={{ antialias: true, alpha: true }}
       >
-        <ambientLight intensity={isNight ? 1.0 : 2.5} />
-        {/* Angled light to cast subtle shadows on the randomly displaced blocks */}
-        <directionalLight position={[-10, 20, 15]} intensity={isNight ? 0.5 : 1.5} color="#ffffff" />
-        <directionalLight position={[10, -10, 10]} intensity={isNight ? 0.2 : 0.5} color="#ffffff" />
+        {/* Soft ambient lighting */}
+        <ambientLight intensity={isNight ? 0.8 : 2.5} />
+        {/* Top-left directional light casts the subtle bottom-right shadows on the displaced cubes */}
+        <directionalLight position={[-20, 20, 30]} intensity={isNight ? 0.5 : 1.2} color="#ffffff" castShadow />
         
         <Cubes isNight={isNight} />
       </Canvas>
@@ -177,7 +178,7 @@ export default function HeroBg() {
         position: 'absolute', inset: 0,
         background: isNight 
           ? 'linear-gradient(to bottom, rgba(2,6,23,0) 0%, rgba(2,6,23,0.9) 70%, #020617 100%)'
-          : 'linear-gradient(to bottom, rgba(248,250,252,0) 0%, rgba(248,250,252,0.9) 70%, #f8fafc 100%)',
+          : 'linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 70%, #ffffff 100%)',
         zIndex: 2, pointerEvents: 'none'
       }} />
     </motion.div>

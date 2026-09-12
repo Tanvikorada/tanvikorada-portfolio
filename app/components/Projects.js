@@ -13,7 +13,7 @@ const projects = [
       'Integrated advanced prompt engineering and RAG for zero-shot bug fixing and self-healing code compilation',
     ],
     url: 'https://github.com/tanvikorada/appcompiler',
-    image: '/images/appcompiler.png',
+    image: '/images/appcompiler.jpg',
     color: '#0f172a',
     textDark: false
   },
@@ -188,4 +188,5 @@ export default function Projects() {
     </section>
   );
 }
+
 

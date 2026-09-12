@@ -1028,3 +1028,17 @@ body.night .skill-pill {
 
 
 
+
+/* Responsive Premium Cards */
+@media (max-width: 900px) {
+  .premium-card {
+    flex-direction: column !important;
+    padding: 32px !important;
+    height: auto !important;
+    min-height: 75vh;
+  }
+  .premium-media {
+    min-height: 250px;
+    margin-top: 24px;
+  }
+}
