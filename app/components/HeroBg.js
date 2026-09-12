@@ -78,12 +78,13 @@ function Cubes({ isNight }) {
 
           const cubeState = states[i];
 
-          // Threshold matches exactly the cubes that are flipping
-          if (dist < 4.5) {
-            cubeState.colorVal = 1.0;
-            cubeState.tpY = -0.5;
-            cubeState.trX = Math.PI; 
-            cubeState.trY = Math.PI / 4;
+          const maxDist = 7.0;
+          if (dist < maxDist) {
+            const intensity = 1 - Math.pow(dist / maxDist, 2);
+            cubeState.colorVal = intensity; // Smooth glow
+            cubeState.tpY = -3.5 * intensity; // Smooth deep push inwards
+            cubeState.trX = 0;
+            cubeState.trY = 0;
           } else {
             // Fade out color
             cubeState.colorVal = MathUtils.lerp(cubeState.colorVal, 0, 0.05);
@@ -164,5 +165,6 @@ export default function HeroBg() {
     </motion.div>
   );
 }
+
 
 
