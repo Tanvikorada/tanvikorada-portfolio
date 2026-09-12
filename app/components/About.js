@@ -37,8 +37,8 @@ export default function About() {
   return (
     <section id="about" className="about-section" ref={containerRef} style={{ position: 'relative', overflow: 'hidden' }}>
       {/* Apple-style ambient background orbs to make the glass effect visible */}
-      <div style={{ position: 'absolute', top: '10%', left: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(147,51,234,0.15) 0%, transparent 70%)', filter: 'blur(60px)', zIndex: 0, pointerEvents: 'none', transform: 'translateZ(0)' }} />
-      <div style={{ position: 'absolute', bottom: '10%', right: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%)', filter: 'blur(60px)', zIndex: 0, pointerEvents: 'none', transform: 'translateZ(0)' }} />
+      <motion.div animate={{ x: ['-10%', '10%', '-10%'], y: ['-5%', '10%', '-5%'], scale: [1, 1.1, 1] }} transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }} style={{ position: 'absolute', top: '5%', left: '-10%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(147,51,234,0.2) 0%, transparent 70%)', filter: 'blur(60px)', zIndex: 0, pointerEvents: 'none' }} />
+      <motion.div animate={{ x: ['10%', '-10%', '10%'], y: ['10%', '-5%', '10%'], scale: [1, 1.2, 1] }} transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }} style={{ position: 'absolute', bottom: '5%', right: '-10%', width: '60vw', height: '60vw', background: 'radial-gradient(circle, rgba(56,189,248,0.2) 0%, transparent 70%)', filter: 'blur(60px)', zIndex: 0, pointerEvents: 'none' }} />
 
       
       <style>{`
@@ -223,5 +223,6 @@ export default function About() {
     </section>
   );
 }
+
 
 

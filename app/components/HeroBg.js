@@ -134,8 +134,8 @@ function Cubes({ isNight }) {
 export default function HeroBg() {
   const [isNight, setIsNight] = useState(false);
   const { scrollY } = useScroll();
-  const yBg = useTransform(scrollY, [0, 1000], [0, 300]);
-  const opacityBg = useTransform(scrollY, [0, 600], [1, 0.1]);
+  
+  
 
   useEffect(() => {
     const checkTheme = () => {
@@ -154,8 +154,8 @@ export default function HeroBg() {
         position: 'fixed',
         top: 0, left: 0, right: 0, bottom: 0,
         zIndex: 0,
-        y: yBg,
-        opacity: opacityBg,
+        
+        
         pointerEvents: 'none',
         background: isNight ? '#020617' : '#ffffff',
         transition: 'background 0.5s ease'
@@ -174,14 +174,10 @@ export default function HeroBg() {
         <Cubes isNight={isNight} />
       </Canvas>
 
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: isNight 
-          ? 'linear-gradient(to bottom, rgba(2,6,23,0) 0%, rgba(2,6,23,0.9) 70%, #020617 100%)'
-          : 'linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 70%, #ffffff 100%)',
-        zIndex: 2, pointerEvents: 'none'
-      }} />
+      
     </motion.div>
   );
 }
+
+
 
