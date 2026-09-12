@@ -1,7 +1,7 @@
 'use client';
 import { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Object3D, MathUtils, Color, OrthographicCamera } from 'three';
+import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 // Dezprox uses very large, flat tiles.
@@ -157,7 +157,7 @@ export default function HeroBg() {
         style={{ background: isNight ? '#020617' : '#ffffff', transition: 'background 0.5s ease' }}
       >
         {/* Orthographic Camera completely removes perspective warping, making blocks perfectly flush */}
-        <OrthographicCamera makeDefault position={[0, 0, 100]} zoom={18} />
+        <orthographicCamera makeDefault position={[0, 0, 100]} zoom={18} />
         
         <ambientLight intensity={isNight ? 0.8 : 1.5} />
         <directionalLight position={[20, 20, 30]} intensity={isNight ? 1.0 : 1.5} color="#ffffff" />
