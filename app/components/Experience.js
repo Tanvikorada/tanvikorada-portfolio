@@ -23,20 +23,8 @@ const EXPERIENCES = [
     desc: 'Built responsive full-stack web modules using HTML, CSS, JavaScript, and REST API integration across 3+ production features.',
     tag: 'Full-Stack',
   },
-  {
-    role: 'Python Developer Intern',
-    company: 'CodSoft',
-    date: 'Jun 2025 – Jul 2025',
-    desc: 'Developed automated data processing pipelines in Python, eliminating manual steps for 2 recurring business workflows.',
-    tag: 'Python',
-  },
-  {
-    role: 'Artificial Intelligence Intern',
-    company: 'Codec Technologies',
-    date: 'May 2025 – Jun 2025',
-    desc: 'Built and evaluated ML prototypes (classification, regression) on structured datasets; designed data pipelines from ingestion through model evaluation.',
-    tag: 'ML / AI',
-  },
+  
+  
 ];
 
 export default function Experience() {
@@ -119,4 +107,5 @@ export default function Experience() {
     </section>
   );
 }
+
 
