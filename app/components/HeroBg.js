@@ -4,8 +4,8 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-const GRID_SIZE = 24; // Grid large enough to fill screen
-const CUBE_SIZE = 2.002; // Matches SPACING for zero gap
+const GRID_SIZE = 24; 
+const CUBE_SIZE = 2.002; 
 const SPACING = 2.0;
 
 function Cubes({ isNight }) {
@@ -15,9 +15,9 @@ function Cubes({ isNight }) {
   
   const tempColor = useMemo(() => new Color(), []);
   
-  // Dezprox-style styling:
-  const cBaseLight = useMemo(() => new Color('#f8fafc'), []); 
-  const cRippleLight = useMemo(() => new Color('#94a3b8'), []); // Silver/slate ripple
+  // Extremely subtle colors
+  const cBaseLight = useMemo(() => new Color('#f1f5f9'), []); // Very light gray/slate
+  const cRippleLight = useMemo(() => new Color('#cbd5e1'), []); // slightly darker for ripple
   
   const cBaseNight = useMemo(() => new Color('#020617'), []); // Deep black
   const cRippleNight = useMemo(() => new Color('#fbbf24'), []); // Gold accent!
@@ -72,7 +72,6 @@ function Cubes({ isNight }) {
 
     let needsUpdate = false;
 
-    // Convert mouse screen to world pos roughly
     const mx = mouse.current.x * 25;
     const mz = -mouse.current.y * 25;
 
@@ -95,7 +94,6 @@ function Cubes({ isNight }) {
       meshRef.current.setMatrixAt(i, dummy.matrix);
 
       if (meshRef.current.instanceColor) {
-        // Softly mix colors
         const mix = ripple;
         if (isNight) {
           tempColor.copy(cBaseNight).lerp(cRippleNight, mix);
@@ -119,7 +117,7 @@ function Cubes({ isNight }) {
     <instancedMesh ref={meshRef} args={[null, null, count]}>
       <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 0.8]} />
       <meshStandardMaterial 
-        roughness={1} // Very diffuse, flat lighting look
+        roughness={1} 
         metalness={0.1}
       />
     </instancedMesh>
@@ -160,8 +158,8 @@ export default function HeroBg() {
         camera={{ position: [0, 8, 20], fov: 45 }}
         gl={{ antialias: true, alpha: true }}
       >
-        <ambientLight intensity={isNight ? 2 : 2.5} />
-        <directionalLight position={[10, 20, 10]} intensity={isNight ? 1 : 1.5} color={isNight ? '#ffffff' : '#ffffff'} />
+        <ambientLight intensity={isNight ? 0.8 : 1.5} />
+        <directionalLight position={[10, 20, 10]} intensity={isNight ? 0.3 : 0.8} color={isNight ? '#ffffff' : '#ffffff'} />
         
         <Cubes isNight={isNight} />
       </Canvas>

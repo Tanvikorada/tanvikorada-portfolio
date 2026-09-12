@@ -18,6 +18,20 @@ const projects = [
     textDark: false
   },
   {
+    id: 'satyalabel',
+    title: 'SatyaLabel',
+    tags: ['Gemini Vision', 'Next.js', 'PostgreSQL', 'SIH 2026'],
+    bullets: [
+      'AI Compliance Checker built for Ministry of Consumer Affairs; placed 8th in SRMIST SIH round',
+      'Scans packaged product labels via OCR and validates mandatory declarations against rules',
+      'Mobile-first PWA on a zero-cost stack using Tesseract OCR with Gemini Vision as fallback',
+    ],
+    url: 'https://satyalabel.vercel.app',
+    image: '/images/satyalabel.png',
+    color: '#eff6ff',
+    textDark: true
+  },
+  {
     id: 'trackr',
     title: 'TrackR',
     tags: ['SvelteKit', 'PostgreSQL', 'Tailwind', 'Groq'],
@@ -118,9 +132,8 @@ function ProjectCard({ project, i, progress, range, targetScale }) {
           </div>
         </div>
 
-        {/* Right Side: Media (hidden on small screens usually, handled in CSS if needed, but we'll stick to a clean flex layout) */}
+        {/* Right Side: Media */}
         <div className="premium-media" style={{ flex: '1 1 50%', position: 'relative', borderRadius: '24px', overflow: 'hidden', background: 'rgba(0,0,0,0.1)' }}>
-           {/* Fallback pattern if image is missing, otherwise we could just render nothing. We'll use a clean subtle mesh. */}
            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.05) 75%, transparent 75%, transparent)', backgroundSize: '20px 20px', opacity: 0.5 }} />
         </div>
       </motion.div>
