@@ -1,13 +1,14 @@
 'use client';
 import { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Object3D, MathUtils, Color } from 'three';
-import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motion';
+import { Object3D, MathUtils, Color, OrthographicCamera } from 'three';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
-const GRID_W = 40; 
-const GRID_H = 24;
-const SPACING = 2.0;
-const CUBE_SIZE = 2.0; 
+// Dezprox uses very large, flat tiles.
+const GRID_W = 24; 
+const GRID_H = 14;
+const SPACING = 4.0;
+const CUBE_SIZE = 3.9; // Slight gap creates the tile lines
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -16,8 +17,8 @@ function Cubes({ isNight }) {
   
   const tempColor = useMemo(() => new Color(), []);
   
-  const cBaseLight = useMemo(() => new Color('#ffffff'), []); 
-  const cRippleLight = useMemo(() => new Color('#38bdf8'), []); 
+  const cBaseLight = useMemo(() => new Color('#f8fafc'), []); // Very light subtle gray/white
+  const cRippleLight = useMemo(() => new Color('#dcfce7'), []); // Subtle green Dezprox tint
   
   const cBaseNight = useMemo(() => new Color('#020617'), []); 
   const cRippleNight = useMemo(() => new Color('#fbbf24'), []); 
@@ -28,15 +29,9 @@ function Cubes({ isNight }) {
   const states = useMemo(() => {
     const s = [];
     for (let i = 0; i < count; i++) {
-      const ix = (i % GRID_W - GRID_W / 2) * SPACING;
-      const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
-      
-      const distFromCenter = Math.hypot(ix, iy);
-      const baseZ = Math.sin(distFromCenter * 0.2) * 1.5 - distFromCenter * 0.1;
-      
       s.push({
-        baseZ,
-        pZ: baseZ,
+        baseZ: 0, // PERFECTLY FLAT AT REST
+        pZ: 0,
         vZ: 0
       });
     }
@@ -57,7 +52,7 @@ function Cubes({ isNight }) {
       for (let i = 0; i < count; i++) {
         const ix = (i % GRID_W - GRID_W / 2) * SPACING;
         const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
-        dummy.position.set(ix, iy, states[i].baseZ);
+        dummy.position.set(ix, iy, 0);
         dummy.updateMatrix();
         meshRef.current.setMatrixAt(i, dummy.matrix);
         
@@ -67,23 +62,25 @@ function Cubes({ isNight }) {
       meshRef.current.instanceMatrix.needsUpdate = true;
       meshRef.current.instanceColor.needsUpdate = true;
     }
-  }, [isNight, count, cBaseNight, cBaseLight, dummy, tempColor, states]);
+  }, [isNight, count, cBaseNight, cBaseLight, dummy, tempColor]);
 
   useFrame((state) => {
     mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.1);
     mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.1);
 
-    state.camera.position.x = MathUtils.lerp(state.camera.position.x, mouse.current.x * 0.5, 0.05);
-    state.camera.position.y = MathUtils.lerp(state.camera.position.y, mouse.current.y * 0.5, 0.05);
+    // Subtle camera parallax
+    state.camera.position.x = MathUtils.lerp(state.camera.position.x, mouse.current.x * 2.0, 0.05);
+    state.camera.position.y = MathUtils.lerp(state.camera.position.y, mouse.current.y * 2.0, 0.05);
     state.camera.lookAt(0, 0, 0);
 
     let needsUpdate = false;
 
-    const mx = mouse.current.x * (state.viewport.width / 2);
-    const my = mouse.current.y * (state.viewport.height / 2);
+    // Convert mouse to world coordinates perfectly based on visible area
+    const mx = mouse.current.x * (GRID_W * SPACING / 2);
+    const my = mouse.current.y * (GRID_H * SPACING / 2);
 
-    const tension = 0.04;
-    const damping = 0.85;
+    const tension = 0.03;
+    const damping = 0.88; // highly viscous fluid feel
 
     for (let i = 0; i < count; i++) {
       const ix = (i % GRID_W - GRID_W / 2) * SPACING;
@@ -93,14 +90,13 @@ function Cubes({ isNight }) {
       const dy = iy - my;
       const dist = Math.hypot(dx, dy);
 
-      if (dist < 10) {
-        const force = (1 - dist / 10) * 0.6;
+      if (dist < 12) {
+        const force = (1 - dist / 12) * 1.5; // Stronger push for larger cubes
         states[i].vZ -= force;
       }
 
       const displacement = states[i].pZ - states[i].baseZ;
       
-      // OPTIMIZATION: Only process blocks that are actively moving or displaced!
       if (Math.abs(states[i].vZ) > 0.001 || Math.abs(displacement) > 0.001) {
         needsUpdate = true;
         
@@ -108,14 +104,15 @@ function Cubes({ isNight }) {
         states[i].vZ *= damping;
         states[i].pZ += states[i].vZ;
 
+        // The blocks push backward on Z
         dummy.position.set(ix, iy, states[i].pZ);
-        const stretch = Math.max(0.1, 1 + (states[i].pZ - states[i].baseZ) * 0.2);
-        dummy.scale.set(1, 1, stretch);
         dummy.updateMatrix();
         meshRef.current.setMatrixAt(i, dummy.matrix);
 
-        const pressDepth = states[i].baseZ - states[i].pZ;
-        const intensity = Math.max(0, Math.min(1, pressDepth * 0.4));
+        // Color mapping
+        const pressDepth = Math.abs(states[i].pZ);
+        const intensity = Math.max(0, Math.min(1, pressDepth * 0.15));
+        
         const base = isNight ? cBaseNight : cBaseLight;
         const ripple = isNight ? cRippleNight : cRippleLight;
         tempColor.copy(base).lerp(ripple, intensity);
@@ -132,7 +129,8 @@ function Cubes({ isNight }) {
   return (
     <instancedMesh ref={meshRef} args={[null, null, count]}>
       <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]} />
-      <meshStandardMaterial roughness={0.8} metalness={0.2} />
+      {/* High metalness/smoothness makes them look sleek and reflective like Dezprox */}
+      <meshStandardMaterial roughness={0.2} metalness={0.1} />
     </instancedMesh>
   );
 }
@@ -140,9 +138,6 @@ function Cubes({ isNight }) {
 export default function HeroBg() {
   const [isNight, setIsNight] = useState(true);
   const { scrollYProgress } = useScroll();
-  
-  // OPTIMIZATION: Replaced expensive CSS blur with a highly performant hardware-accelerated opacity overlay.
-  // Blurring a massive live WebGL canvas causes extreme lag on older laptops.
   const overlayOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 0.85, 0.85, 0]);
 
   useEffect(() => {
@@ -157,18 +152,20 @@ export default function HeroBg() {
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: 'none' }}>
       <Canvas 
-        camera={{ position: [0, 0, 75], fov: 15 }} 
-        gl={{ alpha: false, antialias: false }} // alpha: false is faster!
-        dpr={1} // Lock pixel ratio to 1 for immense performance gain on high-res low-end laptops
+        gl={{ alpha: false, antialias: true }} 
+        dpr={[1, 1.5]} // Slight bump in quality for the large cubes
         style={{ background: isNight ? '#020617' : '#ffffff', transition: 'background 0.5s ease' }}
       >
-        <ambientLight intensity={isNight ? 0.4 : 1.2} />
-        <directionalLight position={[10, 20, 15]} intensity={isNight ? 1.5 : 2.0} color="#ffffff" />
-        <directionalLight position={[-10, -10, 15]} intensity={isNight ? 0.5 : 0.8} color={isNight ? '#fbbf24' : '#38bdf8'} />
+        {/* Orthographic Camera completely removes perspective warping, making blocks perfectly flush */}
+        <OrthographicCamera makeDefault position={[0, 0, 100]} zoom={18} />
+        
+        <ambientLight intensity={isNight ? 0.8 : 1.5} />
+        <directionalLight position={[20, 20, 30]} intensity={isNight ? 1.0 : 1.5} color="#ffffff" />
+        <directionalLight position={[-20, -20, 30]} intensity={isNight ? 0.5 : 0.8} color={isNight ? '#fbbf24' : '#dcfce7'} />
+        
         <Cubes isNight={isNight} />
       </Canvas>
       
-      {/* High-performance fade overlay replaces the expensive blur */}
       <motion.div 
         style={{
           position: 'absolute', inset: 0,
