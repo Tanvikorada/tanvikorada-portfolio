@@ -15,9 +15,9 @@ function Cubes({ isNight }) {
   
   const tempColor = useMemo(() => new Color(), []);
   const cBaseLight = useMemo(() => new Color('#ffffff'), []); // Pure White
-  const cRippleLight = useMemo(() => new Color('#e9d5ff'), []); // Light lavender ripple
+  const cRippleLight = useMemo(() => new Color('#cbd5e1'), []); // Premium metallic silver
   const cBaseNight = useMemo(() => new Color('#020617'), []);
-  const cRippleNight = useMemo(() => new Color('#3b0764'), []);
+  const cRippleNight = useMemo(() => new Color('#c9961a'), []); // Cohesive brand gold
 
   const states = useMemo(() => Array.from({ length: count }, () => ({
     rX: 0, rY: 0, rZ: 0,
@@ -80,11 +80,15 @@ function Cubes({ isNight }) {
 
           const maxDist = 7.0;
           if (dist < maxDist) {
+            // Smooth easing curve
             const intensity = 1 - Math.pow(dist / maxDist, 2);
             cubeState.colorVal = intensity; // Smooth glow
-            cubeState.tpY = -3.5 * intensity; // Smooth deep push inwards
-            cubeState.trX = 0;
-            cubeState.trY = 0;
+            cubeState.tpY = -3.0 * intensity; // Smooth deep push inwards
+            
+            // Premium Micro-Tilt: Cubes tilt slightly away from the cursor
+            // This acts like a faceted surface catching specular highlights
+            cubeState.trX = (dy / (dist || 1)) * 0.15 * intensity;
+            cubeState.trY = -(dx / (dist || 1)) * 0.15 * intensity;
           } else {
             // Fade out color
             cubeState.colorVal = MathUtils.lerp(cubeState.colorVal, 0, 0.05);
@@ -165,6 +169,7 @@ export default function HeroBg() {
     </motion.div>
   );
 }
+
 
 
 
