@@ -17,11 +17,13 @@ import Preloader from './components/Preloader';
 import PaperPlane from './components/PaperPlane';
 import PlaygroundSection from './components/PlaygroundSection';
 import ScrollExpand from './components/ui/ScrollExpand';
+import RagBot from './components/ui/RagBot';
 
 export default function Home() {
   return (
     <>
       <CursorFX />
+      <RagBot />
       <Preloader />
       <Nav />
             <HeroBg />
@@ -88,6 +90,7 @@ export default function Home() {
     </>
   );
 }
+
 
 
 

@@ -47,35 +47,6 @@ export default function Contact() {
           </span> together.
         </motion.div>
 
-        {/* The Robot Mascot */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          style={{
-            position: 'absolute',
-            bottom: '10%',
-            right: '10%',
-            width: '120px',
-            pointerEvents: 'none'
-          }}
-        >
-          <motion.img
-            src="/assets/robot.png"
-            alt="Friendly Robot"
-            style={{ width: '100%', height: 'auto', filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.1))' }}
-            animate={{
-              y: [0, -15, 0],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-        </motion.div>
-
         <motion.a
           href="https://mail.google.com/mail/?view=cm&fs=1&to=tanvikorada@gmail.com&su=Portfolio%20Inquiry"
           target="_blank"
