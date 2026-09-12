@@ -131,6 +131,7 @@ export default function PlaygroundSection() {
       // Make the plants fill the entire vertical height of the section!
       const depthPx = rnd(10, window.innerHeight * 0.7); 
       
+      el.style.position = 'absolute';
       el.style.left = xPct + '%';
       el.style.bottom = depthPx + 'px';
       
@@ -140,12 +141,18 @@ export default function PlaygroundSection() {
       let baseScale = phoneMQ.matches ? 0.6 : 1.0;
       let g0 = baseScale * storedScales[i];
       el.style.setProperty('--g', g0.toFixed(3));
+      el.style.transformOrigin = 'bottom center';
+      el.style.transform = 'scale(var(--g))';
+      el.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
       
       // Interaction
       el.addEventListener('mouseenter', () => {
         g0 = Math.min(baseScale * 1.5, g0 + 0.15);
         storedScales[i] = g0 / baseScale;
         el.style.setProperty('--g', g0.toFixed(3));
+      el.style.transformOrigin = 'bottom center';
+      el.style.transform = 'scale(var(--g))';
+      el.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
         try { localStorage.setItem('gardenScales', JSON.stringify(storedScales)); } catch(e) {}
       });
       
@@ -181,3 +188,5 @@ export default function PlaygroundSection() {
     </section>
   );
 }
+
+
