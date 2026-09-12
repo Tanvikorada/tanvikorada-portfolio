@@ -1,28 +1,11 @@
 'use client';
 import { useRef, useMemo, useEffect } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
 
 const GRID_SIZE = 26; 
 const CUBE_SIZE = 2.005; 
 const SPACING = 2.0; 
-
-function MouseLight() {
-  const lightRef = useRef();
-  const { viewport } = useThree();
-  
-  useFrame((state) => {
-    if (lightRef.current) {
-      // Follow the mouse smoothly
-      const x = (state.pointer.x * viewport.width) / 2;
-      const y = (state.pointer.y * viewport.height) / 2;
-      lightRef.current.position.x = MathUtils.lerp(lightRef.current.position.x, x, 0.1);
-      lightRef.current.position.y = MathUtils.lerp(lightRef.current.position.y, y, 0.1);
-    }
-  });
-  
-  return <pointLight ref={lightRef} position={[0, 0, 4]} distance={20} intensity={2.5} color="#ffffff" />;
-}
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -31,14 +14,11 @@ function Cubes({ isNight }) {
   
   const tempColor = useMemo(() => new Color(), []);
   
-  // High-end premium colors
-  // Light mode: Clean soft gray base, striking vibrant violet/blue on hover
-  const cBaseLight = useMemo(() => new Color('#f8fafc'), []); 
-  const cRippleLight = useMemo(() => new Color('#6366f1'), []); 
+  const cBaseLight = useMemo(() => new Color('#e2e8f0'), []); // slate-200
+  const cRippleLight = useMemo(() => new Color('#818cf8'), []); // indigo-400
   
-  // Dark mode: Deep slate base, electric cyan/teal on hover
-  const cBaseNight = useMemo(() => new Color('#0f172a'), []);
-  const cRippleNight = useMemo(() => new Color('#06b6d4'), []); 
+  const cBaseNight = useMemo(() => new Color('#0f172a'), []); // slate-900
+  const cRippleNight = useMemo(() => new Color('#38bdf8'), []); // sky-400
 
   const states = useMemo(() => Array.from({ length: count }, () => ({
     pY: 0, tpY: 0,
@@ -90,27 +70,22 @@ function Cubes({ isNight }) {
 
           const cubeState = states[i];
 
-          // Smooth depression effect (NO ROTATION, just smooth Z-axis sink)
           const maxDist = 6.0;
           if (dist < maxDist) {
-            // Gaussian-like curve for buttery smooth edges
-            const intensity = Math.exp(-Math.pow(dist, 2) / (2 * Math.pow(maxDist / 2.5, 2)));
+            const intensity = Math.exp(-Math.pow(dist, 2) / 8.0);
             cubeState.tpY = -2.0 * intensity;
-            cubeState.colorVal = intensity * 1.2; // Slightly boost color intensity at the peak
+            cubeState.colorVal = intensity; 
           } else {
             cubeState.tpY = 0;
             cubeState.colorVal = 0;
           }
 
-          // Buttery smooth physical interpolation
           cubeState.pY = MathUtils.lerp(cubeState.pY, cubeState.tpY, 0.08);
 
-          // Apply position
           dummy.position.set(px, py, cubeState.pY);
           dummy.updateMatrix();
           meshRef.current.setMatrixAt(i, dummy.matrix);
 
-          // Apply color
           tempColor.copy(cBase).lerp(cRipple, MathUtils.clamp(cubeState.colorVal, 0, 1));
           meshRef.current.setColorAt(i, tempColor);
 
@@ -126,7 +101,7 @@ function Cubes({ isNight }) {
     <instancedMesh ref={meshRef} args={[null, null, count]}>
       <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 0.8]} />
       <meshStandardMaterial 
-        roughness={0.4} 
+        roughness={0.6} 
         metalness={0.1}
       />
     </instancedMesh>
@@ -140,26 +115,22 @@ export default function HeroBg({ isNight = false }) {
       top: 0, left: 0, right: 0, bottom: 0,
       zIndex: 0,
       pointerEvents: 'none',
-      background: isNight ? '#020617' : '#ffffff'
+      background: isNight ? '#020617' : '#f8fafc'
     }}>
       <Canvas 
         camera={{ position: [0, 0, 20], fov: 40 }}
         dpr={[1, 2]}
       >
-        <ambientLight intensity={isNight ? 1.0 : 1.5} />
-        <directionalLight position={[10, 20, 15]} intensity={isNight ? 1.5 : 2.5} />
-        <MouseLight />
+        <ambientLight intensity={isNight ? 1.0 : 1.2} />
+        <directionalLight position={[10, 20, 15]} intensity={isNight ? 1.5 : 1.8} />
         <Cubes isNight={isNight} />
       </Canvas>
       
-      {/* Heavy gradient fade at the bottom so it blends into the rest of the site */}
       <div style={{
         position: 'absolute',
         bottom: 0, left: 0, right: 0,
         height: '40vh',
-        background: isNight 
-          ? 'linear-gradient(to bottom, transparent, var(--bg-base))'
-          : 'linear-gradient(to bottom, transparent, var(--bg-base))',
+        background: 'linear-gradient(to bottom, transparent, var(--bg-base))',
         pointerEvents: 'none'
       }} />
     </div>

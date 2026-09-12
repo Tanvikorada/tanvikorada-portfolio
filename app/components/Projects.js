@@ -1,6 +1,5 @@
 'use client';
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
 
 const PROJECTS = [
   {
@@ -62,61 +61,8 @@ const PROJECTS = [
 ];
 
 function ProjectCard({ project, i }) {
-  const containerRef = useRef(null);
-  
   return (
-    <div ref={containerRef} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8vh', position: 'relative' }}>
-      <style>{`
-        .premium-card {
-          width: 85vw;
-          max-width: 1200px;
-          min-height: 70vh;
-          border-radius: 40px;
-          display: flex;
-          position: relative;
-          overflow: hidden;
-          box-shadow: 0 30px 60px rgba(0,0,0,0.08), inset 0 2px 4px rgba(255,255,255,0.4);
-          transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .premium-card:hover {
-          transform: translateY(-8px);
-        }
-        .premium-card:hover .project-img {
-          transform: scale(1.05);
-        }
-        .premium-card:hover .live-demo-btn {
-          background: #000;
-          color: #fff;
-          transform: scale(1.1);
-        }
-        .live-demo-btn {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 64px;
-          height: 64px;
-          border-radius: 50%;
-          background: rgba(0,0,0,0.05);
-          color: #000;
-          text-decoration: none;
-          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-          backdrop-filter: blur(10px);
-        }
-        @media (max-width: 900px) {
-          .premium-card {
-            flex-direction: column;
-            min-height: auto;
-          }
-          .premium-content {
-            padding: 40px !important;
-          }
-          .premium-image-container {
-            width: 100% !important;
-            height: 300px !important;
-            padding: 0 40px 40px 40px !important;
-          }
-        }
-      `}</style>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '80px', position: 'relative', width: '100%', padding: '0 4vw' }}>
       <div 
         className="premium-card"
         style={{ 
@@ -126,7 +72,7 @@ function ProjectCard({ project, i }) {
       >
         
         {/* Left Side: Content */}
-        <div className="premium-content" style={{ flex: 1, padding: '64px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', zIndex: 10 }}>
+        <div className="premium-content">
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', opacity: 0.6, letterSpacing: '2px', textTransform: 'uppercase', margin: 0 }}>
@@ -165,9 +111,9 @@ function ProjectCard({ project, i }) {
         </div>
 
         {/* Right Side: Image */}
-        <div className="premium-image-container" style={{ width: '45%', position: 'relative', overflow: 'hidden', padding: '24px' }}>
-          <div style={{ width: '100%', height: '100%', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.1)', background: '#fff' }}>
-             <img className="project-img" src={project.image} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }} />
+        <div className="premium-image-container">
+          <div style={{ width: '100%', height: '100%', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.1)', background: '#fff', position: 'relative' }}>
+             <img className="project-img" src={project.image} alt={project.title} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)' }} />
           </div>
         </div>
 
@@ -179,10 +125,75 @@ function ProjectCard({ project, i }) {
 export default function Projects() {
   return (
     <section id="work" style={{ paddingTop: '10vh' }}>
-      <div className="section" style={{ display: 'flex', alignItems: 'center', zIndex: 10, marginBottom: '6vh' }}>
+      <style>{`
+        .premium-card {
+          width: 100%;
+          max-width: 1200px;
+          min-height: 500px;
+          border-radius: 40px;
+          display: flex;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 30px 60px rgba(0,0,0,0.08), inset 0 2px 4px rgba(255,255,255,0.4);
+          transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .premium-card:hover {
+          transform: translateY(-8px);
+        }
+        .premium-card:hover .project-img {
+          transform: scale(1.05);
+        }
+        .premium-card:hover .live-demo-btn {
+          background: #000;
+          color: #fff;
+          transform: scale(1.1);
+        }
+        .live-demo-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 64px;
+          height: 64px;
+          border-radius: 50%;
+          background: rgba(0,0,0,0.05);
+          color: #000;
+          text-decoration: none;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          backdrop-filter: blur(10px);
+        }
+        .premium-content {
+          flex: 1;
+          padding: 64px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          z-index: 10;
+        }
+        .premium-image-container {
+          flex: 1;
+          position: relative;
+          overflow: hidden;
+          padding: 32px;
+        }
+        @media (max-width: 900px) {
+          .premium-card {
+            flex-direction: column;
+            min-height: auto;
+          }
+          .premium-content {
+            padding: 40px;
+          }
+          .premium-image-container {
+            width: 100%;
+            height: 350px;
+            padding: 0 40px 40px 40px;
+          }
+        }
+      `}</style>
+      <div className="section" style={{ display: 'flex', alignItems: 'center', zIndex: 10, marginBottom: '80px' }}>
         <p className="section-eyebrow" style={{ fontSize: '2rem', margin: 0, paddingLeft: '8vw' }}>Selected Work</p>
       </div>
-      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', width: '100%' }}>
         {PROJECTS.map((project, i) => (
           <ProjectCard 
             key={project.id} 
