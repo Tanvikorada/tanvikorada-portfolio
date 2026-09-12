@@ -18,7 +18,7 @@ function Cubes({ isNight }) {
   
   // Dezprox-style subtle colors
   const cBaseLight = useMemo(() => new Color('#ffffff'), []); // Pure white cubes
-  const cRippleLight = useMemo(() => new Color('#e2e8f0'), []); 
+  const cRippleLight = useMemo(() => new Color('#94a3b8'), []); 
   
   const cBaseNight = useMemo(() => new Color('#020617'), []); // Deep black
   const cRippleNight = useMemo(() => new Color('#fbbf24'), []); // Gold accent
@@ -87,10 +87,10 @@ function Cubes({ isNight }) {
       const dist = Math.sqrt(dx * dx + dy * dy);
 
       // Ripple interaction pushing cubes outward (Z-axis)
-      const ripple = Math.max(0, 1 - dist / 8);
+      const ripple = Math.max(0, 1 - dist / 12);
       
-      states[i].tpZ = states[i].baseZ + ripple * 2.0;
-      states[i].pZ = MathUtils.lerp(states[i].pZ, states[i].tpZ, 0.1);
+      states[i].tpZ = states[i].baseZ - ripple * 3.5;
+      states[i].pZ = MathUtils.lerp(states[i].pZ, states[i].tpZ, 0.15);
       
       dummy.position.set(ix, iy, states[i].pZ);
       dummy.updateMatrix();
@@ -184,3 +184,4 @@ export default function HeroBg() {
     </motion.div>
   );
 }
+

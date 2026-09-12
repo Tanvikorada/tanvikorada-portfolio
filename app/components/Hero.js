@@ -122,13 +122,13 @@ export default function Hero() {
 
         {/* Profile Photo Floating on the Right */}
         <motion.div 
-          initial={{ scale: 0.8, opacity: 0, y: '-40%', rotate: -5 }}
-          animate={{ scale: 1, opacity: 1, y: '-50%', rotate: 2 }}
+          initial={{ scale: 0.8, opacity: 0, rotate: -5 }}
+          animate={{ scale: 1, opacity: 1, rotate: 2 }}
           transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.5 }}
           style={{
             position: 'absolute',
             right: '8vw',
-            top: '35%',
+            top: '25%', /* Just below nav */
             display: 'flex',
             justifyContent: 'flex-end',
             zIndex: 5
@@ -166,3 +166,4 @@ export default function Hero() {
     </section>
   );
 }
+

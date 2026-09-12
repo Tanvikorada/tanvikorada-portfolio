@@ -1,16 +1,6 @@
 'use client';
 import { useEffect, useRef } from 'react';
-
-// Exact palettes from reference
-const STEM = ['#5e6955', '#6b7960', '#76876a'];
-const LAV = ['#8f73b8', '#9e85c4', '#a890cc', '#b9a5d8', '#7b62a1'];
-const OLIVE = ['#3b4234', '#464d3f', '#4f5647'];
-const CREAM = ['#f5efe5', '#faf4ed', '#fef9f2'];
-const LEAFG = ['#4a5441', '#545d4b', '#5c6553'];
-const DISC = '#c97a22';
-const DISC_HI = '#d68c36';
-const DISC_SH = '#b86616';
-const PETAL_EDGE = 'rgba(0,0,0,0.05)';
+import { motion } from 'framer-motion';
 
 export default function PlaygroundSection() {
   const containerRef = useRef(null);
@@ -28,38 +18,49 @@ export default function PlaygroundSection() {
     const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
     const phoneMQ = window.matchMedia('(max-width: 640px)');
-    const compactMQ = window.matchMedia('(max-width: 1100px)');
 
-    // ---- inline-SVG plant builders ----
-    function petalPath(len, w, col, extra) {
-      return `<path d="M0 0 C ${-w} ${(-len * 0.42).toFixed(1)} ${(-w * 0.55).toFixed(1)} ${-len} 0 ${-len} C ${(w * 0.55).toFixed(1)} ${-len} ${w} ${(-len * 0.42).toFixed(1)} 0 0 Z" fill="${col}" ${extra || ''}/>`;
-    }
-    function blade(x, y, ang, len, col) {
-      const tx = x + Math.sin(ang * Math.PI / 180) * len, ty = y - Math.cos(ang * Math.PI / 180) * len;
-      return `<path d="M${x} ${y} Q ${((x + tx) / 2 + rnd(-3, 3)).toFixed(1)} ${((y + ty) / 2).toFixed(1)} ${tx.toFixed(1)} ${ty.toFixed(1)}" stroke="${col}" stroke-width="${rnd(2.4, 3.6).toFixed(1)}" fill="none" stroke-linecap="round"/>`;
-    }
-    function frond(x, y, ang, len, col) {
-      const fingers = 3 + ((Math.random() * 3) | 0);
-      let g = `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${ang.toFixed(1)})">`;
-      for (let i = 0; i < fingers; i++) {
-        const fa = (i - (fingers - 1) / 2) * rnd(15, 21);
-        const fl = len * (1 - Math.abs(i - (fingers - 1) / 2) * 0.1) * rnd(0.8, 1);
-        g += `<g transform="rotate(${fa.toFixed(1)})">${petalPath(fl, rnd(6, 9), col)}</g>`;
-      }
-      return g + '</g>';
-    }
     function wrap(w, h, inner) {
-      return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible"><rect width="${w}" height="${h}" fill="transparent" pointer-events="all"/><g filter="url(#ft-paint)">${inner}</g></svg>`;
+      return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:visible; filter:url(#paper)">${inner}</svg>`;
+    }
+
+    const stemColor = '#84cc16';
+    const leafColor = '#4d7c0f';
+    const cream = '#fef3c7';
+    const PETAL_EDGE = '#fcd34d';
+    const DISC = '#451a03';
+    const DISC_HI = '#78350f';
+    const DISC_SH = '#1c1917';
+    const LAV = ['#c084fc', '#a855f7', '#d8b4fe', '#f0abfc'];
+    const olive = '#65a30d';
+
+    function frond(bx, by, a, L, col) {
+      const p = [[0, 0]];
+      let x = 0, y = 0, currA = a;
+      const segs = 6, sl = L / segs;
+      for (let i = 0; i < segs; i++) {
+        currA += rnd(-8, 8);
+        x += Math.cos(currA * Math.PI / 180) * sl;
+        y -= Math.sin(currA * Math.PI / 180) * sl;
+        p.push([x, y]);
+      }
+      const d = `M${bx} ${by} ` + p.map(pt => `L${(bx + pt[0]).toFixed(1)} ${(by + pt[1]).toFixed(1)}`).join(' ');
+      return `<path class="stem" d="${d}" stroke="${col}" stroke-width="${rnd(1.5, 2.5).toFixed(1)}" stroke-linecap="round" fill="none"/>`;
+    }
+
+    function petalPath(L, W, col, extra = '') {
+      return `<path d="M0,0 C${W},${-L * 0.3} ${W * 0.8},${-L * 0.8} 0,${-L} C${-W * 0.8},${-L * 0.8} ${-W},${-L * 0.3} 0,0 Z" fill="${col}" ${extra}/>`;
     }
 
     function buildDaisy() {
-      const h = rnd(165, 245), w = 96, cx = w / 2, top = 28, bend = rnd(-15, 15);
-      const stemC = pick(STEM), olive = pick(OLIVE), cream = pick(CREAM);
-      const stem = `<path d="M${cx} ${h} C ${(cx + bend).toFixed(1)} ${(h * 0.6).toFixed(1)} ${(cx - bend).toFixed(1)} ${(h * 0.34).toFixed(1)} ${cx} ${top + 6}" stroke="${stemC}" stroke-width="${rnd(3.4, 4.6).toFixed(1)}" fill="none" stroke-linecap="round"/>`;
-      let base = frond(cx + rnd(-4, 4), h - 2, rnd(-42, -22), rnd(48, 70), olive)
-               + frond(cx + rnd(-4, 4), h - 2, rnd(22, 42), rnd(48, 70), olive)
-               + frond(cx + rnd(-3, 3), h - 2, rnd(-10, 10), rnd(40, 58), olive);
-      const calyx = `<path d="M${cx - 11} ${top + 2} q11 15 22 0 q-3 12 -11 12 q-8 0 -11 -12 z" fill="${olive}"/>`;
+      const w = 120, h = 180, cx = 60;
+      let base = '', stem = '', calyx = '';
+      const numCols = 3;
+      for (let i = 0; i < numCols; i++) base += frond(cx, h - 2, 90 + rnd(-35, 35), rnd(h * 0.3, h * 0.6), leafColor);
+      
+      const top = rnd(h * 0.2, h * 0.4);
+      stem = `<path class="stem" d="M${cx},${h} Q${cx + rnd(-15, 15)},${h * 0.7} ${cx},${top}" stroke="${stemColor}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+      calyx = `<circle cx="${cx}" cy="${top + 2}" r="6" fill="${leafColor}"/>`;
+      
       const n = 11 + ((Math.random() * 4) | 0);
       let petals = '';
       for (let i = 0; i < n; i++) {
@@ -74,13 +75,17 @@ export default function PlaygroundSection() {
     }
 
     function buildLavender() {
-      const h = rnd(150, 215), w = 56, cx = w / 2;
-      const green = pick(LEAFG);
-      const stem = `<path d="M${cx} ${h} C ${(cx + rnd(-6, 6)).toFixed(1)} ${(h * 0.6).toFixed(1)} ${(cx + rnd(-4, 4)).toFixed(1)} ${(h * 0.42).toFixed(1)} ${cx} ${(h * 0.3).toFixed(1)}" stroke="${green}" stroke-width="2.8" fill="none" stroke-linecap="round"/>`;
-      const leaves = blade(cx, h, rnd(-32, -18), rnd(46, 66), green) + blade(cx, h, rnd(18, 32), rnd(46, 66), green);
-      const spikeBot = h * 0.34, spikeTop = 12;
+      const w = 80, h = 160, cx = 40;
+      let leaves = '', stem = '';
+      const numCols = 2;
+      for (let i = 0; i < numCols; i++) leaves += frond(cx, h - 2, 90 + rnd(-25, 25), rnd(h * 0.4, h * 0.7), leafColor);
+      
+      const spikeBot = rnd(h * 0.5, h * 0.7);
+      const spikeTop = rnd(h * 0.1, h * 0.2);
+      stem = `<path class="stem" d="M${cx},${h} Q${cx + rnd(-10, 10)},${h * 0.7} ${cx},${spikeTop}" stroke="${stemColor}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+      
       let florets = '';
-      const rows = 11 + ((Math.random() * 6) | 0);
+      const rows = 18;
       for (let i = 0; i <= rows; i++) {
         const t = i / rows, yy = spikeBot + (spikeTop - spikeBot) * t, spread = (1 - t) * 7 + 3;
         for (let k = 0; k < 2 + ((Math.random() * 2) | 0); k++)
@@ -90,192 +95,89 @@ export default function PlaygroundSection() {
     }
 
     function buildFoliage() {
-      const h = rnd(80, 130), w = 110, cx = w / 2;
-      const olive = pick(OLIVE);
-      let g = '';
+      const w = 100, h = 140, cx = 50;
       const n = 4 + ((Math.random() * 3) | 0);
+      let g = '';
       for (let i = 0; i < n; i++) g += frond(cx + rnd(-10, 10), h - 2, (i - (n - 1) / 2) * rnd(20, 30), rnd(h * 0.7, h * 1.05), olive);
       return { svg: wrap(w, h, `<g class="head">${g}</g>`), h };
     }
 
-    // shared paint filter
     const defs = document.createElement('div');
-    defs.setAttribute('aria-hidden', 'true');
-    defs.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
-    defs.innerHTML = `<svg><defs><filter id="ft-paint" x="-30%" y="-30%" width="160%" height="160%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.028 0.04" numOctaves="2" seed="6" result="n"/>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
-    </filter></defs></svg>`;
+    defs.innerHTML = `<svg width="0" height="0" style="position:absolute; width:0; height:0;"><defs><filter id="paper" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G"/></filter></defs></svg>`;
     garden.appendChild(defs);
 
-    const N = 20;
+    // Give a FULL PAGE of plants!
+    const N = window.innerWidth > 1024 ? 60 : 40;
+    
+    // Distribute them evenly across width (0-100%) and height (0-80% of container)
     let storedScales = Array(N).fill(1.0);
     try {
       const s = localStorage.getItem('gardenScales');
       if (s) {
         const parsed = JSON.parse(s);
-        if (Array.isArray(parsed) && parsed.length === N) storedScales = parsed;
+        if (parsed.length === N) storedScales = parsed;
       }
     } catch(e) {}
-
-    const nc = 5 + ((Math.random() * 2) | 0);
-    const centers = [];
-    for (let c = 0; c < nc; c++) centers.push(clamp((c + 0.5) / nc * 100, 7, 93));
-
-    // Simple flat ridge since we don't have the image
-    const plantY = (pct, depth) => 20 + depth; 
 
     for (let i = 0; i < N; i++) {
       const roll = Math.random();
       const built = roll < 0.5 ? buildDaisy() : roll < 0.78 ? buildLavender() : buildFoliage();
       const el = document.createElement('div');
       
-      // Inline the CSS classes from reference
-      el.style.position = 'absolute';
-      el.style.transformOrigin = 'bottom center';
-      el.style.transform = 'scale(var(--g))';
-      el.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
-      el.style.willChange = 'transform';
-
-      const xPct = clamp(centers[i % nc] + rnd(-6, 6), 2, 98);
-      const depthPx = compactMQ.matches ? rnd(4, 28) : rnd(4, 15);
-      const baseY = plantY(xPct / 100, depthPx);
+      el.className = 'garden-plant';
+      el.innerHTML = built.svg;
+      
+      const xPct = clamp(rnd(2, 98), 2, 98);
+      // Make the plants fill the entire vertical height of the section!
+      const depthPx = rnd(10, window.innerHeight * 0.7); 
       
       el.style.left = xPct + '%';
-      el.style.bottom = baseY + 'px';
-      el.style.zIndex = String(1 + ((Math.random() * 2) | 0) + Math.round(depthPx / 12));
-      let baseScale = phoneMQ.matches ? 0.55 : 0.85;
+      el.style.bottom = depthPx + 'px';
+      
+      // Z-index depends on depth so closer plants overlap further ones
+      el.style.zIndex = Math.round(1000 - depthPx);
+      
+      let baseScale = phoneMQ.matches ? 0.6 : 1.0;
       let g0 = baseScale * storedScales[i];
       el.style.setProperty('--g', g0.toFixed(3));
-      el.style.cursor = 'pointer';
       
-      const stalk = document.createElement('div');
-      // Adding sway CSS inline to avoid needing the exact site.css
-      stalk.style.transformOrigin = 'bottom center';
-      stalk.style.animation = `willow-sway var(--sway) ease-in-out infinite alternate`;
-      stalk.style.animationDelay = `var(--sway-d)`;
-      
-      stalk.style.cssText += `--swayA:${rnd(1.4, 3.4).toFixed(1)}deg;--sway:${rnd(4, 7).toFixed(1)}s;--sway-d:${rnd(-3, 0).toFixed(1)}s;`;
-      stalk.innerHTML = built.svg;
-      
-      // Interactive scale
-      el.addEventListener('mouseenter', () => { el.style.setProperty('--g', (g0 * 1.3).toFixed(3)); });
-      el.addEventListener('mouseleave', () => { el.style.setProperty('--g', g0.toFixed(3)); });
-
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        storedScales[i] = Math.min(storedScales[i] * 1.15, 2.5); // Grow by 15%, max 2.5x
-        try { localStorage.setItem('gardenScales', JSON.stringify(storedScales)); } catch(err) {}
-        g0 = baseScale * storedScales[i];
-        el.style.setProperty('--g', (g0 * 1.3).toFixed(3)); // keep the hover size active
-        
-        // Add a tiny wiggle effect
-        el.style.transition = 'transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        el.style.transform = 'scale(calc(var(--g) * 1.1))';
-        setTimeout(() => {
-          el.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
-          el.style.transform = 'scale(var(--g))';
-        }, 100);
+      // Interaction
+      el.addEventListener('mouseenter', () => {
+        g0 = Math.min(baseScale * 1.5, g0 + 0.15);
+        storedScales[i] = g0 / baseScale;
+        el.style.setProperty('--g', g0.toFixed(3));
+        try { localStorage.setItem('gardenScales', JSON.stringify(storedScales)); } catch(e) {}
       });
-
-      el.appendChild(stalk);
+      
       garden.appendChild(el);
-      plantsRef.current.push({ el, g0: g0, max: 1.75, fullH: built.h, xPct, baseY, depthPx });
+      plantsRef.current.push({ el, xPct });
     }
-
-    // Add CSS for the sway
-    const style = document.createElement('style');
-    style.innerHTML = `
-      @keyframes willow-sway {
-        from { transform: skewX(calc(var(--swayA) * -1)) translateX(-1%); }
-        to   { transform: skewX(var(--swayA)) translateX(1%); }
-      }
-      .head {
-        transform-origin: 50% 30px;
-        animation: head-nod 6s ease-in-out infinite alternate;
-      }
-      @keyframes head-nod {
-        from { transform: rotate(-3deg); }
-        to   { transform: rotate(3deg); }
-      }
-    `;
-    garden.appendChild(style);
-
   }, []);
 
   return (
-    <section 
-      id="playground" 
-      className="garden-container"
-      style={{ 
-        position: 'relative', 
-        width: '100%', 
-        height: '60vh',
-        overflow: 'hidden',
-        background: 'transparent', /* Let the grid flow through! */
-        borderTop: '1px solid rgba(139, 92, 246, 0.1)'
-      }}
-    >
-      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', zIndex: 5, paddingBottom: '15vh' }}>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', letterSpacing: '4px', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '16px' }}>
-          Interactive Playground
-        </p>
-        <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(3rem, 7vw, 6rem)', color: 'var(--text-heading)', lineHeight: 1, margin: 0, opacity: 0.1 }}>
-          The Garden
-        </h2>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', marginTop: '1rem', color: 'var(--text-heading)', animation: 'pulse 2s infinite' }}>
-          CLICK TO GROW
-        </p>
+    <section id="playground" style={{ position: 'relative', width: '100%', height: '100vh', background: 'transparent', overflow: 'hidden', padding: 0 }}>
+      {/* Background depth gradient for the garden */}
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, var(--bg-surface) 0%, transparent 80%)', pointerEvents: 'none', zIndex: 0 }} />
+      <div style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <motion.p
+          className="section-eyebrow"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={{ marginBottom: '24px' }}
+        >
+          Water The Garden
+        </motion.p>
+        <motion.h2 
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}
+        >
+          Hover to Grow
+        </motion.h2>
       </div>
-
-      {/* The Garden Bed */}
-      <div 
-        ref={containerRef} 
-        
-        style={{ 
-          position: 'absolute', 
-          bottom: 0,  /* Start at bottom of section */
-          left: 0, 
-          right: 0, 
-          height: '250px', 
-          zIndex: 10,
-          pointerEvents: 'auto',
-          
-        }} 
-      />
-
-      {/* Wavy Meadow Base (replaces flat soil) */}
-      <svg 
-        viewBox="0 0 100 20" 
-        preserveAspectRatio="none" 
-        style={{ 
-          position: 'absolute', 
-          bottom: -2, /* Slightly overflow bottom */
-          left: 0, 
-          width: '100%', 
-          height: '100px', /* Much taller so it covers the base of the plants */
-          zIndex: 15, pointerEvents: 'none' /* RENDER ABOVE PLANTS TO HIDE THEIR BASES */
-        }}
-      >
-        <path d="M0,15 Q25,2 50,15 T100,5 L100,22 L0,22 Z" fill="#0f172a" />
-        <path d="M0,12 Q30,0 60,12 T100,8 L100,22 L0,22 Z" fill="#1e1b4b" opacity="0.85" />
-      </svg>
-      
-      <style>{`
-        @keyframes pulse {
-          0% { opacity: 0.3; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.05); }
-          100% { opacity: 0.3; transform: scale(1); }
-        }
-      `}</style>
+      <div ref={containerRef} style={{ position: 'absolute', inset: 0, zIndex: 2 }} />
     </section>
   );
 }
-
-
-
-
-
-
-
-
