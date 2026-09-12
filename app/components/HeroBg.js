@@ -18,7 +18,7 @@ function Cubes({ isNight }) {
   
   // Dezprox-style subtle colors
   const cBaseLight = useMemo(() => new Color('#ffffff'), []); // Pure white cubes
-  const cRippleLight = useMemo(() => new Color('#94a3b8'), []); 
+  const cRippleLight = useMemo(() => new Color('#38bdf8'), []); 
   
   const cBaseNight = useMemo(() => new Color('#020617'), []); // Deep black
   const cRippleNight = useMemo(() => new Color('#fbbf24'), []); // Gold accent
@@ -75,8 +75,8 @@ function Cubes({ isNight }) {
     let needsUpdate = false;
 
     // Scale mouse to world bounds for interaction
-    const mx = mouse.current.x * (GRID_W * SPACING) * 0.5;
-    const my = mouse.current.y * (GRID_H * SPACING) * 0.5;
+    const mx = mouse.current.x * (state.viewport.width / 2);
+    const my = mouse.current.y * (state.viewport.height / 2);
 
     for (let i = 0; i < count; i++) {
       const ix = (i % GRID_W - GRID_W / 2) * SPACING;
@@ -87,9 +87,9 @@ function Cubes({ isNight }) {
       const dist = Math.sqrt(dx * dx + dy * dy);
 
       // Ripple interaction pushing cubes outward (Z-axis)
-      const ripple = Math.max(0, 1 - dist / 12);
+      const ripple = Math.max(0, 1 - dist / 8); /* slightly tighter, sharper ripple */
       
-      states[i].tpZ = states[i].baseZ - ripple * 3.5;
+      states[i].tpZ = states[i].baseZ - ripple * 4.0; /* deeper press */
       states[i].pZ = MathUtils.lerp(states[i].pZ, states[i].tpZ, 0.15);
       
       dummy.position.set(ix, iy, states[i].pZ);
@@ -178,6 +178,7 @@ export default function HeroBg() {
     </motion.div>
   );
 }
+
 
 
 
