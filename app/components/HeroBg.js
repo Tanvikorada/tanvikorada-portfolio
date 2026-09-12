@@ -4,9 +4,9 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-// Perfectly flush grid
-const GRID_W = 44; 
-const GRID_H = 26;
+// Guaranteed massive flush tiles that perfectly fill the screen
+const GRID_W = 24; 
+const GRID_H = 14;
 const SPACING = 4.0;
 const CUBE_SIZE = 3.95; // 0.05 gap for perfectly precise grid lines
 
@@ -30,7 +30,7 @@ function Cubes({ isNight }) {
     const s = [];
     for (let i = 0; i < count; i++) {
       s.push({
-        baseZ: 0, // PERFECTLY FLAT AT REST
+        baseZ: 0,
         pZ: 0,
         vZ: 0
       });
@@ -68,16 +68,11 @@ function Cubes({ isNight }) {
     mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.1);
     mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.1);
 
-    // FIXED CAMERA. No parallax. Perfectly head-on flush view.
-    state.camera.position.set(0, 0, 100);
-    state.camera.lookAt(0, 0, 0);
-
     let needsUpdate = false;
 
-    // Convert mouse to world coordinates perfectly based on visible area
-    // The screen maps perfectly because the camera never moves.
-    const mx = mouse.current.x * (state.viewport.width / 2);
-    const my = mouse.current.y * (state.viewport.height / 2);
+    // We map mouse to the grid dimensions mathematically
+    const mx = mouse.current.x * (GRID_W * SPACING / 2);
+    const my = mouse.current.y * (GRID_H * SPACING / 2);
 
     const tension = 0.04;
     const damping = 0.85;
@@ -129,7 +124,7 @@ function Cubes({ isNight }) {
 
   return (
     <instancedMesh ref={meshRef} args={[null, null, count]}>
-      {/* 0.1 depth! They are Flat Tiles, not massive deep boxes! */}
+      {/* 0.1 depth ensures it's a Flat Tile wall, preventing any gap illusions */}
       <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 0.1]} />
       <meshStandardMaterial roughness={0.3} metalness={0.1} />
     </instancedMesh>
@@ -155,10 +150,9 @@ export default function HeroBg() {
       <Canvas 
         gl={{ alpha: false, antialias: true }} 
         dpr={[1, 1.5]} 
-        style={{ background: isNight ? '#020617' : '#ffffff', transition: 'background 0.5s ease' }}
+        camera={{ position: [0, 0, 150], fov: 15 }} // Perfectly centered, tight FOV creates a flush 2D architectural look
+        style={{ width: '100vw', height: '100vh', background: isNight ? '#020617' : '#ffffff', transition: 'background 0.5s ease' }}
       >
-        <orthographicCamera makeDefault position={[0, 0, 100]} zoom={20} />
-        
         <ambientLight intensity={isNight ? 0.7 : 1.2} />
         {/* Lights designed to perfectly cast a tiny shadow on the top-left edge, making them look 3D despite being flat tiles */}
         <directionalLight position={[10, -10, 20]} intensity={isNight ? 1.0 : 1.5} color="#ffffff" />
