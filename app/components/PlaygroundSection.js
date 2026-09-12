@@ -20,7 +20,7 @@ export default function PlaygroundSection() {
     const phoneMQ = window.matchMedia('(max-width: 640px)');
 
     function wrap(w, h, inner) {
-      return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:visible; filter:url(#paper)">${inner}</svg>`;
+      return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">${inner}</svg>`;
     }
 
     const stemColor = '#84cc16';
@@ -188,6 +188,8 @@ export default function PlaygroundSection() {
     </section>
   );
 }
+
+
 
 
 

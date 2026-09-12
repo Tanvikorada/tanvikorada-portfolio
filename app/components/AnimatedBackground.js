@@ -495,7 +495,7 @@ export default function AnimatedBackground() {
           position: 'fixed', 
           inset: 0, 
           zIndex: 0, 
-          pointerEvents: 'auto', // Must be auto so Spline registers hover/click
+          pointerEvents: activeSection === 'stack' ? 'auto' : 'none', // OPTIMIZATION: Disable extremely heavy Spline raycasting when not in the tech stack section to eliminate UI lag
           width: '100vw', 
           height: '100vh', 
           background: 'transparent',
@@ -514,6 +514,7 @@ export default function AnimatedBackground() {
     </>
   );
 }
+
 
 
 

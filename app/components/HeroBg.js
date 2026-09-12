@@ -37,7 +37,7 @@ function Cubes({ isNight }) {
       s.push({
         baseZ,
         pZ: baseZ,
-        vZ: 0 // Velocity for fluid spring physics
+        vZ: 0
       });
     }
     return s;
@@ -48,19 +48,26 @@ function Cubes({ isNight }) {
       targetMouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
       targetMouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
     };
-    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mousemove', handleMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMove);
   }, []);
 
   useEffect(() => {
     if (meshRef.current) {
       for (let i = 0; i < count; i++) {
+        const ix = (i % GRID_W - GRID_W / 2) * SPACING;
+        const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
+        dummy.position.set(ix, iy, states[i].baseZ);
+        dummy.updateMatrix();
+        meshRef.current.setMatrixAt(i, dummy.matrix);
+        
         tempColor.copy(isNight ? cBaseNight : cBaseLight);
         meshRef.current.setColorAt(i, tempColor);
       }
+      meshRef.current.instanceMatrix.needsUpdate = true;
       meshRef.current.instanceColor.needsUpdate = true;
     }
-  }, [isNight, count, cBaseNight, cBaseLight, dummy, tempColor]);
+  }, [isNight, count, cBaseNight, cBaseLight, dummy, tempColor, states]);
 
   useFrame((state) => {
     mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.1);
@@ -72,11 +79,9 @@ function Cubes({ isNight }) {
 
     let needsUpdate = false;
 
-    // Convert mouse to world coordinates perfectly based on visible area
     const mx = mouse.current.x * (state.viewport.width / 2);
     const my = mouse.current.y * (state.viewport.height / 2);
 
-    // Fluid Spring Physics Configuration
     const tension = 0.04;
     const damping = 0.85;
 
@@ -88,58 +93,57 @@ function Cubes({ isNight }) {
       const dy = iy - my;
       const dist = Math.hypot(dx, dy);
 
-      // Add downward force (viscous push) based on proximity
       if (dist < 10) {
-        const force = (1 - dist / 10) * 0.6; // Push strength
+        const force = (1 - dist / 10) * 0.6;
         states[i].vZ -= force;
       }
 
-      // Execute spring physics
       const displacement = states[i].pZ - states[i].baseZ;
-      states[i].vZ -= displacement * tension; // pull back to base
-      states[i].vZ *= damping; // apply friction/damping
-      states[i].pZ += states[i].vZ;
-
-      dummy.position.set(ix, iy, states[i].pZ);
       
-      const stretch = Math.max(0.1, 1 + (states[i].pZ - states[i].baseZ) * 0.2);
-      dummy.scale.set(1, 1, stretch);
-      dummy.updateMatrix();
-      meshRef.current.setMatrixAt(i, dummy.matrix);
+      // OPTIMIZATION: Only process blocks that are actively moving or displaced!
+      if (Math.abs(states[i].vZ) > 0.001 || Math.abs(displacement) > 0.001) {
+        needsUpdate = true;
+        
+        states[i].vZ -= displacement * tension;
+        states[i].vZ *= damping;
+        states[i].pZ += states[i].vZ;
 
-      // Color mapping based on spring displacement
-      const pressDepth = states[i].baseZ - states[i].pZ;
-      const intensity = Math.max(0, Math.min(1, pressDepth * 0.4));
-      
-      const base = isNight ? cBaseNight : cBaseLight;
-      const ripple = isNight ? cRippleNight : cRippleLight;
-      tempColor.copy(base).lerp(ripple, intensity);
-      meshRef.current.setColorAt(i, tempColor);
+        dummy.position.set(ix, iy, states[i].pZ);
+        const stretch = Math.max(0.1, 1 + (states[i].pZ - states[i].baseZ) * 0.2);
+        dummy.scale.set(1, 1, stretch);
+        dummy.updateMatrix();
+        meshRef.current.setMatrixAt(i, dummy.matrix);
+
+        const pressDepth = states[i].baseZ - states[i].pZ;
+        const intensity = Math.max(0, Math.min(1, pressDepth * 0.4));
+        const base = isNight ? cBaseNight : cBaseLight;
+        const ripple = isNight ? cRippleNight : cRippleLight;
+        tempColor.copy(base).lerp(ripple, intensity);
+        meshRef.current.setColorAt(i, tempColor);
+      }
     }
     
-    meshRef.current.instanceMatrix.needsUpdate = true;
-    meshRef.current.instanceColor.needsUpdate = true;
-    if (needsUpdate) meshRef.current.instanceColor.needsUpdate = true;
+    if (needsUpdate) {
+      meshRef.current.instanceMatrix.needsUpdate = true;
+      meshRef.current.instanceColor.needsUpdate = true;
+    }
   });
 
   return (
     <instancedMesh ref={meshRef} args={[null, null, count]}>
       <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]} />
-      <meshStandardMaterial 
-        roughness={0.8}
-        metalness={0.2}
-      />
+      <meshStandardMaterial roughness={0.8} metalness={0.2} />
     </instancedMesh>
   );
 }
 
 export default function HeroBg() {
   const [isNight, setIsNight] = useState(true);
-
   const { scrollYProgress } = useScroll();
-  // Blur effect: 0 blur at top (0.0), scales to 15px by 10% scroll, stays 15px, unblurs at 90% scroll to bottom (1.0)
-  const blurValue = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 15, 15, 0]);
-  const filterBg = useMotionTemplate`blur(${blurValue}px)`;
+  
+  // OPTIMIZATION: Replaced expensive CSS blur with a highly performant hardware-accelerated opacity overlay.
+  // Blurring a massive live WebGL canvas causes extreme lag on older laptops.
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 0.85, 0.85, 0]);
 
   useEffect(() => {
     setIsNight(document.body.classList.contains('night'));
@@ -151,37 +155,27 @@ export default function HeroBg() {
   }, []);
 
   return (
-    <motion.div 
-      className="hero-bg-container"
-      style={{
-        position: 'fixed',
-        top: 0, left: 0, right: 0, bottom: 0,
-        zIndex: 0,
-        pointerEvents: 'none',
-        background: isNight ? '#020617' : '#ffffff',
-        transition: 'background 0.5s ease',
-        filter: filterBg // Dynamic Blur applied here!
-      }}
-    >
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: 'none' }}>
       <Canvas 
         camera={{ position: [0, 0, 75], fov: 15 }} 
-        gl={{ alpha: true, antialias: false }}
-        dpr={[1, 1.5]}
+        gl={{ alpha: false, antialias: false }} // alpha: false is faster!
+        dpr={1} // Lock pixel ratio to 1 for immense performance gain on high-res low-end laptops
+        style={{ background: isNight ? '#020617' : '#ffffff', transition: 'background 0.5s ease' }}
       >
         <ambientLight intensity={isNight ? 0.4 : 1.2} />
-        <directionalLight 
-          position={[10, 20, 15]} 
-          intensity={isNight ? 1.5 : 2.0} 
-          color={isNight ? '#ffffff' : '#ffffff'} 
-        />
-        <directionalLight 
-          position={[-10, -10, 15]} 
-          intensity={isNight ? 0.5 : 0.8} 
-          color={isNight ? '#fbbf24' : '#38bdf8'} 
-        />
+        <directionalLight position={[10, 20, 15]} intensity={isNight ? 1.5 : 2.0} color="#ffffff" />
+        <directionalLight position={[-10, -10, 15]} intensity={isNight ? 0.5 : 0.8} color={isNight ? '#fbbf24' : '#38bdf8'} />
         <Cubes isNight={isNight} />
       </Canvas>
-    </motion.div>
+      
+      {/* High-performance fade overlay replaces the expensive blur */}
+      <motion.div 
+        style={{
+          position: 'absolute', inset: 0,
+          background: isNight ? '#020617' : '#ffffff',
+          opacity: overlayOpacity
+        }}
+      />
+    </div>
   );
 }
-
