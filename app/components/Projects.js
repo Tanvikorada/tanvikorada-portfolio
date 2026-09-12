@@ -134,7 +134,7 @@ function ProjectCard({ project, i, progress, range, targetScale }) {
 
         {/* Right Side: Media */}
         <div className="premium-media" style={{ flex: '1 1 50%', position: 'relative', borderRadius: '24px', overflow: 'hidden', background: 'rgba(0,0,0,0.1)' }}>
-           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.05) 75%, transparent 75%, transparent)', backgroundSize: '20px 20px', opacity: 0.5 }} />
+           <img src={project.image} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
       </motion.div>
     </div>
@@ -188,3 +188,4 @@ export default function Projects() {
     </section>
   );
 }
+

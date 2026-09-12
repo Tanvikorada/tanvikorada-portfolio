@@ -4,28 +4,35 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-const GRID_SIZE = 24; 
-const CUBE_SIZE = 2.002; 
-const SPACING = 2.0;
+const GRID_W = 50; 
+const GRID_H = 30;
+const SPACING = 1.0;
+const CUBE_SIZE = 0.98; // Creates the thin border lines between cubes
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
   const dummy = useMemo(() => new Object3D(), []);
-  const count = GRID_SIZE * GRID_SIZE;
+  const count = GRID_W * GRID_H;
   
   const tempColor = useMemo(() => new Color(), []);
   
-  // Extremely subtle colors
-  const cBaseLight = useMemo(() => new Color('#f1f5f9'), []); // Very light gray/slate
-  const cRippleLight = useMemo(() => new Color('#cbd5e1'), []); // slightly darker for ripple
+  // Dezprox-style subtle colors
+  const cBaseLight = useMemo(() => new Color('#f8fafc'), []); 
+  const cRippleLight = useMemo(() => new Color('#e2e8f0'), []); 
   
   const cBaseNight = useMemo(() => new Color('#020617'), []); // Deep black
-  const cRippleNight = useMemo(() => new Color('#fbbf24'), []); // Gold accent!
-
-  const states = useMemo(() => Array.from({ length: count }, () => ({
-    pY: 0, tpY: 0,
-    colorVal: 0
-  })), [count]);
+  const cRippleNight = useMemo(() => new Color('#fbbf24'), []); // Gold accent
+  
+  // Create static noise map for Dezprox "blocky wall" look
+  const states = useMemo(() => Array.from({ length: count }, () => {
+    // Random base displacement between -0.3 and +0.3
+    const baseZ = (Math.random() - 0.5) * 0.6;
+    return { 
+      baseZ, 
+      pZ: baseZ, 
+      tpZ: baseZ 
+    };
+  }), [count]);
 
   const mouse = useRef({ x: 0, y: 0 });
   const targetMouse = useRef({ x: 0, y: 0 });
@@ -42,11 +49,9 @@ function Cubes({ isNight }) {
   useEffect(() => {
     if (meshRef.current) {
       for (let i = 0; i < count; i++) {
-        dummy.position.set(
-          (i % GRID_SIZE - GRID_SIZE / 2) * SPACING,
-          0,
-          (Math.floor(i / GRID_SIZE) - GRID_SIZE / 2) * SPACING
-        );
+        const ix = (i % GRID_W - GRID_W / 2) * SPACING;
+        const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
+        dummy.position.set(ix, iy, states[i].baseZ);
         dummy.updateMatrix();
         meshRef.current.setMatrixAt(i, dummy.matrix);
         meshRef.current.setColorAt(i, isNight ? cBaseNight : cBaseLight);
@@ -56,40 +61,38 @@ function Cubes({ isNight }) {
         meshRef.current.instanceColor.needsUpdate = true;
       }
     }
-  }, [isNight, count, cBaseNight, cBaseLight]);
+  }, [isNight, count, cBaseNight, cBaseLight, states, dummy]);
 
   useFrame((state) => {
-    const { clock } = state;
-    const time = clock.getElapsedTime();
-
     mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.1);
     mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.1);
 
-    // Camera follow (NO ROTATION per user request)
+    // Subtle parallax on the whole wall, matching Dezprox style
     state.camera.position.x = MathUtils.lerp(state.camera.position.x, mouse.current.x * 2, 0.05);
-    state.camera.position.z = MathUtils.lerp(state.camera.position.z, 20 + mouse.current.y * 2, 0.05);
-    state.camera.lookAt(0, -2, 0);
+    state.camera.position.y = MathUtils.lerp(state.camera.position.y, mouse.current.y * 2, 0.05);
+    state.camera.lookAt(0, 0, 0);
 
     let needsUpdate = false;
 
-    const mx = mouse.current.x * 25;
-    const mz = -mouse.current.y * 25;
+    // Scale mouse to world bounds for interaction
+    const mx = mouse.current.x * (GRID_W * SPACING) * 0.5;
+    const my = mouse.current.y * (GRID_H * SPACING) * 0.5;
 
     for (let i = 0; i < count; i++) {
-      const ix = (i % GRID_SIZE - GRID_SIZE / 2) * SPACING;
-      const iz = (Math.floor(i / GRID_SIZE) - GRID_SIZE / 2) * SPACING;
+      const ix = (i % GRID_W - GRID_W / 2) * SPACING;
+      const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
       
       const dx = ix - mx;
-      const dz = iz - mz;
-      const dist = Math.sqrt(dx * dx + dz * dz);
+      const dy = iy - my;
+      const dist = Math.sqrt(dx * dx + dy * dy);
 
-      // Ripple interaction
-      const ripple = Math.max(0, 1 - dist / 8);
+      // Ripple interaction pushing cubes outward (Z-axis)
+      const ripple = Math.max(0, 1 - dist / 6);
       
-      states[i].tpY = -ripple * 1.5;
-      states[i].pY = MathUtils.lerp(states[i].pY, states[i].tpY, 0.1);
+      states[i].tpZ = states[i].baseZ + ripple * 1.5;
+      states[i].pZ = MathUtils.lerp(states[i].pZ, states[i].tpZ, 0.1);
       
-      dummy.position.set(ix, states[i].pY, iz);
+      dummy.position.set(ix, iy, states[i].pZ);
       dummy.updateMatrix();
       meshRef.current.setMatrixAt(i, dummy.matrix);
 
@@ -115,9 +118,13 @@ function Cubes({ isNight }) {
 
   return (
     <instancedMesh ref={meshRef} args={[null, null, count]}>
-      <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 0.8]} />
+      <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, CUBE_SIZE]} />
+      {/* 
+        Roughness 0.8 and Metalness 0.1 gives that beautiful matte Dezprox finish.
+        The random Z displacement will catch the directional light and create the "grid blocks" look.
+      */}
       <meshStandardMaterial 
-        roughness={1} 
+        roughness={0.8} 
         metalness={0.1}
       />
     </instancedMesh>
@@ -155,11 +162,13 @@ export default function HeroBg() {
       }}
     >
       <Canvas
-        camera={{ position: [0, 8, 20], fov: 45 }}
+        camera={{ position: [0, 0, 18], fov: 50 }}
         gl={{ antialias: true, alpha: true }}
       >
-        <ambientLight intensity={isNight ? 0.8 : 1.5} />
-        <directionalLight position={[10, 20, 10]} intensity={isNight ? 0.3 : 0.8} color={isNight ? '#ffffff' : '#ffffff'} />
+        <ambientLight intensity={isNight ? 1.0 : 2.5} />
+        {/* Angled light to cast subtle shadows on the randomly displaced blocks */}
+        <directionalLight position={[-10, 20, 15]} intensity={isNight ? 0.5 : 1.5} color="#ffffff" />
+        <directionalLight position={[10, -10, 10]} intensity={isNight ? 0.2 : 0.5} color="#ffffff" />
         
         <Cubes isNight={isNight} />
       </Canvas>
@@ -167,8 +176,8 @@ export default function HeroBg() {
       <div style={{
         position: 'absolute', inset: 0,
         background: isNight 
-          ? 'linear-gradient(to bottom, rgba(2,6,23,0) 0%, rgba(2,6,23,0.8) 70%, #020617 100%)'
-          : 'linear-gradient(to bottom, rgba(248,250,252,0) 0%, rgba(248,250,252,0.8) 70%, #f8fafc 100%)',
+          ? 'linear-gradient(to bottom, rgba(2,6,23,0) 0%, rgba(2,6,23,0.9) 70%, #020617 100%)'
+          : 'linear-gradient(to bottom, rgba(248,250,252,0) 0%, rgba(248,250,252,0.9) 70%, #f8fafc 100%)',
         zIndex: 2, pointerEvents: 'none'
       }} />
     </motion.div>
