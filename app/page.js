@@ -13,7 +13,6 @@ import Certs from './components/Certs';
 import About from './components/About';
 import CursorFX from './components/CursorFX';
 import Contact from './components/Contact';
-import FluidGlass from './components/ui/FluidGlass';
 
 import Preloader from './components/Preloader';
 import PaperPlane from './components/PaperPlane';
@@ -77,9 +76,6 @@ export default function Home() {
           </section>
 
           <section style={{ position: 'relative', zIndex: 30 }}>
-            <div style={{ height: '700px', position: 'relative', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
-              <FluidGlass mode="lens" />
-            </div>
             <Contact />
           </section>
 
@@ -91,6 +87,8 @@ export default function Home() {
     </>
   );
 }
+
+
 
 
 
