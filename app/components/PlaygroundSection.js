@@ -6,7 +6,10 @@ export default function PlaygroundSection() {
   const containerRef = useRef(null);
   const gardenRef = useRef(null);
   const landRef = useRef(null);
+  const cursorRef = useRef(null);
   const [isNight, setIsNight] = useState(true);
+  const [isHovering, setIsHovering] = useState(false);
+  const [isClicking, setIsClicking] = useState(false);
 
   useEffect(() => {
     setIsNight(document.body.classList.contains('night'));
@@ -34,7 +37,9 @@ export default function PlaygroundSection() {
     const OLIVE = ['#65a30d', '#4d7c0f', '#3f6212', '#84cc16'];
     const LAVENDER = ['#c084fc', '#a855f7', '#d8b4fe'];
 
-    function wrap(w, h, inner) { return `<svg viewBox="-${w / 2} -${h} ${w} ${h}" width="${w}" height="${h}" style="overflow:visible; filter:url(#ft-paint)">${inner}</svg>`; }
+    function wrap(w, h, inner) { 
+      return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" style="overflow:visible; filter:url(#ft-paint)">${inner}</svg>`; 
+    }
 
     function leaf(x, y, ang, len, col) {
       return `<path d="M ${x} ${y} Q ${x + Math.sin(ang - 0.2) * len} ${y - Math.cos(ang - 0.2) * len} ${x + Math.sin(ang) * len * 1.5} ${y - Math.cos(ang) * len * 1.5} Q ${x + Math.sin(ang + 0.2) * len} ${y - Math.cos(ang + 0.2) * len} ${x} ${y}" fill="${col}"/>`;
@@ -188,7 +193,6 @@ export default function PlaygroundSection() {
       style.id = 'ft-sway-style';
       style.innerHTML = `
         @keyframes sway { 0% { transform: translateX(-50%) rotate(-3deg); } 100% { transform: translateX(-50%) rotate(3deg); } }
-        @keyframes fall { 0% { top: -20px; opacity: 1; transform: scaleY(1); } 90% { transform: scaleY(1.5); opacity: 1; } 100% { top: calc(100% - 10px); opacity: 0; transform: scaleY(0.5); } }
         @keyframes splash { 0% { transform: scale(0); opacity: 0.8; } 100% { transform: scale(2); opacity: 0; } }
         @keyframes grow { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } 100% { transform: translateX(-50%) scale(1); } }
       `;
@@ -197,73 +201,55 @@ export default function PlaygroundSection() {
     
   }, [isNight]);
 
-  // WATERING LOGIC
+  const handleMouseMove = (e) => {
+    if (cursorRef.current && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      // offset by 44, 43 so the tip of the can touches the cursor
+      cursorRef.current.style.transform = `translate(${x - 44}px, ${y - 43}px) ${isClicking ? 'rotate(-25deg)' : ''}`;
+    }
+  };
+
   const handleWaterClick = (e) => {
     if (!containerRef.current) return;
-    
-    // Create water drop
-    const drop = document.createElement('div');
-    const dropSize = 12;
-    
-    // Calculate relative coordinates
+    setIsClicking(true);
+    setTimeout(() => setIsClicking(false), 200);
+
     const rect = containerRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    drop.style.position = 'absolute';
-    drop.style.left = `${x - dropSize / 2}px`;
-    drop.style.width = `${dropSize}px`;
-    drop.style.height = `${dropSize * 1.5}px`;
-    drop.style.backgroundColor = '#38bdf8';
-    drop.style.borderRadius = '50% 50% 50% 50% / 60% 60% 40% 40%'; // Teardrop shape
-    drop.style.zIndex = '100';
-    drop.style.animation = 'fall 0.6s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards';
-    drop.style.pointerEvents = 'none';
-    drop.style.boxShadow = '0 0 10px rgba(56, 189, 248, 0.5)';
+    // Create splash ring
+    const splash = document.createElement('div');
+    splash.style.position = 'absolute';
+    splash.style.left = `${x - 15}px`;
+    splash.style.top = `${y - 5}px`;
+    splash.style.width = '30px';
+    splash.style.height = '10px';
+    splash.style.border = '2px solid #38bdf8';
+    splash.style.borderRadius = '50%';
+    splash.style.animation = 'splash 0.5s ease-out forwards';
+    splash.style.pointerEvents = 'none';
+    splash.style.zIndex = '90';
+    containerRef.current.appendChild(splash);
     
-    // We append to container so it falls from mouse click down to bottom of container
-    containerRef.current.appendChild(drop);
-
-    // Splash effect and trigger growth
     setTimeout(() => {
-      // Clean up drop
-      if (drop.parentNode) drop.parentNode.removeChild(drop);
+      if (splash.parentNode) splash.parentNode.removeChild(splash);
+    }, 500);
 
-      // Create splash ring
-      const splash = document.createElement('div');
-      splash.style.position = 'absolute';
-      splash.style.left = `${x - 15}px`;
-      splash.style.bottom = '10%'; // Approx ground level
-      splash.style.width = '30px';
-      splash.style.height = '10px';
-      splash.style.border = '2px solid #38bdf8';
-      splash.style.borderRadius = '50%';
-      splash.style.animation = 'splash 0.5s ease-out forwards';
-      splash.style.pointerEvents = 'none';
-      splash.style.zIndex = '90';
-      containerRef.current.appendChild(splash);
-      
-      setTimeout(() => {
-        if (splash.parentNode) splash.parentNode.removeChild(splash);
-      }, 500);
-
-      // Make all plants nearby grow
-      const plants = document.querySelectorAll('.ft-plant');
-      const clickXPct = (x / rect.width) * 100;
-      
-      plants.forEach(plant => {
-        const plantLeft = parseFloat(plant.style.left);
-        // If plant is within 15% horizontal distance of the drop
-        if (Math.abs(plantLeft - clickXPct) < 15) {
-          // Remove old grow animation to re-trigger
-          plant.style.animation = 'none';
-          void plant.offsetWidth; // Trigger reflow
-          // Apply grow animation then revert to sway
-          plant.style.animation = 'grow 1s ease-out forwards, sway 5s ease-in-out infinite alternate';
-        }
-      });
-
-    }, 600);
+    // Make all plants nearby grow
+    const plants = document.querySelectorAll('.ft-plant');
+    const clickXPct = (x / rect.width) * 100;
+    
+    plants.forEach(plant => {
+      const plantLeft = parseFloat(plant.style.left);
+      if (Math.abs(plantLeft - clickXPct) < 15) {
+        plant.style.animation = 'none';
+        void plant.offsetWidth; // Trigger reflow
+        plant.style.animation = 'grow 1s ease-out forwards, sway 5s ease-in-out infinite alternate';
+      }
+    });
   };
 
   return (
@@ -271,6 +257,9 @@ export default function PlaygroundSection() {
       <section 
         ref={containerRef}
         id="playground" 
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
         onClick={handleWaterClick}
         style={{ 
           position: 'relative', 
@@ -282,9 +271,43 @@ export default function PlaygroundSection() {
           justifyContent: 'flex-start',
           alignItems: 'center',
           paddingTop: '10vh',
-          cursor: 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' fill=\'none\' stroke=\'%2338bdf8\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><path d=\'M12 2v20M17 7l-5-5-5 5\'/></svg>") 12 12, crosshair',
+          userSelect: 'none',
+          cursor: isHovering ? 'none' : 'auto'
         }}
       >
+        {isHovering && (
+          <div 
+            ref={cursorRef} 
+            style={{ 
+              position: 'absolute', 
+              top: 0, left: 0, 
+              pointerEvents: 'none', 
+              zIndex: 9999, 
+              transition: 'transform 0.1s ease-out'
+            }}
+          >
+            <svg viewBox="0 0 60 60" width="58" height="58">
+              <g filter="url(#ft-paint)">
+                <g transform="rotate(20 27 27)">
+                  <path d="M16 21 Q7.5 22 8 29 Q8.3 34 15 34" fill="none" stroke="#c9856f" strokeWidth="3.2" strokeLinecap="round"/>
+                  <path d="M34.5 24 L47 29 L49.5 33.5 L46 37 L33 31 Z" fill="#d69880"/>
+                  <ellipse cx="47.5" cy="34.5" rx="2.6" ry="3.8" transform="rotate(28 47.5 34.5)" fill="#cf8f7b"/>
+                  <path d="M16 22 Q16 18 20 18 L32 18 Q36 18 36 22 L35 35 Q35 38 31 38 L21 38 Q16 38 16 34 Z" fill="#d99f8c"/>
+                  <ellipse cx="26" cy="18" rx="8.2" ry="2.6" fill="#cf8f7b"/>
+                  <path d="M16.5 16 Q26 1 35.5 15" fill="none" stroke="#d99f8c" strokeWidth="4.6" strokeLinecap="round"/>
+                  <path d="M24 29.5 C 20.5 26.5 21.6 23.4 24 25.2 C 26.4 23.4 27.5 26.5 24 29.5 Z" fill="#a85a48"/>
+                </g>
+              </g>
+            </svg>
+            {isClicking && (
+              <>
+                <div style={{ position: 'absolute', left: '44px', top: '43px', width: '3px', height: '3px', background: '#6cc2ee', borderRadius: '50%', animation: 'fall 0.3s linear forwards' }} />
+                <div style={{ position: 'absolute', left: '47px', top: '41px', width: '2px', height: '2px', background: '#6cc2ee', borderRadius: '50%', animation: 'fall 0.3s linear 0.1s forwards' }} />
+              </>
+            )}
+          </div>
+        )}
+
         <div style={{ position: 'relative', zIndex: 60, textAlign: 'center', padding: '0 20px', pointerEvents: 'none' }}>
           <motion.p
             className="section-eyebrow"
