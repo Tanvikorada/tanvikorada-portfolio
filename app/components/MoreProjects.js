@@ -86,7 +86,7 @@ export default function MoreProjects() {
           <h3 style={{ fontSize: '2rem', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>Highlights & Milestones</h3>
           <span style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--accent)' }}>Interactive</span>
         </div>
-        <div style={{ width: '100%', boxShadow: 'var(--shadow-md)' }}>
+        <div style={{ width: '100%' }}>
           
 
           
@@ -95,7 +95,7 @@ export default function MoreProjects() {
             <InfiniteSpiral
               items={SLIDER_ITEMS.map(i => ({ src: i.image, alt: i.label }))}
               animationMode="all"
-              speed={0.55}
+              speed={0.25}
               radius={200}
               cardWidth={280}
               cardHeight={160}
@@ -161,6 +161,7 @@ export default function MoreProjects() {
     </section>
   );
 }
+
 
 
 
