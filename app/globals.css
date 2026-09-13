@@ -7,6 +7,7 @@
 :root {
   --bg-solid:       #fff9f1; /* Solid cream for button text */
   --bg-base:        transparent;
+  --bg-true:        #ffffff;
   --bg-surface:     rgba(255, 255, 255, 0.4);
   --bg-card:        rgba(255, 255, 255, 0.5);
   --bg-glass:       transparent;
@@ -37,7 +38,8 @@
 
 body.night {
   --bg-solid:       #020617;
-  --bg-base:        #020617;
+  --bg-base:        #000000;
+  --bg-true:        #000000;
   --bg-surface:     #0f172a;
   --bg-card:        rgba(15,23,42,0.7);
   --bg-glass:       rgba(2,6,23,0.6);
@@ -1054,6 +1056,7 @@ body.night .skill-pill {
     margin-top: 24px;
   }
 }
+
 
 
 
