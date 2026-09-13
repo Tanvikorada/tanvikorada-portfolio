@@ -3,13 +3,58 @@ import { motion } from 'framer-motion';
 import SpotlightCard from './ui/SpotlightCard';
 
 const CERTS = [
-  { name: 'Python', org: 'DataCamp', color: '#38bdf8', icon: '🐍' },
-  { name: 'AWS Cloud', org: 'DataCamp', color: '#f97316', icon: '☁️' },
-  { name: 'MongoDB', org: 'MongoDB', color: '#22c55e', icon: '🍃' },
-  { name: 'Prompt Eng.', org: 'Future Interns', color: '#c084fc', icon: '🧠' },
-  { name: 'Machine Learning', org: 'CodSoft', color: '#facc15', icon: '🤖' },
-  { name: 'Web Dev', org: 'Prodigy', color: '#60a5fa', icon: '💻' },
+  { name: 'Python', org: 'DataCamp', color: '#38bdf8' },
+  { name: 'AWS Cloud', org: 'DataCamp', color: '#f97316' },
+  { name: 'MongoDB', org: 'MongoDB', color: '#22c55e' },
+  { name: 'Prompt Eng.', org: 'Future Interns', color: '#c084fc' },
+  { name: 'Machine Learning', org: 'CodSoft', color: '#facc15' },
+  { name: 'Web Dev', org: 'Prodigy', color: '#60a5fa' },
 ];
+
+function AnimatedFolderIcon({ color }) {
+  return (
+    <div className="folder-icon-wrapper" style={{ width: '28px', height: '24px', position: 'relative' }}>
+      {/* Back tab of folder */}
+      <div 
+        style={{ 
+          position: 'absolute', top: 0, left: 0, width: '10px', height: '6px', 
+          background: color, opacity: 0.6, borderRadius: '3px 3px 0 0' 
+        }} 
+      />
+      {/* Back body of folder */}
+      <div 
+        style={{ 
+          position: 'absolute', top: '4px', left: 0, width: '28px', height: '20px', 
+          background: color, opacity: 0.6, borderRadius: '4px' 
+        }} 
+      />
+      {/* Paper sticking out */}
+      <div 
+        className="folder-paper"
+        style={{ 
+          position: 'absolute', top: '6px', left: '4px', width: '20px', height: '14px', 
+          background: '#fff', borderRadius: '2px', opacity: 0.9,
+          boxShadow: '0 0 4px rgba(0,0,0,0.1)',
+          transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
+        }} 
+      >
+        <div style={{ width: '12px', height: '2px', background: 'rgba(0,0,0,0.1)', margin: '3px auto 0', borderRadius: '2px' }} />
+        <div style={{ width: '8px', height: '2px', background: 'rgba(0,0,0,0.1)', margin: '2px auto 0', borderRadius: '2px' }} />
+      </div>
+      {/* Front flap of folder */}
+      <div 
+        className="folder-flap"
+        style={{ 
+          position: 'absolute', top: '8px', left: 0, width: '28px', height: '16px', 
+          background: color, borderRadius: '3px',
+          transformOrigin: 'bottom center',
+          transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+          borderTop: '1px solid rgba(255,255,255,0.2)'
+        }} 
+      />
+    </div>
+  );
+}
 
 export default function Certs() {
   return (
@@ -48,7 +93,9 @@ export default function Certs() {
           align-items: center;
           gap: 16px;
           padding: 16px 20px;
-          background: linear-gradient(135deg, color-mix(in srgb, var(--bg-glass) 40%, rgba(255,255,255,0.05)), color-mix(in srgb, var(--bg-glass) 60%, rgba(0,0,0,0.02))); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+          background: linear-gradient(135deg, color-mix(in srgb, var(--bg-glass) 40%, rgba(255,255,255,0.05)), color-mix(in srgb, var(--bg-glass) 60%, rgba(0,0,0,0.02))); 
+          backdrop-filter: blur(20px); 
+          -webkit-backdrop-filter: blur(20px);
           border: 1px solid var(--border);
           border-radius: 20px;
           box-shadow: 0 4px 20px rgba(0,0,0,0.02);
@@ -60,28 +107,34 @@ export default function Certs() {
           border-color: rgba(147, 51, 234, 0.3);
           box-shadow: 0 10px 30px rgba(147, 51, 234, 0.1);
         }
+        .cert-pill:hover .folder-flap {
+          transform: skewX(-8deg) scaleY(0.75);
+        }
+        .cert-pill:hover .folder-paper {
+          transform: translateY(-8px);
+        }
       `}</style>
 
       {/* Ambience */}
       <div style={{ position: 'absolute', top: '10%', left: '20%', width: '30vw', height: '30vw', background: 'radial-gradient(circle, rgba(147,51,234,0.15) 0%, transparent 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', bottom: '10%', right: '10%', width: '40vw', height: '40vw', background: 'radial-gradient(circle, rgba(56,189,248,0.1) 0%, transparent 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none' }} />
       
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        style={{ textAlign: 'center', marginBottom: '8vh', position: 'relative', zIndex: 2 }}
-      >
-        <p className="section-eyebrow" style={{ background: 'var(--bg-glass)', border: '1px solid var(--border)', padding: '6px 20px', borderRadius: '100px', display: 'inline-block', marginBottom: '24px' }}>
-          Trophies & Milestones
-        </p>
-        <h2 style={{ fontSize: 'clamp(3rem, 6vw, 4.5rem)', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
-          Lifelong <span style={{ fontStyle: 'italic', color: 'var(--gold)' }}>learner.</span>
-        </h2>
-      </motion.div>
-
       <div style={{ maxWidth: '1240px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
         
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={{ textAlign: 'center', marginBottom: '8vh', position: 'relative', zIndex: 2 }}
+        >
+          <p className="section-eyebrow" style={{ background: 'var(--bg-glass)', border: '1px solid var(--border)', padding: '6px 20px', borderRadius: '100px', display: 'inline-block', marginBottom: '24px' }}>
+            Trophies & Milestones
+          </p>
+          <h2 style={{ fontSize: 'clamp(3rem, 6vw, 4.5rem)', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+            Honors & <br/> <span style={{ color: 'var(--text-muted)' }}>Accolades</span>
+          </h2>
+        </motion.div>
+
         {/* Achievements Row */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '24px', marginBottom: '24px' }}>
           
@@ -89,7 +142,7 @@ export default function Certs() {
           <SpotlightCard className="cert-glass-card" style={{ padding: '40px' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
               <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'color-mix(in srgb, #facc15 15%, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', flexShrink: 0, border: '1px solid rgba(250, 204, 21, 0.2)' }}>
-                🏆
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#facc15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
               </div>
               <div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600 }}>Hackathon</div>
@@ -103,7 +156,7 @@ export default function Certs() {
           <SpotlightCard className="cert-glass-card" style={{ padding: '40px' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
               <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'color-mix(in srgb, #38bdf8 15%, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', flexShrink: 0, border: '1px solid rgba(56, 189, 248, 0.2)' }}>
-                🔬
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12h10"/><path d="M9 4v16"/><path d="m3 9 3 3-3 3"/></svg>
               </div>
               <div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600 }}>Publication</div>
@@ -126,16 +179,16 @@ export default function Certs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-              style={{ position: 'relative' }}
+                style={{ position: 'relative' }}
               >
                 <SpotlightCard className="cert-pill" spotlightColor="rgba(255,255,255,0.2)" style={{ height: "100%", width: "100%", margin: 0 }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: `color-mix(in srgb, ${cert.color} 15%, transparent)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', border: `1px solid color-mix(in srgb, ${cert.color} 20%, transparent)` }}>
-                  {cert.icon}
-                </div>
-                <div>
-                  <div style={{ fontWeight: 700, color: 'var(--text-heading)', fontSize: '15px' }}>{cert.name}</div>
-                  <div style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '2px' }}>{cert.org}</div>
-                </div>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: `color-mix(in srgb, ${cert.color} 10%, transparent)`, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid color-mix(in srgb, ${cert.color} 20%, transparent)` }}>
+                    <AnimatedFolderIcon color={cert.color} />
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 700, color: 'var(--text-heading)', fontSize: '15px' }}>{cert.name}</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '2px' }}>{cert.org}</div>
+                  </div>
                 </SpotlightCard>
               </motion.div>
             ))}
@@ -146,5 +199,3 @@ export default function Certs() {
     </section>
   );
 }
-
-
