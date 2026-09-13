@@ -55,7 +55,7 @@ function Cubes({ isNight }) {
     }
   }, [isNight, count, cBaseNight, cBaseLight, dummy, tempColor]);
 
-  useFrame((state, delta) => {
+  useFrame((state, delta) => { if (typeof window !== "undefined" && window.scrollY > window.innerHeight * 1.5) return;
     mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.2);
     mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.2);
 
@@ -151,12 +151,7 @@ export default function HeroBg() {
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: 'none' }}>
-      <Canvas 
-        gl={{ alpha: false, antialias: true }} 
-        dpr={[1, 1.5]} 
-        camera={{ position: [0, 0, 55], fov: 42 }} 
-        style={{ width: '100vw', height: '100vh' }}
-      >
+      <Canvas gl={{ alpha: false, antialias: false, powerPreference: "high-performance" }} dpr={[1, 1.5]} camera={{ position: [0, 0, 55], fov: 42 }} style={{ width: "100vw", height: "100vh" }}>
         <ambientLight intensity={isNight ? 0.7 : 2.5} />
         <directionalLight position={[15, -20, 30]} intensity={isNight ? 1.0 : 0.8} color="#ffffff" />
         <directionalLight position={[-15, 20, 20]} intensity={isNight ? 0.4 : 0.4} color={isNight ? '#fcd34d' : '#f3e8ff'} />
@@ -173,6 +168,9 @@ export default function HeroBg() {
     </div>
   );
 }
+
+
+
 
 
 
