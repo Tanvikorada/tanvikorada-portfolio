@@ -48,7 +48,7 @@ export default function Certs() {
           align-items: center;
           gap: 16px;
           padding: 16px 20px;
-          background: var(--bg-surface);
+          background: linear-gradient(135deg, color-mix(in srgb, var(--bg-glass) 40%, rgba(255,255,255,0.05)), color-mix(in srgb, var(--bg-glass) 60%, rgba(0,0,0,0.02))); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
           border: 1px solid var(--border);
           border-radius: 20px;
           box-shadow: 0 4px 20px rgba(0,0,0,0.02);
@@ -122,12 +122,13 @@ export default function Certs() {
             {CERTS.map((cert, i) => (
               <motion.div 
                 key={i}
-                className="cert-pill"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
+              style={{ position: 'relative' }}
               >
+                <SpotlightCard className="cert-pill" spotlightColor="rgba(255,255,255,0.2)" style={{ height: "100%", width: "100%", margin: 0 }}>
                 <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: `color-mix(in srgb, ${cert.color} 15%, transparent)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', border: `1px solid color-mix(in srgb, ${cert.color} 20%, transparent)` }}>
                   {cert.icon}
                 </div>
@@ -135,6 +136,7 @@ export default function Certs() {
                   <div style={{ fontWeight: 700, color: 'var(--text-heading)', fontSize: '15px' }}>{cert.name}</div>
                   <div style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '2px' }}>{cert.org}</div>
                 </div>
+                </SpotlightCard>
               </motion.div>
             ))}
           </div>
@@ -144,3 +146,5 @@ export default function Certs() {
     </section>
   );
 }
+
+
