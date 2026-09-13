@@ -33,7 +33,7 @@ export async function POST(req) {
         ? 'https://api.groq.com/openai/v1/chat/completions'
         : 'https://api.openai.com/v1/chat/completions';
         
-      const model = apiKey.startsWith('gsk_') ? 'openai/gpt-oss-20b' : 'gpt-4o-mini';
+      const model = apiKey.startsWith('gsk_') ? 'llama-3.3-70b-versatile' : 'gpt-4o-mini';
 
       const response = await fetch(endpoint, {
         method: 'POST',
