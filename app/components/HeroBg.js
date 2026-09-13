@@ -4,11 +4,11 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-// Higher resolution grid for liquid smoothness
+// High-resolution grid
 const GRID_W = 46; 
-const GRID_H = 28;
-const SPACING = 2.4;
-const CUBE_SIZE = 2.4; // Zero gap.
+const GRID_H = 30;
+const SPACING = 2.5;
+const CUBE_SIZE = 2.48; // Microscopic gap for that premium structural look
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -17,11 +17,11 @@ function Cubes({ isNight }) {
   
   const tempColor = useMemo(() => new Color(), []);
   
-  const cBaseLight = useMemo(() => new Color('#ffffff'), []); // Pure white
-  const cRippleLight = useMemo(() => new Color('#a855f7'), []); // Glowing lavender
+  const cBaseLight = useMemo(() => new Color('#ffffff'), []); 
+  const cRippleLight = useMemo(() => new Color('#a855f7'), []); // Lavender
   
-  const cBaseNight = useMemo(() => new Color('#000000'), []); // Pure black
-  const cRippleNight = useMemo(() => new Color('#fbbf24'), []); // Fluid gold
+  const cBaseNight = useMemo(() => new Color('#000000'), []); 
+  const cRippleNight = useMemo(() => new Color('#fbbf24'), []); // Gold
 
   const targetMouse = useRef({ x: 0, y: 0 });
   const mouse = useRef({ x: 0, y: 0 });
@@ -31,14 +31,14 @@ function Cubes({ isNight }) {
     const s = [];
     for (let i = 0; i < count; i++) {
       s.push({
-        baseZ: 0,
         pZ: 0,
         vZ: 0,
-        targetZ: 0
       });
     }
     return s;
   }, [count]);
+
+  const nextVZ = useMemo(() => new Float32Array(count), [count]);
 
   useEffect(() => {
     const handleMove = (e) => {
@@ -70,9 +70,8 @@ function Cubes({ isNight }) {
   useFrame(() => {
     prevMouse.current.x = mouse.current.x;
     prevMouse.current.y = mouse.current.y;
-    // Smoother mouse tracking for liquid feel
-    mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.1);
-    mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.1);
+    mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.15);
+    mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.15);
 
     const mx = mouse.current.x * (GRID_W * SPACING / 2);
     const my = mouse.current.y * (GRID_H * SPACING / 2);
@@ -81,22 +80,11 @@ function Cubes({ isNight }) {
 
     let needsUpdate = false;
 
-    // 1. Mouse Disturbance (Wider, softer splash = liquid feel)
-    for (let i = 0; i < count; i++) {
-      const ix = (i % GRID_W - GRID_W / 2) * SPACING;
-      const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
-      const dist = Math.hypot(mx - ix, my - iy);
+    // LOOP 1: Exact 2D Laplacian Wave Equation (Guarantees true ringing water ripples)
+    const c2 = 0.15; // Wave propagation speed
+    const anchor = 0.04; // Tension to return to 0
+    const damping = 0.97; // Liquid friction (0.97 allows beautiful ringing oscillation)
 
-      if (dist < 12.0 && mouseSpeed > 0.001) {
-        const force = Math.min(mouseSpeed * 0.4, 0.25);
-        states[i].vZ -= force * (1 - dist / 12.0);
-      }
-    }
-
-    // 2. 2D Wave Propagation (Faster spread for liquid fluidity)
-    const newTargetZ = new Float32Array(count);
-    const waveSpread = 0.32; 
-    
     for (let i = 0; i < count; i++) {
       let sum = 0;
       let numNeighbors = 0;
@@ -109,43 +97,46 @@ function Cubes({ isNight }) {
       if (y > 0) { sum += states[i - GRID_W].pZ; numNeighbors++; }
       if (y < GRID_H - 1) { sum += states[i + GRID_W].pZ; numNeighbors++; }
 
-      const avg = sum / numNeighbors;
-      newTargetZ[i] = states[i].pZ + (avg - states[i].pZ) * waveSpread;
+      const laplacian = sum - (numNeighbors * states[i].pZ);
+      let acc = (laplacian * c2) - (states[i].pZ * anchor);
+
+      // Mouse Splash
+      const ix = (x - GRID_W / 2) * SPACING;
+      const iy = (y - GRID_H / 2) * SPACING;
+      const dist = Math.hypot(mx - ix, my - iy);
+
+      if (dist < 8.0 && mouseSpeed > 0.005) {
+        // Direct downward acceleration to create a deep splash that rebounds high!
+        acc -= Math.min(mouseSpeed * 0.25, 0.2) * (1 - dist / 8.0);
+      }
+
+      nextVZ[i] = (states[i].vZ + acc) * damping;
     }
 
-    // Heavy liquid physics
-    const tension = 0.025; // Slow spring back
-    const damping = 0.99; // Ultra low friction, ripples roll beautifully
-
+    // LOOP 2: Apply velocities and render
     for (let i = 0; i < count; i++) {
-      const ix = (i % GRID_W - GRID_W / 2) * SPACING;
-      const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
-
-      const pull = newTargetZ[i] - states[i].pZ;
-      const spring = (0 - states[i].pZ) * tension;
-      
-      states[i].vZ += pull + spring;
-      states[i].vZ *= damping;
+      states[i].vZ = nextVZ[i];
       states[i].pZ += states[i].vZ;
 
       // Only update Three.js matrices if the tile is actively rippling
       if (Math.abs(states[i].vZ) > 0.001 || Math.abs(states[i].pZ) > 0.001) {
         needsUpdate = true;
         
-        const renderZ = Math.max(-3.0, Math.min(3.0, states[i].pZ));
+        const ix = (i % GRID_W - GRID_W / 2) * SPACING;
+        const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
 
+        // Strict clamp to prevent exploding physics
+        const renderZ = Math.max(-10.0, Math.min(10.0, states[i].pZ));
+
+        // Z-Movement ONLY. No tilting! Perspective camera handles the 3D depth.
         dummy.position.set(ix, iy, renderZ);
-        
-        // Tilt dynamic to wave gradient! This gives the true 3D liquid faceted look
-        dummy.rotation.x = states[i].pZ * 0.12;
-        dummy.rotation.y = states[i].pZ * 0.12;
-        
+        dummy.rotation.set(0, 0, 0);
         dummy.updateMatrix();
         meshRef.current.setMatrixAt(i, dummy.matrix);
 
-        // Fluid color mapping
+        // Fluid color mapping (glows when high or low)
         const pressDepth = Math.abs(states[i].pZ);
-        const intensity = Math.max(0, Math.min(1, pressDepth * 0.7));
+        const intensity = Math.max(0, Math.min(1, pressDepth * 0.4));
         
         const base = isNight ? cBaseNight : cBaseLight;
         const ripple = isNight ? cRippleNight : cRippleLight;
@@ -162,20 +153,16 @@ function Cubes({ isNight }) {
 
   return (
     <>
-      <instancedMesh ref={meshRef} args={[null, null, count]} position={[0, 0, 1]}>
-        {/* Deep columns so you see the 3D sides when they ripple */}
-        <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 8.0]} />
-        <meshStandardMaterial roughness={0.1} metalness={0.1} />
+      <instancedMesh ref={meshRef} args={[null, null, count]}>
+        {/* Massive 12.0 depth so they look like deep skyscrapers when the wave lifts them! */}
+        <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 12.0]} />
+        <meshStandardMaterial roughness={0.2} metalness={0.1} />
       </instancedMesh>
       
-      {/* 
-        THE SECRET TO ZERO WHITE LINES:
-        A massive backplate right behind the cubes with the EXACT same material and color.
-        If a gap opens, it just reveals the identical lit background, making the grid 100% invisible at rest!
-      */}
-      <mesh position={[0, 0, -3.5]}>
+      {/* Backplate to mask gaps at rest */}
+      <mesh position={[0, 0, -6.0]}>
         <planeGeometry args={[400, 400]} />
-        <meshStandardMaterial color={isNight ? '#000000' : '#ffffff'} roughness={0.1} metalness={0.1} />
+        <meshStandardMaterial color={isNight ? '#000000' : '#ffffff'} roughness={0.2} metalness={0.1} />
       </mesh>
     </>
   );
@@ -198,15 +185,15 @@ export default function HeroBg() {
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: 'none' }}>
       <Canvas 
-        gl={{ alpha: false, antialias: true }} // alpha false because we have the backplate
+        gl={{ alpha: false, antialias: true }} 
         dpr={[1, 1.5]} 
-        camera={{ position: [0, 0, 80], fov: 20 }} 
+        // A wider FOV (45) naturally reveals the deep 3D sides of the blocks due to perspective! Exactly like Dezprox!
+        camera={{ position: [0, 0, 45], fov: 45 }} 
         style={{ width: '100vw', height: '100vh' }}
       >
-        <ambientLight intensity={isNight ? 0.8 : 1.4} />
-        {/* Soft, beautiful studio lighting */}
-        <directionalLight position={[20, -20, 30]} intensity={isNight ? 1.0 : 1.2} color="#ffffff" />
-        <directionalLight position={[-20, 20, 20]} intensity={isNight ? 0.3 : 0.4} color={isNight ? '#fbbf24' : '#a855f7'} />
+        <ambientLight intensity={isNight ? 0.7 : 1.3} />
+        <directionalLight position={[20, -20, 30]} intensity={isNight ? 1.0 : 1.5} color="#ffffff" />
+        <directionalLight position={[-20, 20, 20]} intensity={isNight ? 0.4 : 0.5} color={isNight ? '#fbbf24' : '#a855f7'} />
         
         <Cubes isNight={isNight} />
       </Canvas>
@@ -221,7 +208,3 @@ export default function HeroBg() {
     </div>
   );
 }
-
-
-
-
