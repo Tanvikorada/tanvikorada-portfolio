@@ -53,13 +53,13 @@ export default function About() {
           .apple-bento-grid {
             grid-template-columns: repeat(2, 1fr);
           }
-          .bento-photo { grid-column: span 1 !important; grid-row: span 2 !important; }
-          .bento-map { grid-column: span 1 !important; grid-row: span 2 !important; }
-          .bento-bio { grid-column: span 2 !important; grid-row: span 2 !important; }
-          .bento-stats { grid-column: span 2 !important; }
-          .bento-skills { grid-column: span 2 !important; }
-          .bento-status { grid-column: span 2 !important; }
-          .bento-clubs { grid-column: span 2 !important; }
+          .apple-photo { grid-column: span 1 !important; grid-row: span 2 !important; }
+          .apple-map { grid-column: span 1 !important; grid-row: span 2 !important; }
+          .apple-bio { grid-column: span 2 !important; grid-row: span 2 !important; }
+          .apple-stats { grid-column: span 2 !important; }
+          .apple-skills { grid-column: span 2 !important; }
+          .apple-status { grid-column: span 2 !important; }
+          .apple-clubs { grid-column: span 2 !important; }
         }
 
         @media (max-width: 600px) {
@@ -107,15 +107,15 @@ export default function About() {
           box-shadow: 0 20px 50px rgba(31, 38, 135, 0.1), inset 0 1px 1px rgba(255,255,255,0.3), inset 0 0 30px rgba(56, 189, 248, 0.1);
         }
 
-        .bento-photo { grid-column: span 1; grid-row: span 2; padding: 0; }
-        .bento-bio { grid-column: span 2; grid-row: span 2; justify-content: center; }
-        .bento-map { grid-column: span 1; grid-row: span 2; padding: 0; }
+        .apple-photo { grid-column: span 1; grid-row: span 2; padding: 0; }
+        .apple-bio { grid-column: span 2; grid-row: span 2; justify-content: center; }
+        .apple-map { grid-column: span 1; grid-row: span 2; padding: 0; }
         
-        .bento-status { grid-column: span 2; grid-row: span 1; justify-content: center; }
-        .bento-stats { grid-column: span 2; grid-row: span 1; justify-content: center; }
+        .apple-status { grid-column: span 2; grid-row: span 1; justify-content: center; }
+        .apple-stats { grid-column: span 2; grid-row: span 1; justify-content: center; }
         
-        .bento-skills { grid-column: span 2; grid-row: span 2; }
-        .bento-clubs { grid-column: span 2; grid-row: span 2; display: flex; flex-direction: column; justify-content: space-between; }
+        .apple-skills { grid-column: span 2; grid-row: span 2; }
+        .apple-clubs { grid-column: span 2; grid-row: span 2; display: flex; flex-direction: column; justify-content: space-between; }
 
         .apple-label {
           font-family: var(--font-mono);
@@ -180,7 +180,7 @@ export default function About() {
         <div className="apple-bento-grid">
           
           {/* 1. Photo Tile */}
-          <AppleGlassCard className="bento-photo">
+          <AppleGlassCard className="apple-photo">
             <RippleDistortion
               src="/images/about-profile.jpg"
               grayscale={true}
@@ -193,7 +193,7 @@ export default function About() {
           </AppleGlassCard>
 
           {/* 2. Bio Tile */}
-          <AppleGlassCard className="bento-bio">
+          <AppleGlassCard className="apple-bio">
             <p className="apple-label">Who I am</p>
             <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', marginBottom: '16px', lineHeight: 1.1 }}>
               Korada Tanvi
@@ -204,7 +204,7 @@ export default function About() {
           </AppleGlassCard>
 
           {/* 3. Location / Map Tile (USER REQUESTED: MAP) */}
-                    <AppleGlassCard className="bento-map">
+                    <AppleGlassCard className="apple-map">
             <div style={{ position: 'absolute', top: '24px', left: '24px', zIndex: 10, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', padding: '10px 16px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.15)' }}>
               <p style={{ margin: 0, fontSize: '11px', fontFamily: 'var(--font-mono)', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Location</p>
               <p style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#fff', fontFamily: 'var(--font-serif)' }}>SRMIST, Chennai</p>
@@ -219,7 +219,7 @@ export default function About() {
           </AppleGlassCard>
 
           {/* 4. Availability Status */}
-          <AppleGlassCard className="bento-status superb-status">
+          <AppleGlassCard className="apple-status superb-status">
             <p className="apple-label">Availability</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
               <div className="pulse-dot" />
@@ -236,7 +236,7 @@ export default function About() {
           </AppleGlassCard>
 
           {/* 5. Stats Row */}
-          <AppleGlassCard className="bento-stats" style={{ padding: '24px' }}>
+          <AppleGlassCard className="apple-stats" style={{ padding: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: '100%' }}>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)' }}>9.27</div>
@@ -256,7 +256,7 @@ export default function About() {
           </AppleGlassCard>
 
           {/* 6. Skills */}
-          <AppleGlassCard className="bento-skills">
+          <AppleGlassCard className="apple-skills">
             <p className="apple-label">Technical Arsenal</p>
             <div style={{ marginBottom: '20px' }}>
               <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px', fontWeight: 600 }}>AI & GenAI</div>
@@ -269,7 +269,7 @@ export default function About() {
           </AppleGlassCard>
 
           {/* 7. Fun / Roles */}
-          <AppleGlassCard className="bento-fun" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px' }}>
+          <AppleGlassCard className="apple-clubs" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px' }}>
             <div>
               <p className="apple-label">Extracurriculars</p>
               <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)' }}>Clubs & Roles</h3>
@@ -310,6 +310,8 @@ export default function About() {
     </section>
   );
 }
+
+
 
 
 
