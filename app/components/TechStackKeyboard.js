@@ -4,6 +4,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { RoundedBox, Text, Environment, ContactShadows, Float, PresentationControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion } from 'framer-motion';
+import confetti from 'canvas-confetti';
 
 const MY_STACK = [
   { id: 'react', label: 'React', color: '#61dafb' },
@@ -22,6 +23,8 @@ const MY_STACK = [
   { id: 'prompt', label: 'Prompt Eng.', color: '#a855f7' },
   { id: 'git', label: 'Git / GitHub', color: '#f05032' },
 ];
+
+const BOMB_EMOJIS = ['🚀', '💥', '🔥', '✨', '💻', '💡', '🌟', '🤯'];
 
 function Keycap({ position, label, accent, onClick }) {
   const mesh = useRef();
@@ -67,12 +70,12 @@ function Keycap({ position, label, accent, onClick }) {
         <Text
           position={[0, 0.31, 0]}
           rotation={[-Math.PI / 2, 0, 0]}
-          fontSize={0.25}
+          fontSize={0.24}
           color={hovered ? "#000000" : "#ffffff"}
           anchorX="center"
           anchorY="middle"
           fontWeight="bold"
-                  >
+        >
           {label}
         </Text>
       </RoundedBox>
@@ -81,24 +84,85 @@ function Keycap({ position, label, accent, onClick }) {
 }
 
 export default function TechStackKeyboard() {
-  const [activeTech, setActiveTech] = useState("Press any key...");
+  const [activeTech, setActiveTech] = useState("Hover or click a key");
+  const [emojiMenuPos, setEmojiMenuPos] = useState(null);
 
-  // Grid layout config
   const cols = 5;
   const spacing = 2.1;
 
   const playClick = () => {
     try {
-      const audio = new Audio('/assets/keycap-sounds/click-1.mp3'); // or whichever audio
+      const audio = new Audio('/assets/keycap-sounds/click-1.mp3');
       audio.volume = 0.5;
       audio.play().catch(()=>{});
     } catch(e){}
   };
 
+  const handleRightClick = (e) => {
+    e.preventDefault();
+    setEmojiMenuPos({ x: e.clientX, y: e.clientY });
+  };
+
+  const bombEmoji = (e, emoji) => {
+    e.stopPropagation();
+    const shape = confetti.shapeFromText({ text: emoji, scalar: 3 });
+    confetti({
+      particleCount: 150,
+      spread: 120,
+      startVelocity: 50,
+      origin: { x: emojiMenuPos.x / window.innerWidth, y: emojiMenuPos.y / window.innerHeight },
+      shapes: [shape],
+      scalar: 3,
+      disableForReducedMotion: true,
+      zIndex: 10000,
+    });
+    setEmojiMenuPos(null);
+  };
+
   return (
-    <section id="stack" className="section" style={{ position: 'relative', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+    <section 
+      id="stack" 
+      className="section" 
+      onClick={() => setEmojiMenuPos(null)}
+      onContextMenu={handleRightClick}
+      style={{ position: 'relative', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}
+    >
       
-      <div style={{ textAlign: 'center', marginBottom: '40px', zIndex: 10 }}>
+      {emojiMenuPos && (
+        <div 
+          onClick={e => e.stopPropagation()}
+          style={{
+            position: 'fixed',
+            left: Math.min(emojiMenuPos.x, typeof window !== 'undefined' ? window.innerWidth - 200 : 0),
+            top: Math.min(emojiMenuPos.y, typeof window !== 'undefined' ? window.innerHeight - 150 : 0),
+            background: 'var(--bg-glass)',
+            border: '1px solid var(--border)',
+            padding: '16px',
+            borderRadius: '16px',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+            zIndex: 10000,
+            backdropFilter: 'blur(24px)',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '8px'
+          }}
+        >
+          <div style={{ gridColumn: 'span 4', textAlign: 'center', color: '#fff', fontSize: '12px', marginBottom: '8px', fontFamily: 'var(--font-mono)' }}>Select an emoji to bomb!</div>
+          {BOMB_EMOJIS.map(emoji => (
+            <button
+              key={emoji}
+              onClick={(e) => bombEmoji(e, emoji)}
+              style={{ background: 'rgba(255,255,255,0.05)', border: 'none', borderRadius: '8px', fontSize: '24px', padding: '8px', cursor: 'pointer', transition: 'background 0.2s' }}
+              onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+              onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+            >
+              {emoji}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div style={{ textAlign: 'center', marginBottom: '10px', zIndex: 10, pointerEvents: 'none' }}>
         <motion.p 
           initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           className="section-eyebrow" style={{ background: 'var(--bg-glass)', border: '1px solid var(--border)', padding: '6px 20px', borderRadius: '100px', display: 'inline-block', marginBottom: '24px' }}>
@@ -111,13 +175,13 @@ export default function TechStackKeyboard() {
         </motion.h2>
         <motion.p 
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.2 }}
-          style={{ marginTop: '20px', fontSize: '1.2rem', color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>
-          {activeTech}
+          style={{ marginTop: '16px', fontSize: '1rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          (Right-click anywhere to emoji bomb)
         </motion.p>
       </div>
 
-      <div style={{ width: '100%', height: '600px', cursor: 'grab' }} onMouseDown={e => e.currentTarget.style.cursor = 'grabbing'} onMouseUp={e => e.currentTarget.style.cursor = 'grab'}>
-        <Canvas camera={{ position: [0, 8, 8], fov: 45 }}>
+      <div style={{ width: '100%', height: '70vh', cursor: 'grab' }} onMouseDown={e => e.currentTarget.style.cursor = 'grabbing'} onMouseUp={e => e.currentTarget.style.cursor = 'grab'}>
+        <Canvas camera={{ position: [0, 8, 5], fov: 50 }}>
           <ambientLight intensity={1.5} />
           <directionalLight position={[10, 10, 5]} intensity={2} castShadow />
           <spotLight position={[-10, 10, 10]} intensity={1.5} color="#c084fc" />
@@ -125,21 +189,52 @@ export default function TechStackKeyboard() {
           
           <PresentationControls 
             global 
-            rotation={[0, 0, 0]} 
+            rotation={[0.3, 0.4, -0.1]} 
             polar={[-Math.PI / 4, Math.PI / 4]} 
             azimuth={[-Math.PI / 4, Math.PI / 4]} 
             config={{ mass: 2, tension: 500 }}
             snap={{ mass: 4, tension: 1500 }}
           >
-            <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
-              <group position={[-(cols * spacing) / 2 + spacing / 2, 0, -spacing]}>
+            <Float speed={2} rotationIntensity={0.1} floatIntensity={0.3}>
+              <group>
+                {/* Keyboard Base / Case */}
+                <RoundedBox
+                  args={[11.6, 0.5, 7.4]}
+                  position={[0, -0.35, 0]}
+                  radius={0.2}
+                  smoothness={4}
+                  castShadow
+                  receiveShadow
+                >
+                  <meshPhysicalMaterial 
+                    color="#09090c" 
+                    roughness={0.8}
+                    metalness={0.2}
+                    clearcoat={0.1}
+                  />
+                </RoundedBox>
+                
+                {/* Accent Trim */}
+                <RoundedBox
+                  args={[11.8, 0.1, 7.6]}
+                  position={[0, -0.55, 0]}
+                  radius={0.2}
+                  smoothness={4}
+                >
+                  <meshPhysicalMaterial color="#38bdf8" roughness={0.5} metalness={0.8} />
+                </RoundedBox>
+
+                {/* Keys */}
                 {MY_STACK.map((tech, i) => {
                   const row = Math.floor(i / cols);
                   const col = i % cols;
+                  // Centered positions
+                  const x = (col * spacing) - ((cols - 1) * spacing / 2);
+                  const z = (row * spacing) - (2 * spacing / 2); // 3 rows
                   return (
                     <Keycap 
                       key={tech.id} 
-                      position={[col * spacing, 0, row * spacing]} 
+                      position={[x, 0.1, z]} 
                       label={tech.label} 
                       accent={tech.color}
                       onClick={(label) => {
@@ -153,11 +248,15 @@ export default function TechStackKeyboard() {
             </Float>
           </PresentationControls>
           
-          <ContactShadows position={[0, -2, 0]} opacity={0.6} scale={20} blur={2} far={4} color="#000000" />
+          <ContactShadows position={[0, -2.5, 0]} opacity={0.5} scale={25} blur={2.5} far={4} color="#000000" />
         </Canvas>
+      </div>
+      
+      <div style={{ position: 'absolute', bottom: '10%', pointerEvents: 'none' }}>
+        <p style={{ fontSize: '1.2rem', color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontWeight: 'bold' }}>
+          {activeTech}
+        </p>
       </div>
     </section>
   );
 }
-
-
