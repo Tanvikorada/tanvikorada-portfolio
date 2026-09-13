@@ -1,10 +1,10 @@
 import Nav from './components/Nav';
 import Hero from './components/Hero';
 
-import AnimatedBackground from './components/AnimatedBackground';
+import TechStackKeyboard from './components/TechStackKeyboard';
 
 import HeroBg from './components/HeroBg';
-import TechStack from './components/TechStack';
+
 import Projects from './components/Projects';
 import MoreProjects from './components/MoreProjects';
 import ScrollExpand from './components/ui/ScrollExpand';
@@ -27,15 +27,13 @@ export default function Home() {
       <Preloader />
       <Nav />
       <HeroBg />
-      <AnimatedBackground />
+      
 
       <main className="canvas-overlay-mode" style={{ position: 'relative', zIndex: 10 }}>
         <PaperPlane />
         <Hero />
 
-        <section style={{ position: 'relative', zIndex: 30 }}>
-          <TechStack />
-        </section>
+        <TechStackKeyboard />
 
         <div style={{ position: "relative", pointerEvents: "auto", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", background: "color-mix(in srgb, var(--bg-base) 60%, transparent)", }}>
 
@@ -87,6 +85,7 @@ export default function Home() {
     </>
   );
 }
+
 
 
 
