@@ -2,10 +2,28 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const BOT_SVG = (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 8V4H8"/>
+    <rect width="16" height="12" x="4" y="8" rx="2"/>
+    <path d="M2 14h2"/>
+    <path d="M20 14h2"/>
+    <path d="M15 13v2"/>
+    <path d="M9 13v2"/>
+  </svg>
+);
+
+const QUICK_QUESTIONS = [
+  "What is your tech stack?",
+  "Tell me about AppCompiler",
+  "Are you open to work?",
+  "What's your CGPA?"
+];
+
 export default function RagBot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: "Hi! I'm Tanvi's AI Assistant. Ask me anything about her projects, skills, or experience!" }
+    { role: 'assistant', content: "Hey human 👋 I’m Tanvi’s AI sidekick. What do you want to know about her?" }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -17,13 +35,14 @@ export default function RagBot() {
     }
   }, [messages]);
 
-  const sendMessage = async (e) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+  const sendMessage = async (textToSubmit) => {
+    if (textToSubmit && textToSubmit.preventDefault) textToSubmit.preventDefault();
+    const text = typeof textToSubmit === 'string' ? textToSubmit : input;
+    if (!text.trim() || isLoading) return;
 
-    const userMessage = { role: 'user', content: input };
+    const userMessage = { role: 'user', content: text };
     setMessages((prev) => [...prev, userMessage]);
-    setInput('');
+    if (text === input) setInput('');
     setIsLoading(true);
 
     try {
@@ -33,9 +52,7 @@ export default function RagBot() {
         body: JSON.stringify({ messages: [...messages, userMessage] })
       });
 
-      if (!response.ok) {
-        throw new Error('API Error');
-      }
+      if (!response.ok) throw new Error('API Error');
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
@@ -63,15 +80,13 @@ export default function RagBot() {
                     return newMessages;
                   });
                 }
-              } catch (e) {
-                // Ignore parse errors for incomplete chunks
-              }
+              } catch (e) {}
             }
           }
         }
       }
     } catch (error) {
-      setMessages((prev) => [...prev, { role: 'assistant', content: "I'm currently running in offline mode because my API keys aren't configured. But I can tell you Tanvi is a brilliant full-stack AI engineer open to new opportunities! Drop her an email to learn more." }]);
+      setMessages((prev) => [...prev, { role: 'assistant', content: "Oops, my API connection is snoozing 😴. Drop Tanvi an email at tanvikorada@gmail.com!" }]);
     } finally {
       setIsLoading(false);
     }
@@ -79,61 +94,71 @@ export default function RagBot() {
 
   return (
     <>
-      <style>{`
-        .rag-bot-btn {
+      <style>{
+        .ai-chat-btn {
           position: fixed;
           bottom: 32px;
           right: 32px;
-          width: 64px;
-          height: 64px;
+          width: 56px;
+          height: 56px;
           border-radius: 50%;
-          background: linear-gradient(135deg, #111, #333);
-          border: 1px solid rgba(255,255,255,0.1);
-          color: white;
+          background: var(--text-heading);
+          color: var(--bg-base);
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.2), inset 0 2px 4px rgba(255,255,255,0.1);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.15);
           cursor: pointer;
           z-index: 9999;
-          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s;
         }
-        .rag-bot-btn:hover {
-          transform: scale(1.05) translateY(-4px);
+        .ai-chat-btn:hover {
+          transform: scale(1.08) translateY(-4px);
         }
-        .rag-bot-window {
+        .ai-window {
           position: fixed;
-          bottom: 110px;
+          bottom: 100px;
           right: 32px;
           width: 380px;
           max-width: calc(100vw - 32px);
-          height: 500px;
-          max-height: calc(100vh - 140px);
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(0,0,0,0.1);
+          height: 550px;
+          max-height: calc(100vh - 120px);
+          background: rgba(255, 255, 255, 0.98);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+          border: 1px solid rgba(0,0,0,0.08);
           border-radius: 24px;
-          box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+          box-shadow: 0 20px 60px rgba(0,0,0,0.12);
           display: flex;
           flex-direction: column;
           z-index: 9998;
           overflow: hidden;
         }
-        :global(.dark) .rag-bot-window {
-          background: rgba(20, 20, 20, 0.95);
-          border: 1px solid rgba(255,255,255,0.1);
+        :global(.dark) .ai-window {
+          background: rgba(20, 20, 20, 0.98);
+          border: 1px solid rgba(255,255,255,0.08);
         }
-        .rag-bot-header {
+        .ai-header {
           padding: 20px;
           border-bottom: 1px solid rgba(0,0,0,0.05);
           display: flex;
           align-items: center;
           gap: 12px;
         }
-        :global(.dark) .rag-bot-header {
+        :global(.dark) .ai-header {
           border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .rag-bot-messages {
+        .ai-avatar {
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          background: var(--text-heading);
+          color: var(--bg-base);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .ai-messages {
           flex: 1;
           overflow-y: auto;
           padding: 20px;
@@ -141,150 +166,173 @@ export default function RagBot() {
           flex-direction: column;
           gap: 16px;
         }
-        .rag-msg {
+        .ai-msg {
           max-width: 85%;
+          display: flex;
+          gap: 12px;
+        }
+        .ai-msg.user {
+          align-self: flex-end;
+          flex-direction: row-reverse;
+        }
+        .ai-bubble {
           padding: 12px 16px;
           border-radius: 16px;
           font-size: 14px;
           line-height: 1.5;
         }
-        .rag-msg.user {
-          align-self: flex-end;
-          background: #111;
-          color: #fff;
-          border-bottom-right-radius: 4px;
-        }
-        .rag-msg.assistant {
-          align-self: flex-start;
-          background: rgba(0,0,0,0.05);
+        .ai-msg.assistant .ai-bubble {
+          background: color-mix(in srgb, var(--text-heading) 5%, transparent);
+          border-top-left-radius: 4px;
           color: var(--text-heading);
-          border-bottom-left-radius: 4px;
         }
-        :global(.dark) .rag-msg.user {
-          background: #fff;
-          color: #000;
+        .ai-msg.user .ai-bubble {
+          background: var(--text-heading);
+          color: var(--bg-base);
+          border-top-right-radius: 4px;
         }
-        :global(.dark) .rag-msg.assistant {
-          background: rgba(255,255,255,0.1);
+        .quick-questions {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin-top: 8px;
         }
-        .rag-bot-input {
+        .quick-q-btn {
+          background: transparent;
+          border: 1px solid var(--border);
+          padding: 8px 12px;
+          border-radius: 100px;
+          font-size: 13px;
+          color: var(--text-heading);
+          cursor: pointer;
+          text-align: left;
+          transition: all 0.2s;
+        }
+        .quick-q-btn:hover {
+          background: color-mix(in srgb, var(--text-heading) 5%, transparent);
+          border-color: var(--text-muted);
+        }
+        .ai-input-area {
           padding: 16px;
           border-top: 1px solid rgba(0,0,0,0.05);
-          display: flex;
-          gap: 8px;
         }
-        :global(.dark) .rag-bot-input {
+        :global(.dark) .ai-input-area {
           border-top: 1px solid rgba(255,255,255,0.05);
         }
-        .rag-bot-input input {
-          flex: 1;
-          padding: 12px 16px;
+        .ai-input-wrapper {
+          display: flex;
+          background: color-mix(in srgb, var(--text-heading) 5%, transparent);
           border-radius: 100px;
-          border: 1px solid rgba(0,0,0,0.1);
-          background: rgba(0,0,0,0.02);
+          padding: 4px;
+        }
+        .ai-input {
+          flex: 1;
+          background: transparent;
+          border: none;
+          padding: 12px 16px;
+          font-size: 14px;
           color: var(--text-heading);
-          font-family: var(--font-sans);
           outline: none;
         }
-        :global(.dark) .rag-bot-input input {
-          border: 1px solid rgba(255,255,255,0.1);
-          background: rgba(255,255,255,0.05);
-        }
-        .rag-bot-input button {
-          width: 44px;
-          height: 44px;
+        .ai-send {
+          width: 36px;
+          height: 36px;
           border-radius: 50%;
+          background: var(--text-heading);
+          color: var(--bg-base);
           border: none;
-          background: #111;
-          color: white;
-          cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: background 0.2s;
+          cursor: pointer;
+          margin: 2px;
+          transition: opacity 0.2s;
         }
-        :global(.dark) .rag-bot-input button {
-          background: #fff;
-          color: #000;
-        }
-        .rag-bot-input button:disabled {
+        .ai-send:disabled {
           opacity: 0.5;
           cursor: not-allowed;
         }
-      `}</style>
+      }</style>
 
-      {/* Floating Action Button */}
-      <motion.button
-        className="rag-bot-btn"
-        onClick={() => setIsOpen(!isOpen)}
-        whileTap={{ scale: 0.9 }}
-      >
+      <div className="ai-chat-btn" onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
         ) : (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="11" width="18" height="10" rx="2" />
-              <circle cx="12" cy="5" r="2" />
-              <path d="M12 7v4" />
-              <line x1="8" y1="16" x2="8.01" y2="16" strokeWidth="3" />
-              <line x1="16" y1="16" x2="16.01" y2="16" strokeWidth="3" />
-              <path d="M21 16h2" />
-              <path d="M1 16h2" />
-          </svg>
+          BOT_SVG
         )}
-      </motion.button>
+      </div>
 
-      {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            className="rag-bot-window"
+          <motion.div 
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="ai-window"
           >
-            <div className="rag-bot-header">
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 10px #22c55e' }} />
+            <div className="ai-header">
+              <div className="ai-avatar">
+                {BOT_SVG}
+              </div>
               <div>
-                <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600, color: 'var(--text-heading)' }}>Tanvi's AI</h3>
-                <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>Intelligent RAG Assistant</p>
+                <div style={{ fontWeight: 600, fontSize: '15px' }}>Tanvi's AI</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Online & Ready</div>
               </div>
             </div>
 
-            <div className="rag-bot-messages">
-              {messages.map((msg, i) => (
-                <div key={i} className={`rag-msg ${msg.role}`}>
-                  {msg.content}
+            <div className="ai-messages">
+              {messages.map((m, i) => (
+                <div key={i} className={i-msg }>
+                  {m.role === 'assistant' && (
+                    <div className="ai-avatar" style={{ width: '28px', height: '28px', flexShrink: 0, marginTop: '2px' }}>
+                      {BOT_SVG}
+                    </div>
+                  )}
+                  <div className="ai-bubble">
+                    {m.content}
+                    {m.role === 'assistant' && i === 0 && (
+                      <div className="quick-questions">
+                        <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px', marginBottom: '4px' }}>Quick questions:</div>
+                        {QUICK_QUESTIONS.map((q, idx) => (
+                          <button key={idx} className="quick-q-btn" onClick={() => sendMessage(q)}>
+                            {q}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
               {isLoading && (
-                <div className="rag-msg assistant">
-                  <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-                    Thinking...
-                  </motion.div>
+                <div className="ai-msg assistant">
+                  <div className="ai-avatar" style={{ width: '28px', height: '28px', flexShrink: 0 }}>
+                    {BOT_SVG}
+                  </div>
+                  <div className="ai-bubble" style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                    <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0 }} style={{ width: '6px', height: '6px', background: 'var(--text-muted)', borderRadius: '50%' }} />
+                    <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} style={{ width: '6px', height: '6px', background: 'var(--text-muted)', borderRadius: '50%' }} />
+                    <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }} style={{ width: '6px', height: '6px', background: 'var(--text-muted)', borderRadius: '50%' }} />
+                  </div>
                 </div>
               )}
               <div ref={endOfMessagesRef} />
             </div>
 
-            <form className="rag-bot-input" onSubmit={sendMessage}>
-              <input
-                type="text"
-                placeholder="Ask about her skills, projects..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                disabled={isLoading}
-              />
-              <button type="submit" disabled={!input.trim() || isLoading}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="22" y1="2" x2="11" y2="13"></line>
-                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
-              </button>
+            <form onSubmit={(e) => sendMessage(e)} className="ai-input-area">
+              <div className="ai-input-wrapper">
+                <input 
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ask me anything..."
+                  className="ai-input"
+                  disabled={isLoading}
+                />
+                <button type="submit" disabled={!input.trim() || isLoading} className="ai-send">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+              </div>
             </form>
           </motion.div>
         )}

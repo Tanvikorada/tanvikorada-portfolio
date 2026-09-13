@@ -1,7 +1,7 @@
 import Nav from './components/Nav';
 import Hero from './components/Hero';
 
-import TechStackKeyboard from './components/TechStackKeyboard';
+import TechStack from './components/TechStack';
 
 import HeroBg from './components/HeroBg';
 
@@ -33,7 +33,7 @@ export default function Home() {
         <PaperPlane />
         <Hero />
 
-        <TechStackKeyboard />
+        <TechStack />
 
         <div style={{ position: "relative", pointerEvents: "auto", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", background: "color-mix(in srgb, var(--bg-base) 80%, transparent)", }}>
 
@@ -85,6 +85,7 @@ export default function Home() {
     </>
   );
 }
+
 
 
 
