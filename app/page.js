@@ -37,7 +37,7 @@ export default function Home() {
           <TechStack />
         </section>
 
-        <div style={{ position: "relative", pointerEvents: "auto", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", background: "color-mix(in srgb, var(--bg-base) 60%, transparent)", borderTop: "1px solid var(--border)" }}>
+        <div style={{ position: "relative", pointerEvents: "auto", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", background: "color-mix(in srgb, var(--bg-base) 60%, transparent)", }}>
 
           <section style={{ position: 'relative', zIndex: 30 }}>
             <ScrollExpand
@@ -56,7 +56,7 @@ export default function Home() {
           </section>
           
           <section style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', zIndex: 10, borderTop: '1px solid var(--border)' }} />
+            
             <div style={{ position: 'relative', zIndex: 30 }}>
               <Projects />
             </div>
@@ -67,7 +67,7 @@ export default function Home() {
           </section>
 
           <section style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', zIndex: 10, borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }} />
+            
             <div style={{ position: 'relative', zIndex: 30 }}>
               <Journey />
               <Certs />
@@ -87,6 +87,7 @@ export default function Home() {
     </>
   );
 }
+
 
 
 
