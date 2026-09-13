@@ -1,431 +1,273 @@
 'use client';
 import { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 
-const EXPERIENCES = [
+const TIMELINE = [
   {
     id: 'atribs',
+    side: 'right',
     type: 'experience',
     title: 'Software Development Intern',
     org: 'ATRIBS Software Systems Pvt Ltd',
-    timeline: 'Sep 2026 - Oct 2026',
-    status: 'Upcoming / Confirmed',
+    period: 'Sep – Oct 2026',
     isCurrent: true,
-    desc: 'Progressive Web App (PWA) engineering — architecting installable, offline-first mobile web applications with native-like UX and background sync in a production environment.',
-    metrics: 'Production PWA Architecture',
-    tags: ['Next.js', 'PWA', 'Service Workers', 'Offline DB'],
+    status: 'Active',
+    desc: 'Engineering a full Progressive Web App from the ground up — installable, offline-first, background sync and native-like UX in a live production environment.',
+    achievement: 'Production PWA Shipped',
+    tags: ['Next.js', 'PWA', 'Service Workers', 'IndexedDB'],
     color: '#38bdf8',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-    )
   },
-  {
-    id: 'future-interns',
-    type: 'experience',
-    title: 'Prompt Engineering & AI Intern',
-    org: 'Future Interns',
-    timeline: 'Dec 2025 - Jan 2026',
-    desc: 'Engineered multi-step autonomous AI workflows and LLM agent behaviors across 5+ enterprise use cases. Implemented systematic task decomposition and evaluation loops to drastically cut hallucinations.',
-    metrics: '5+ Enterprise AI Workflows',
-    tags: ['LLM Orchestration', 'Prompt Engineering', 'RAG', 'Agentic AI'],
-    color: '#a855f7',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a8 8 0 0 0-8 8c0 3.36 2.06 6.24 5 7.4V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.6c2.94-1.16 5-4.04 5-7.4a8 8 0 0 0-8-8z"></path><line x1="12" y1="12" x2="12" y2="12.01"></line></svg>
-    )
-  },
-  {
-    id: 'prodigy',
-    type: 'experience',
-    title: 'Full-Stack Web Dev Intern',
-    org: 'Prodigy InfoTech',
-    timeline: 'Jun 2025 - Jul 2025',
-    desc: 'Constructed responsive, dynamic web applications with modular client components and RESTful microservices. Integrated robust data pipelines and optimized rendering bottlenecks.',
-    metrics: '3+ Production Features',
-    tags: ['React', 'REST APIs', 'Node.js', 'State Mgmt'],
-    color: '#06b6d4',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-    )
-  }
-];
-
-const EDUCATION = [
   {
     id: 'srmist',
+    side: 'left',
     type: 'education',
     title: 'B.Tech — CSE (Cloud Computing)',
     org: 'SRMIST Chennai',
-    timeline: '2024 - 2028',
-    status: 'In Progress',
+    period: '2024 – 2028',
     isCurrent: true,
-    desc: 'Focusing on distributed cloud architectures, advanced deep learning, full-stack microservices, and AI system design. Active contributor to collegiate technical initiatives.',
-    metrics: 'CGPA: 9.27 / 10',
-    tags: ['Cloud Computing', 'Data Structures', 'AI / ML', 'Distributed Systems'],
+    status: 'In Progress',
+    desc: 'Pursuing undergraduate studies with focus on distributed cloud systems, deep learning architectures and full-stack AI product engineering.',
+    achievement: 'CGPA: 9.27 / 10',
+    tags: ['Cloud Architecture', 'AI / ML', 'DSA', 'Microservices'],
     color: '#10b981',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
-    )
+  },
+  {
+    id: 'future-interns',
+    side: 'right',
+    type: 'experience',
+    title: 'Prompt Engineering & AI Intern',
+    org: 'Future Interns',
+    period: 'Dec 2025 – Jan 2026',
+    desc: 'Designed multi-step agentic workflows and LLM orchestration pipelines across 5+ enterprise use cases. Reduced hallucinations via systematic prompt decomposition.',
+    achievement: '5+ Enterprise AI Workflows',
+    tags: ['Agentic AI', 'LLM Orchestration', 'RAG', 'Prompt Design'],
+    color: '#a855f7',
+  },
+  {
+    id: 'prodigy',
+    side: 'right',
+    type: 'experience',
+    title: 'Full-Stack Web Dev Intern',
+    org: 'Prodigy InfoTech',
+    period: 'Jun – Jul 2025',
+    desc: 'Built responsive full-stack modules with REST API integrations, optimised rendering bottlenecks and shipped 3+ production features in a live customer-facing application.',
+    achievement: '3+ Production Features',
+    tags: ['React', 'Node.js', 'REST APIs', 'CSS'],
+    color: '#06b6d4',
   },
   {
     id: 'tirumala',
+    side: 'left',
     type: 'education',
     title: 'Class XII (MPC) — BIEAP',
     org: 'Tirumala Junior College',
-    timeline: '2022 - 2024',
-    desc: 'Higher secondary education with rigorous focus in Mathematics, Physics, and Chemistry. Graduated with top percentile honors across the state board.',
-    metrics: 'Score: 95.2%',
-    tags: ['Mathematics', 'Physics', 'Analytical Problem Solving'],
+    period: '2022 – 2024',
+    desc: 'Higher Secondary Education with a rigorous focus on Mathematics, Physics & Chemistry. Graduated with top-percentile honours across the state board.',
+    achievement: 'Score: 95.2%',
+    tags: ['Mathematics', 'Physics', 'STEM'],
     color: '#f59e0b',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-    )
   },
   {
     id: 'ravindra',
+    side: 'left',
     type: 'education',
     title: 'Class X (SSC) — BSEAP',
     org: 'Ravindra Bharathi School',
-    timeline: '2021 - 2022',
-    desc: 'Secondary school foundation with broad distinctions in Computer Science fundamentals, science, and scholastic leadership.',
-    metrics: 'Score: 88.0%',
+    period: '2021 – 2022',
+    desc: 'Secondary schooling with broad distinctions in Computer Science fundamentals, sciences and scholastic leadership.',
+    achievement: 'Score: 88.0%',
     tags: ['STEM Foundations', 'Merit Scholar'],
     color: '#ec4899',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
-    )
-  }
+  },
 ];
 
-export default function Journey() {
-  const [filter, setFilter] = useState('all'); // 'all' | 'experience' | 'education'
+function BorderBeam({ color }) {
+  return (
+    <div aria-hidden style={{ position: 'absolute', inset: 0, borderRadius: 'inherit', overflow: 'hidden', pointerEvents: 'none', zIndex: 1 }}>
+      <div style={{ position: 'absolute', inset: -1, borderRadius: 'inherit', background: `conic-gradient(from 0deg, transparent 0%, transparent 60%, ${color} 80%, transparent 100%)`, animation: 'beam-spin 3s linear infinite', opacity: 0.9 }} />
+      <div style={{ position: 'absolute', inset: 1, borderRadius: '22px', background: '#080910' }} />
+    </div>
+  );
+}
 
-  const items = filter === 'all' 
-    ? [...EXPERIENCES, ...EDUCATION]
-    : filter === 'experience' ? EXPERIENCES : EDUCATION;
+function BlurCard({ children, delay }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-60px' });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30, filter: 'blur(12px)' }}
+      animate={isInView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+      transition={{ duration: 0.65, delay, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function Card({ item }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      style={{
+        position: 'relative',
+        borderRadius: '24px',
+        border: `1px solid ${hovered ? item.color + '60' : 'rgba(255,255,255,0.08)'}`,
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.015) 100%)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        padding: '28px',
+        transition: 'border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease',
+        transform: hovered ? 'translateY(-6px)' : 'translateY(0)',
+        boxShadow: hovered ? `0 28px 56px rgba(0,0,0,0.35), 0 0 32px ${item.color}18` : '0 8px 24px rgba(0,0,0,0.12)',
+        overflow: 'hidden',
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {item.isCurrent && <BorderBeam color={item.color} />}
+      <div style={{ position: 'relative', zIndex: 2 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', letterSpacing: '0.08em', textTransform: 'uppercase', color: item.color, background: item.color + '18', border: `1px solid ${item.color}30`, padding: '3px 10px', borderRadius: '100px', fontWeight: 700 }}>
+              {item.type}
+            </span>
+            {item.isCurrent && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                <span className="live-dot" />
+                <span style={{ fontSize: '10px', fontFamily: 'var(--font-mono)', color: '#10b981', letterSpacing: '0.05em' }}>{item.status}</span>
+              </span>
+            )}
+          </div>
+          <span style={{ fontSize: '12px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>{item.period}</span>
+        </div>
+
+        <h3 style={{ fontSize: 'clamp(16px, 1.6vw, 20px)', fontWeight: 800, color: 'var(--text-heading)', lineHeight: 1.25, marginBottom: '4px', fontFamily: 'var(--font-serif)', letterSpacing: '-0.01em' }}>
+          {item.title}
+        </h3>
+        <p style={{ fontSize: '13px', fontWeight: 700, color: item.color, marginBottom: '14px', letterSpacing: '0.02em' }}>{item.org}</p>
+        <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', lineHeight: 1.7, marginBottom: '20px' }}>{item.desc}</p>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', borderRadius: '12px', background: item.color + '0f', border: `1px solid ${item.color}22`, marginBottom: '16px' }}>
+          <span style={{ fontSize: '10px', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Key Highlight</span>
+          <span style={{ fontSize: '13px', fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--text-heading)' }}>{item.achievement}</span>
+        </div>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+          {item.tags.map((tag, i) => (
+            <span key={i} style={{ position: 'relative', overflow: 'hidden', display: 'inline-flex', alignItems: 'center', padding: '3px 10px', borderRadius: '6px', fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Journey() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start 0.85', 'end 0.2'] });
+  const beamHeight = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
+
+  const edu = TIMELINE.filter(i => i.side === 'left');
+  const exp = TIMELINE.filter(i => i.side === 'right');
 
   return (
-    <section id="journey" style={{ position: 'relative', padding: '14vh 5vw', overflow: 'hidden' }}>
-      
-      {/* Magic UI / React Bits Styles */}
+    <section id="journey" ref={containerRef} style={{ position: 'relative', padding: '14vh 4vw', overflow: 'hidden' }}>
       <style>{`
-        /* Animated Border Beam */
-        @keyframes border-beam {
-          100% {
-            offset-distance: 100%;
-          }
+        @keyframes beam-spin { to { transform: rotate(360deg); } }
+        .live-dot {
+          display: inline-block; width: 7px; height: 7px;
+          border-radius: 50%; background: #10b981;
+          position: relative; flex-shrink: 0;
         }
-        .border-beam-card {
-          position: relative;
-        }
-        .border-beam-card::after {
-          content: "";
-          position: absolute;
-          inset: -1px;
-          border-radius: inherit;
-          padding: 1px;
-          background: linear-gradient(90deg, transparent 0%, rgba(56,189,248,0.8) 50%, transparent 100%);
-          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-          -webkit-mask-composite: xor;
-          mask-composite: exclude;
-          pointer-events: none;
-          opacity: 0.8;
-          animation: border-beam-glow 4s ease-in-out infinite alternate;
-        }
-        @keyframes border-beam-glow {
-          0% { filter: drop-shadow(0 0 4px rgba(56,189,248,0.3)); }
-          100% { filter: drop-shadow(0 0 16px rgba(168,85,247,0.5)); }
-        }
-
-        /* Glass Bento Container */
-        .magic-bento-card {
-          background: linear-gradient(135deg, color-mix(in srgb, var(--bg-glass) 50%, rgba(255,255,255,0.06)), color-mix(in srgb, var(--bg-glass) 80%, rgba(0,0,0,0.03)));
-          border: 1px solid color-mix(in srgb, var(--border) 70%, rgba(255,255,255,0.12));
-          backdrop-filter: blur(28px) saturate(180%);
-          -webkit-backdrop-filter: blur(28px) saturate(180%);
-          border-radius: 28px;
-          padding: 32px;
-          position: relative;
-          overflow: hidden;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.04), inset 0 1px 1px rgba(255,255,255,0.15);
-          transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, border-color 0.35s ease;
-        }
-        .magic-bento-card:hover {
-          transform: translateY(-6px);
-          border-color: color-mix(in srgb, var(--card-color, #a855f7) 50%, transparent);
-          box-shadow: 0 20px 50px rgba(0,0,0,0.1), 0 0 30px color-mix(in srgb, var(--card-color, #a855f7) 12%, transparent);
-        }
-
-        /* Live Radar Beacon */
-        .live-beacon {
-          position: relative;
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background: #10b981;
-          display: inline-block;
-        }
-        .live-beacon::after {
-          content: "";
-          position: absolute;
-          inset: -4px;
-          border-radius: 50%;
+        .live-dot::after {
+          content: ''; position: absolute; inset: -3px; border-radius: 50%;
           border: 1.5px solid #10b981;
-          animation: beacon-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+          animation: liveping 2s cubic-bezier(0,0,0.2,1) infinite;
         }
-        @keyframes beacon-ping {
-          75%, 100% {
-            transform: scale(2.2);
-            opacity: 0;
-          }
-        }
+        @keyframes liveping { 75%, 100% { transform: scale(2.4); opacity: 0; } }
 
-        /* Connecting Timeline Line */
-        .timeline-beam-spine {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 2px;
-          background: linear-gradient(180deg, transparent, var(--border) 10%, var(--border) 90%, transparent);
-          z-index: 1;
-        }
+        .tl-grid { display: grid; grid-template-columns: 1fr 32px 1fr; gap: 0 40px; }
+        .tl-left  { display: flex; flex-direction: column; gap: 40px; padding-top: 72px; }
+        .tl-right { display: flex; flex-direction: column; gap: 40px; }
+        .tl-spine { position: relative; display: flex; justify-content: center; }
         @media (max-width: 860px) {
-          .timeline-beam-spine {
-            left: 28px;
-          }
+          .tl-grid { grid-template-columns: 28px 1fr; gap: 0 20px; }
+          .tl-left { display: none; }
+          .tl-right { padding-top: 0; }
         }
       `}</style>
 
-      {/* Atmospheric Ambient Glows */}
-      <div style={{ position: 'absolute', top: '15%', left: '15%', width: '45vw', height: '45vw', background: 'radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 60%)', filter: 'blur(90px)', zIndex: 0, pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: '15%', right: '15%', width: '45vw', height: '45vw', background: 'radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 60%)', filter: 'blur(90px)', zIndex: 0, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: '20%', left: '10%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(168,85,247,0.07) 0%, transparent 60%)', filter: 'blur(100px)', pointerEvents: 'none', zIndex: 0 }} />
+      <div style={{ position: 'absolute', bottom: '15%', right: '10%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(16,185,129,0.07) 0%, transparent 60%)', filter: 'blur(100px)', pointerEvents: 'none', zIndex: 0 }} />
 
-      <div style={{ maxWidth: '1280px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-        
-        {/* Section Header */}
-        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--bg-glass)', border: '1px solid var(--border)', padding: '6px 22px', borderRadius: '100px', marginBottom: '24px' }}
-          >
-            <span className="live-beacon" />
-            <span style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-              Trajectory & Pedigree
-            </span>
-          </motion.div>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
 
-          <motion.h2 
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            style={{ fontSize: 'clamp(2.8rem, 5.5vw, 4.5rem)', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', lineHeight: 1.1, letterSpacing: '-0.02em', margin: '0 0 20px 0' }}
-          >
-            Experience & <span style={{ color: 'var(--text-muted)' }}>Education.</span>
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            style={{ fontSize: '16px', color: 'var(--text-muted)', maxWidth: '560px', margin: '0 auto 36px', lineHeight: 1.6 }}
-          >
-            From engineering production-grade web applications to pioneering deep research and achieving academic distinctions.
-          </motion.p>
-
-          {/* Magic UI Interactive Segmented Control */}
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            style={{ display: 'inline-flex', background: 'color-mix(in srgb, var(--text-heading) 5%, transparent)', padding: '4px', borderRadius: '100px', border: '1px solid var(--border)', gap: '4px' }}
-          >
-            {[
-              { id: 'all', label: 'All Milestones' },
-              { id: 'experience', label: 'Work Experience' },
-              { id: 'education', label: 'Academic Journey' }
-            ].map((tab) => {
-              const isActive = filter === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setFilter(tab.id)}
-                  style={{
-                    position: 'relative',
-                    padding: '8px 22px',
-                    borderRadius: '100px',
-                    fontSize: '13px',
-                    fontWeight: isActive ? 600 : 500,
-                    color: isActive ? 'var(--bg-base)' : 'var(--text-muted)',
-                    background: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                    transition: 'color 0.2s ease',
-                    zIndex: 2
-                  }}
-                >
-                  {isActive && (
-                    <motion.div
-                      layoutId="magic-tab-indicator"
-                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        background: 'var(--text-heading)',
-                        borderRadius: '100px',
-                        zIndex: -1
-                      }}
-                    />
-                  )}
-                  {tab.label}
-                </button>
-              );
-            })}
-          </motion.div>
-        </div>
-
-        {/* Bento Grid with Magic UI Aesthetics */}
-        <motion.div 
-          layout
-          style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
-            gap: '24px',
-            alignItems: 'stretch'
-          }}
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          style={{ textAlign: 'center', marginBottom: '64px' }}
         >
-          <AnimatePresence>
-            {items.map((item, i) => (
-              <motion.div
-                key={item.id}
-                layout
-                initial={{ opacity: 0, y: 20, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.94 }}
-                transition={{ duration: 0.35, delay: i * 0.05 }}
-                className={`magic-bento-card ${item.isCurrent ? 'border-beam-card' : ''}`}
-                style={{ '--card-color': item.color, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
-              >
-                
-                {/* Card Top: Icon, Type Badge & Timeline */}
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div 
-                        style={{ 
-                          width: '46px', 
-                          height: '46px', 
-                          borderRadius: '14px', 
-                          background: `color-mix(in srgb, ${item.color} 12%, transparent)`,
-                          border: `1px solid color-mix(in srgb, ${item.color} 28%, transparent)`,
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'center',
-                          color: item.color,
-                          boxShadow: `0 8px 20px color-mix(in srgb, ${item.color} 15%, transparent)`
-                        }}
-                      >
-                        {item.icon}
-                      </div>
-
-                      <span 
-                        style={{ 
-                          fontSize: '11px', 
-                          fontFamily: 'var(--font-mono)', 
-                          letterSpacing: '0.08em', 
-                          textTransform: 'uppercase', 
-                          fontWeight: 700, 
-                          color: item.color, 
-                          background: `color-mix(in srgb, ${item.color} 10%, transparent)`, 
-                          padding: '4px 12px', 
-                          borderRadius: '100px',
-                          border: `1px solid color-mix(in srgb, ${item.color} 20%, transparent)`
-                        }}
-                      >
-                        {item.type === 'experience' ? 'Experience' : 'Education'}
-                      </span>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      {item.isCurrent && <span className="live-beacon" title="Active milestone" />}
-                      <span style={{ fontSize: '12px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
-                        {item.timeline}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Title & Organization */}
-                  <h3 style={{ fontSize: '21px', fontWeight: 800, color: 'var(--text-heading)', lineHeight: 1.25, marginBottom: '6px' }}>
-                    {item.title}
-                  </h3>
-                  
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: item.color, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span>{item.org}</span>
-                    {item.status && (
-                      <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--text-muted)', background: 'color-mix(in srgb, var(--text-heading) 5%, transparent)', padding: '2px 8px', borderRadius: '4px' }}>
-                        {item.status}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Description */}
-                  <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.65, marginBottom: '24px' }}>
-                    {item.desc}
-                  </p>
-                </div>
-
-                {/* Card Bottom: Metrics Highlight & Tags */}
-                <div>
-                  <div 
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'space-between',
-                      padding: '12px 16px', 
-                      borderRadius: '16px', 
-                      background: `color-mix(in srgb, ${item.color} 8%, transparent)`,
-                      border: `1px solid color-mix(in srgb, ${item.color} 18%, transparent)`,
-                      marginBottom: '18px'
-                    }}
-                  >
-                    <span style={{ fontSize: '11px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', letterSpacing: '0.05em', color: 'var(--text-muted)' }}>
-                      Key Distinction
-                    </span>
-                    <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-mono)' }}>
-                      {item.metrics}
-                    </span>
-                  </div>
-
-                  {/* Tags Pill Cloud */}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                    {item.tags.map((tag, tIdx) => (
-                      <span 
-                        key={tIdx}
-                        style={{
-                          fontSize: '11px',
-                          fontFamily: 'var(--font-mono)',
-                          color: 'var(--text-muted)',
-                          background: 'color-mix(in srgb, var(--text-heading) 4%, transparent)',
-                          border: '1px solid color-mix(in srgb, var(--border) 80%, transparent)',
-                          padding: '3px 10px',
-                          borderRadius: '6px'
-                        }}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-              </motion.div>
-            ))}
-          </AnimatePresence>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', padding: '6px 20px', borderRadius: '100px', marginBottom: '20px' }}>
+            <span className="live-dot" />
+            <span style={{ fontSize: '12px', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Trajectory & Pedigree</span>
+          </div>
+          <h2 style={{ fontSize: 'clamp(2.8rem, 5.5vw, 4.5rem)', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', lineHeight: 1.05, letterSpacing: '-0.03em', margin: '0 0 18px' }}>
+            Experience &amp; <span style={{ background: 'linear-gradient(135deg, #a855f7, #38bdf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Education</span>
+          </h2>
+          <p style={{ fontSize: '16px', color: 'var(--text-muted)', maxWidth: '520px', margin: '0 auto', lineHeight: 1.65 }}>
+            From crafting production-grade applications to pioneering deep research and academic distinctions.
+          </p>
         </motion.div>
 
+        {/* Column labels */}
+        <div className="tl-grid" style={{ marginBottom: '24px' }}>
+          <div style={{ textAlign: 'right' }}>
+            <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>Academic</span>
+          </div>
+          <div />
+          <div>
+            <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>Professional</span>
+          </div>
+        </div>
+
+        {/* Main grid */}
+        <div className="tl-grid">
+
+          {/* Left – Education */}
+          <div className="tl-left">
+            {edu.map((item, i) => (
+              <BlurCard key={item.id} delay={i * 0.1}>
+                <Card item={item} />
+              </BlurCard>
+            ))}
+          </div>
+
+          {/* Spine */}
+          <div className="tl-spine">
+            {/* Static track */}
+            <div style={{ position: 'absolute', top: 0, bottom: 0, width: '2px', background: 'rgba(255,255,255,0.07)', borderRadius: '2px' }} />
+            {/* Animated Beam (Magic UI style) */}
+            <motion.div style={{ position: 'absolute', top: 0, height: beamHeight, width: '2px', background: 'linear-gradient(180deg, #a855f7, #38bdf8)', borderRadius: '2px', boxShadow: '0 0 14px rgba(168,85,247,0.9), 0 0 32px rgba(56,189,248,0.5)' }} />
+            {/* Glowing tip */}
+            <motion.div style={{ position: 'absolute', top: beamHeight, translateY: '-50%', width: '12px', height: '12px', borderRadius: '50%', background: '#fff', boxShadow: '0 0 12px 4px rgba(168,85,247,0.9), 0 0 28px 8px rgba(56,189,248,0.6)', marginLeft: '-5px' }} />
+          </div>
+
+          {/* Right – Experience */}
+          <div className="tl-right">
+            {exp.map((item, i) => (
+              <BlurCard key={item.id} delay={i * 0.1 + 0.08}>
+                <Card item={item} />
+              </BlurCard>
+            ))}
+          </div>
+
+        </div>
       </div>
     </section>
   );
