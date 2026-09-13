@@ -97,9 +97,9 @@ function Cubes({ isNight }) {
         if (ringDist < 10.0) { 
           // Firm Gaussian: Shaper divisor (10.0 instead of 18.0) means the ripple is 
           // crisp and focused, completely eliminating the fat jelly wobble.
-          const wave = Math.cos(ringDist * 0.6) * Math.exp(-(ringDist * ringDist) / 14.0);
+          const wave = Math.exp(-(ringDist * ringDist) / 12.0);
           // Height reduced to 1.8. It rises elegantly without forming a massive wall.
-          z += wave * rip.strength * 2.2;
+          z += wave * rip.strength * 1.5;
         }
       }
 
@@ -125,11 +125,11 @@ function Cubes({ isNight }) {
     <>
       <instancedMesh ref={meshRef} args={[null, null, count]}>
         <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 8.0]} />
-        <meshPhysicalMaterial roughness={0.0} metalness={0.1} clearcoat={1.0} clearcoatRoughness={0.0} transmission={0.2} thickness={2.0} />
+        <meshStandardMaterial roughness={0.2} metalness={0.1} />
       </instancedMesh>
       <mesh position={[0, 0, -4.0]}>
         <planeGeometry args={[400, 400]} />
-        <meshPhysicalMaterial color={isNight ? '#000000' : '#ffffff'} roughness={0.0} metalness={0.1} clearcoat={1.0} />
+        <meshStandardMaterial color={isNight ? '#000000' : '#ffffff'} roughness={0.2} metalness={0.1} />
       </mesh>
     </>
   );
@@ -157,9 +157,9 @@ export default function HeroBg() {
         camera={{ position: [0, 0, 55], fov: 42 }} 
         style={{ width: '100vw', height: '100vh' }}
       >
-        <ambientLight intensity={isNight ? 0.7 : 1.5} />
-        <directionalLight position={[15, -20, 30]} intensity={isNight ? 1.0 : 1.5} color="#ffffff" />
-        <directionalLight position={[-15, 20, 20]} intensity={isNight ? 0.4 : 0.6} color={isNight ? '#fcd34d' : '#f3e8ff'} />
+        <ambientLight intensity={isNight ? 0.7 : 2.5} />
+        <directionalLight position={[15, -20, 30]} intensity={isNight ? 1.0 : 0.8} color="#ffffff" />
+        <directionalLight position={[-15, 20, 20]} intensity={isNight ? 0.4 : 0.4} color={isNight ? '#fcd34d' : '#f3e8ff'} />
         
         <Cubes isNight={isNight} />
       </Canvas>
@@ -173,5 +173,7 @@ export default function HeroBg() {
     </div>
   );
 }
+
+
 
 
