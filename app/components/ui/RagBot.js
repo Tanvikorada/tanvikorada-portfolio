@@ -94,7 +94,7 @@ export default function RagBot() {
 
   return (
     <>
-      <style>{
+      <style>{`
         .ai-chat-btn {
           position: fixed;
           bottom: 32px;
@@ -252,7 +252,7 @@ export default function RagBot() {
           opacity: 0.5;
           cursor: not-allowed;
         }
-      }</style>
+      `}</style>
 
       <div className="ai-chat-btn" onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? (
@@ -283,7 +283,7 @@ export default function RagBot() {
 
             <div className="ai-messages">
               {messages.map((m, i) => (
-                <div key={i} className={i-msg }>
+                <div key={i} className={`ai-msg ${m.role}`}>
                   {m.role === 'assistant' && (
                     <div className="ai-avatar" style={{ width: '28px', height: '28px', flexShrink: 0, marginTop: '2px' }}>
                       {BOT_SVG}
@@ -340,4 +340,3 @@ export default function RagBot() {
     </>
   );
 }
-
