@@ -114,7 +114,7 @@ export default function TechStackKeyboard() {
 
   const playClick = () => {
     try {
-      const audio = new Audio('/assets/keycap-sounds/click-1.mp3');
+      const audio = new Audio('/assets/keycap-sounds/press.mp3');
       audio.volume = 0.5;
       audio.play().catch(()=>{});
     } catch(e){}
@@ -280,3 +280,4 @@ export default function TechStackKeyboard() {
     </section>
   );
 }
+

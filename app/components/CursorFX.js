@@ -27,7 +27,7 @@ export default function CursorFX() {
       
       // Sound: A softer, dual-tone "chime" or "glass tap"
       try {
-        if (!isCanvas) {
+        if (true) {
           if (!audioCtx.current) {
             audioCtx.current = new (window.AudioContext || window.webkitAudioContext)();
           }
@@ -137,3 +137,4 @@ export default function CursorFX() {
 
   return <div ref={dotRef} className="cursor-dot" style={{ position: 'fixed', left: '-20px', top: '-20px' }} />;
 }
+
