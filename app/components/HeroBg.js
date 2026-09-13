@@ -88,14 +88,14 @@ function Cubes({ isNight }) {
       const dist = Math.hypot(mx - ix, my - iy);
 
       if (dist < 12.0 && mouseSpeed > 0.001) {
-        // Soft gradient push
-        states[i].vZ -= 0.06 * (1 - dist / 12.0);
+        const force = Math.min(mouseSpeed * 0.4, 0.25);
+        states[i].vZ -= force * (1 - dist / 12.0);
       }
     }
 
     // 2. 2D Wave Propagation (Faster spread for liquid fluidity)
     const newTargetZ = new Float32Array(count);
-    const waveSpread = 0.38; 
+    const waveSpread = 0.32; 
     
     for (let i = 0; i < count; i++) {
       let sum = 0;
@@ -114,8 +114,8 @@ function Cubes({ isNight }) {
     }
 
     // Heavy liquid physics
-    const tension = 0.015; // Slow spring back
-    const damping = 0.975; // Ultra low friction, ripples roll beautifully
+    const tension = 0.025; // Slow spring back
+    const damping = 0.99; // Ultra low friction, ripples roll beautifully
 
     for (let i = 0; i < count; i++) {
       const ix = (i % GRID_W - GRID_W / 2) * SPACING;
@@ -221,3 +221,7 @@ export default function HeroBg() {
     </div>
   );
 }
+
+
+
+
