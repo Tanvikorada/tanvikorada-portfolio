@@ -22,14 +22,14 @@ const EXPERIENCE_DATA = [
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
     )
   },
-  {
-    title: 'Hardware Team',
-    org: 'SlugNPlug',
-    date: 'Jan 2025 - Present',
-    desc: 'Contributing to technical hardware projects and IoT integrations within the university tech club.',
-    highlight: 'Hardware / IoT',
+    {
+    title: 'Full Stack Web Dev Intern',
+    org: 'Prodigy InfoTech',
+    date: 'Jun 2025 - Jul 2025',
+    desc: 'Built responsive full-stack web modules using HTML, CSS, JavaScript, and REST API integration across 3+ production features.',
+    highlight: 'Full-Stack',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
     )
   }
 ];
@@ -163,20 +163,54 @@ export default function Journey() {
           gap: 24px;
         }
         
-        .premium-journey-card {
+                .premium-journey-card {
           position: relative;
           height: 280px; /* ENFORCED EQUAL HEIGHT FOR ALL CARDS */
           display: flex;
           flex-direction: column;
           padding: 32px;
-          background: var(--bg-glass);
-          border-radius: 24px;
-          border: 1px solid var(--border);
-          backdrop-filter: blur(24px);
-          -webkit-backdrop-filter: blur(24px);
+          background: linear-gradient(135deg, color-mix(in srgb, var(--bg-glass) 60%, rgba(255,255,255,0.08)), color-mix(in srgb, var(--bg-glass) 90%, rgba(0,0,0,0.05)));
+          border-radius: 28px;
+          border: 1px solid color-mix(in srgb, var(--border) 60%, rgba(255,255,255,0.15));
+          backdrop-filter: blur(40px) saturate(200%);
+          -webkit-backdrop-filter: blur(40px) saturate(200%);
           overflow: hidden;
-          transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-          box-shadow: 0 4px 24px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.05);
+          transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255,255,255,0.2);
+        }
+
+        .premium-journey-card::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(circle at 0% 0%, rgba(255,255,255,0.1), transparent 50%),
+                      radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--glow-color) 10%, transparent), transparent 60%);
+          z-index: 0;
+          pointer-events: none;
+        }
+
+        .premium-journey-card > * {
+          position: relative;
+          z-index: 1;
+        }
+        
+        .premium-journey-card:hover {
+          transform: translateY(-6px) scale(1.01);
+          border-color: color-mix(in srgb, var(--glow-color) 50%, transparent);
+          box-shadow: 0 20px 50px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255,255,255,0.3), 0 0 30px color-mix(in srgb, var(--glow-color) 15%, transparent);
+        }
+
+        .card-glow {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 100%;
+          background: radial-gradient(circle at top left, color-mix(in srgb, var(--glow-color) 25%, transparent), transparent 70%);
+          opacity: 0;
+          transition: opacity 0.5s ease;
+          pointer-events: none;
+          z-index: 0;
         }
         
         .premium-journey-card:hover {
@@ -262,4 +296,6 @@ export default function Journey() {
     </section>
   );
 }
+
+
 
