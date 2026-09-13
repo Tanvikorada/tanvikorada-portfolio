@@ -1,32 +1,41 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { RoundedBox, Text, Environment, ContactShadows, Float, PresentationControls } from '@react-three/drei';
+import { RoundedBox, Environment, ContactShadows, Float, PresentationControls, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 
+// Suppress THREE.Clock deprecation warning from R3F internal
+if (typeof console !== 'undefined') {
+  const originalWarn = console.warn;
+  console.warn = (...args) => {
+    if (args[0] && typeof args[0] === 'string' && args[0].includes('THREE.Clock: This module has been deprecated')) return;
+    originalWarn(...args);
+  };
+}
+
 const MY_STACK = [
-  { id: 'react', label: 'React', color: '#61dafb' },
-  { id: 'next', label: 'Next.js', color: '#ffffff' },
-  { id: 'node', label: 'Node.js', color: '#339933' },
-  { id: 'python', label: 'Python', color: '#3776ab' },
-  { id: 'postgres', label: 'PostgreSQL', color: '#336791' },
-  { id: 'firebase', label: 'Firebase', color: '#ffca28' },
-  { id: 'aws', label: 'AWS Cloud', color: '#ff9900' },
-  { id: 'html', label: 'HTML/CSS', color: '#e34f26' },
-  { id: 'js', label: 'JavaScript', color: '#f7df1e' },
-  { id: 'tailwind', label: 'Tailwind', color: '#38b2ac' },
-  { id: 'yolo', label: 'YOLO CV', color: '#00ffff' },
-  { id: 'mediapipe', label: 'MediaPipe', color: '#ff4b4b' },
-  { id: 'genai', label: 'GenAI', color: '#c084fc' },
-  { id: 'prompt', label: 'Prompt Eng.', color: '#a855f7' },
-  { id: 'git', label: 'Git / GitHub', color: '#f05032' },
+  { id: 'react', label: 'React', color: '#61dafb', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg' },
+  { id: 'next', label: 'Next.js', color: '#ffffff', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg' },
+  { id: 'node', label: 'Node.js', color: '#339933', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg' },
+  { id: 'python', label: 'Python', color: '#3776ab', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg' },
+  { id: 'postgres', label: 'PostgreSQL', color: '#336791', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg' },
+  { id: 'firebase', label: 'Firebase', color: '#ffca28', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/firebase/firebase-plain.svg' },
+  { id: 'aws', label: 'AWS Cloud', color: '#ff9900', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg' },
+  { id: 'html', label: 'HTML/CSS', color: '#e34f26', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg' },
+  { id: 'js', label: 'JavaScript', color: '#f7df1e', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg' },
+  { id: 'tailwind', label: 'Tailwind', color: '#38b2ac', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg' },
+  { id: 'yolo', label: 'YOLO CV', color: '#00ffff', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/opencv/opencv-original.svg' },
+  { id: 'git', label: 'Git', color: '#f05032', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg' },
+  { id: 'mediapipe', label: 'MediaPipe', color: '#ff4b4b', textOnly: 'MP' },
+  { id: 'genai', label: 'GenAI', color: '#c084fc', textOnly: 'AI' },
+  { id: 'prompt', label: 'Prompt Eng.', color: '#a855f7', textOnly: '✨' },
 ];
 
 const BOMB_EMOJIS = ['🚀', '💥', '🔥', '✨', '💻', '💡', '🌟', '🤯'];
 
-function Keycap({ position, label, accent, onClick }) {
+function Keycap({ position, tech, onClick }) {
   const mesh = useRef();
   const [hovered, setHover] = useState(false);
   const [pressed, setPressed] = useState(false);
@@ -56,28 +65,41 @@ function Keycap({ position, label, accent, onClick }) {
         onPointerOver={() => { setHover(true); document.body.style.cursor = 'pointer'; }}
         onPointerOut={() => { setHover(false); setPressed(false); document.body.style.cursor = 'default'; }}
         onPointerDown={(e) => { e.stopPropagation(); setPressed(true); }}
-        onPointerUp={(e) => { e.stopPropagation(); setPressed(false); onClick?.(label); }}
+        onPointerUp={(e) => { e.stopPropagation(); setPressed(false); onClick?.(tech.label); }}
         castShadow
         receiveShadow
       >
         <meshPhysicalMaterial 
-          color={hovered ? accent : "#1a1a24"} 
+          color={hovered ? tech.color : "#1a1a24"} 
           roughness={hovered ? 0.2 : 0.4} 
           metalness={0.5}
           clearcoat={hovered ? 1 : 0.5}
           clearcoatRoughness={0.1}
         />
-        <Text
-          position={[0, 0.31, 0]}
+        
+        {/* Render HTML Logo or Text directly on the key surface */}
+        <Html 
+          transform 
+          position={[0, 0.31, 0]} 
           rotation={[-Math.PI / 2, 0, 0]}
-          fontSize={0.24}
-          color={hovered ? "#000000" : "#ffffff"}
-          anchorX="center"
-          anchorY="middle"
-          fontWeight="bold"
+          occlude="blending"
+          style={{
+            width: '60px',
+            height: '60px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none', // prevent intercepting clicks
+            opacity: hovered ? 1 : 0.85,
+            transition: 'opacity 0.2s'
+          }}
         >
-          {label}
-        </Text>
+          {tech.icon ? (
+            <img src={tech.icon} alt={tech.label} style={{ width: '40px', height: '40px', objectFit: 'contain', filter: (tech.id === 'next' || tech.id === 'aws') && !hovered ? 'invert(1)' : 'none' }} />
+          ) : (
+            <span style={{ fontSize: '24px', fontWeight: 'bold', color: hovered ? '#000' : '#fff', fontFamily: 'var(--font-mono)' }}>{tech.textOnly}</span>
+          )}
+        </Html>
       </RoundedBox>
     </group>
   );
@@ -228,15 +250,13 @@ export default function TechStackKeyboard() {
                 {MY_STACK.map((tech, i) => {
                   const row = Math.floor(i / cols);
                   const col = i % cols;
-                  // Centered positions
                   const x = (col * spacing) - ((cols - 1) * spacing / 2);
-                  const z = (row * spacing) - (2 * spacing / 2); // 3 rows
+                  const z = (row * spacing) - (2 * spacing / 2); 
                   return (
                     <Keycap 
                       key={tech.id} 
                       position={[x, 0.1, z]} 
-                      label={tech.label} 
-                      accent={tech.color}
+                      tech={tech}
                       onClick={(label) => {
                         setActiveTech(label + " initialized.");
                         playClick();
