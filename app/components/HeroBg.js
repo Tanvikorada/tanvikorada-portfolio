@@ -97,9 +97,9 @@ function Cubes({ isNight }) {
         if (ringDist < 10.0) { 
           // Firm Gaussian: Shaper divisor (10.0 instead of 18.0) means the ripple is 
           // crisp and focused, completely eliminating the fat jelly wobble.
-          const wave = Math.exp(-(ringDist * ringDist) / 10.0);
+          const wave = Math.cos(ringDist * 0.6) * Math.exp(-(ringDist * ringDist) / 14.0);
           // Height reduced to 1.8. It rises elegantly without forming a massive wall.
-          z += wave * rip.strength * 1.8;
+          z += wave * rip.strength * 2.2;
         }
       }
 
@@ -125,11 +125,11 @@ function Cubes({ isNight }) {
     <>
       <instancedMesh ref={meshRef} args={[null, null, count]}>
         <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 8.0]} />
-        <meshStandardMaterial roughness={0.1} metalness={0.05} />
+        <meshPhysicalMaterial roughness={0.0} metalness={0.1} clearcoat={1.0} clearcoatRoughness={0.0} transmission={0.2} thickness={2.0} />
       </instancedMesh>
       <mesh position={[0, 0, -4.0]}>
         <planeGeometry args={[400, 400]} />
-        <meshStandardMaterial color={isNight ? '#000000' : '#ffffff'} roughness={0.1} metalness={0.05} />
+        <meshPhysicalMaterial color={isNight ? '#000000' : '#ffffff'} roughness={0.0} metalness={0.1} clearcoat={1.0} />
       </mesh>
     </>
   );
@@ -173,3 +173,5 @@ export default function HeroBg() {
     </div>
   );
 }
+
+
