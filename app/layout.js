@@ -1,20 +1,8 @@
-import { Syne, Manrope, Space_Mono, Caveat } from 'next/font/google';
+import { IBM_Plex_Mono, Caveat } from 'next/font/google';
 import './globals.css';
 
-const syne = Syne({
-  subsets: ['latin'],
-  variable: '--font-serif', 
-  display: 'swap',
-});
-
-const manrope = Manrope({
-  subsets: ['latin'],
-  variable: '--font-sans',
-  display: 'swap',
-});
-
-const spaceMono = Space_Mono({
-  weight: ['400', '700'],
+const ibmPlexMono = IBM_Plex_Mono({
+  weight: ['400', '500', '600'],
   subsets: ['latin'],
   variable: '--font-mono',
   display: 'swap',
@@ -52,8 +40,14 @@ export default function RootLayout({ children }) {
     <html lang="en" className="dark">
       <head>
         <link rel="icon" href="/favicon.ico" />
+        {/* Awwwards #1 Typography Pairing: Clash Display & Satoshi */}
+        <link rel="preconnect" href="https://api.fontshare.com" />
+        <link 
+          href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@400,500,700&display=swap" 
+          rel="stylesheet" 
+        />
       </head>
-      <body className={`${syne.variable} ${manrope.variable} ${spaceMono.variable} ${caveat.variable} night`} suppressHydrationWarning>
+      <body className={`${ibmPlexMono.variable} ${caveat.variable} night`} suppressHydrationWarning>
         <div id="grain-overlay"></div>
         {children}
       </body>
