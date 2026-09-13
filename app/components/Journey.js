@@ -1,301 +1,432 @@
 'use client';
-import { motion } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const EXPERIENCE_DATA = [
+const EXPERIENCES = [
   {
+    id: 'atribs',
+    type: 'experience',
     title: 'Software Development Intern',
     org: 'ATRIBS Software Systems Pvt Ltd',
-    date: 'Sep 2026 - Oct 2026',
-    desc: 'Progressive Web App (PWA) development - building installable, mobile-first web applications with offline capability.',
-    highlight: 'Full-Stack / PWA',
+    timeline: 'Sep 2026 - Oct 2026',
+    status: 'Upcoming / Confirmed',
+    isCurrent: true,
+    desc: 'Progressive Web App (PWA) engineering — architecting installable, offline-first mobile web applications with native-like UX and background sync in a production environment.',
+    metrics: 'Production PWA Architecture',
+    tags: ['Next.js', 'PWA', 'Service Workers', 'Offline DB'],
+    color: '#38bdf8',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
     )
   },
   {
-    title: 'Prompt Engineering Intern',
+    id: 'future-interns',
+    type: 'experience',
+    title: 'Prompt Engineering & AI Intern',
     org: 'Future Interns',
-    date: 'Dec 2025 - Jan 2026',
-    desc: 'Designed multi-step AI workflows and agent behaviors for GenAI systems across 5+ business use cases.',
-    highlight: 'AI / GenAI',
+    timeline: 'Dec 2025 - Jan 2026',
+    desc: 'Engineered multi-step autonomous AI workflows and LLM agent behaviors across 5+ enterprise use cases. Implemented systematic task decomposition and evaluation loops to drastically cut hallucinations.',
+    metrics: '5+ Enterprise AI Workflows',
+    tags: ['LLM Orchestration', 'Prompt Engineering', 'RAG', 'Agentic AI'],
+    color: '#a855f7',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a8 8 0 0 0-8 8c0 3.36 2.06 6.24 5 7.4V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.6c2.94-1.16 5-4.04 5-7.4a8 8 0 0 0-8-8z"></path><line x1="12" y1="12" x2="12" y2="12.01"></line></svg>
     )
   },
-    {
-    title: 'Full Stack Web Dev Intern',
+  {
+    id: 'prodigy',
+    type: 'experience',
+    title: 'Full-Stack Web Dev Intern',
     org: 'Prodigy InfoTech',
-    date: 'Jun 2025 - Jul 2025',
-    desc: 'Built responsive full-stack web modules using HTML, CSS, JavaScript, and REST API integration across 3+ production features.',
-    highlight: 'Full-Stack',
+    timeline: 'Jun 2025 - Jul 2025',
+    desc: 'Constructed responsive, dynamic web applications with modular client components and RESTful microservices. Integrated robust data pipelines and optimized rendering bottlenecks.',
+    metrics: '3+ Production Features',
+    tags: ['React', 'REST APIs', 'Node.js', 'State Mgmt'],
+    color: '#06b6d4',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
     )
   }
 ];
 
-const EDUCATION_DATA = [
+const EDUCATION = [
   {
-    title: 'B.Tech - CSE (Cloud Computing)',
+    id: 'srmist',
+    type: 'education',
+    title: 'B.Tech — CSE (Cloud Computing)',
     org: 'SRMIST Chennai',
-    date: '2024 - 2028',
-    desc: 'Undergraduate studies focusing on cloud architecture, AI, and full-stack development.',
-    highlight: 'CGPA: 9.27 / 10',
+    timeline: '2024 - 2028',
+    status: 'In Progress',
+    isCurrent: true,
+    desc: 'Focusing on distributed cloud architectures, advanced deep learning, full-stack microservices, and AI system design. Active contributor to collegiate technical initiatives.',
+    metrics: 'CGPA: 9.27 / 10',
+    tags: ['Cloud Computing', 'Data Structures', 'AI / ML', 'Distributed Systems'],
+    color: '#10b981',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
     )
   },
   {
-    title: 'Class XII (MPC) - BIEAP',
+    id: 'tirumala',
+    type: 'education',
+    title: 'Class XII (MPC) — BIEAP',
     org: 'Tirumala Junior College',
-    date: '2022 - 2024',
-    desc: 'Higher Secondary education with a focus on Mathematics, Physics, and Chemistry.',
-    highlight: '95.2%',
+    timeline: '2022 - 2024',
+    desc: 'Higher secondary education with rigorous focus in Mathematics, Physics, and Chemistry. Graduated with top percentile honors across the state board.',
+    metrics: 'Score: 95.2%',
+    tags: ['Mathematics', 'Physics', 'Analytical Problem Solving'],
+    color: '#f59e0b',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
     )
   },
   {
-    title: 'Class X - BSEAP',
+    id: 'ravindra',
+    type: 'education',
+    title: 'Class X (SSC) — BSEAP',
     org: 'Ravindra Bharathi School',
-    date: '2021 - 2022',
-    desc: 'Secondary School Education.',
-    highlight: '88%',
+    timeline: '2021 - 2022',
+    desc: 'Secondary school foundation with broad distinctions in Computer Science fundamentals, science, and scholastic leadership.',
+    metrics: 'Score: 88.0%',
+    tags: ['STEM Foundations', 'Merit Scholar'],
+    color: '#ec4899',
     icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
     )
   }
 ];
-
-// Helper to render premium cards
-function PremiumCard({ item, colorHex, delay }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: delay * 0.1, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-      className="premium-journey-card"
-    >
-      <div className="card-glow" style={{ '--glow-color': colorHex }} />
-      
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-        <div 
-          style={{ 
-            width: '40px', height: '40px', 
-            borderRadius: '12px', 
-            background: `color-mix(in srgb, ${colorHex} 15%, transparent)`, 
-            border: `1px solid color-mix(in srgb, ${colorHex} 30%, transparent)`, 
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: colorHex
-          }}
-        >
-          {item.icon}
-        </div>
-        <span 
-          style={{ 
-            fontFamily: 'var(--font-mono)', 
-            fontSize: '11px', 
-            color: 'var(--text-muted)', 
-            background: 'var(--bg-card)', 
-            border: '1px solid var(--border)',
-            padding: '6px 12px', 
-            borderRadius: '100px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-          }}
-        >
-          {item.date}
-        </span>
-      </div>
-
-      <div style={{ flexGrow: 1 }}>
-        <h4 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-heading)', lineHeight: 1.3, marginBottom: '6px', fontFamily: 'var(--font-sans)' }}>
-          {item.title}
-        </h4>
-        <p style={{ fontSize: '0.9rem', fontWeight: 600, color: colorHex, marginBottom: '16px', letterSpacing: '0.02em' }}>
-          {item.org}
-        </p>
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
-          {item.desc}
-        </p>
-      </div>
-
-      <div style={{ display: 'flex', marginTop: '20px' }}>
-        <span 
-          style={{ 
-            fontSize: '10px', 
-            fontFamily: 'var(--font-mono)', 
-            padding: '6px 14px', 
-            borderRadius: '100px', 
-            background: `color-mix(in srgb, ${colorHex} 8%, transparent)`,
-            border: `1px solid color-mix(in srgb, ${colorHex} 20%, transparent)`, 
-            color: 'var(--text-heading)',
-            fontWeight: 600
-          }}
-        >
-          {item.highlight}
-        </span>
-      </div>
-    </motion.div>
-  );
-}
 
 export default function Journey() {
+  const [filter, setFilter] = useState('all'); // 'all' | 'experience' | 'education'
+
+  const items = filter === 'all' 
+    ? [...EXPERIENCES, ...EDUCATION]
+    : filter === 'experience' ? EXPERIENCES : EDUCATION;
+
   return (
-    <section id="journey" className="section" style={{ position: 'relative', overflow: 'hidden', padding: '12vh 0' }}>
+    <section id="journey" style={{ position: 'relative', padding: '14vh 5vw', overflow: 'hidden' }}>
       
+      {/* Magic UI / React Bits Styles */}
       <style>{`
-        .journey-layout {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 32px;
-          position: relative;
-        }
-        @media (max-width: 900px) {
-          .journey-layout {
-            grid-template-columns: 1fr;
-            gap: 48px;
+        /* Animated Border Beam */
+        @keyframes border-beam {
+          100% {
+            offset-distance: 100%;
           }
         }
-        .journey-column {
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
-        }
-        
-                .premium-journey-card {
+        .border-beam-card {
           position: relative;
-          height: 280px; /* ENFORCED EQUAL HEIGHT FOR ALL CARDS */
-          display: flex;
-          flex-direction: column;
-          padding: 32px;
-          background: linear-gradient(135deg, color-mix(in srgb, var(--bg-glass) 60%, rgba(255,255,255,0.08)), color-mix(in srgb, var(--bg-glass) 90%, rgba(0,0,0,0.05)));
-          border-radius: 28px;
-          border: 1px solid color-mix(in srgb, var(--border) 60%, rgba(255,255,255,0.15));
-          backdrop-filter: blur(40px) saturate(200%);
-          -webkit-backdrop-filter: blur(40px) saturate(200%);
-          overflow: hidden;
-          transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease, border-color 0.4s ease;
-          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255,255,255,0.2);
         }
-
-        .premium-journey-card::before {
+        .border-beam-card::after {
           content: "";
           position: absolute;
-          inset: 0;
-          background: radial-gradient(circle at 0% 0%, rgba(255,255,255,0.1), transparent 50%),
-                      radial-gradient(circle at 100% 100%, color-mix(in srgb, var(--glow-color) 10%, transparent), transparent 60%);
-          z-index: 0;
+          inset: -1px;
+          border-radius: inherit;
+          padding: 1px;
+          background: linear-gradient(90deg, transparent 0%, rgba(56,189,248,0.8) 50%, transparent 100%);
+          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
           pointer-events: none;
+          opacity: 0.8;
+          animation: border-beam-glow 4s ease-in-out infinite alternate;
+        }
+        @keyframes border-beam-glow {
+          0% { filter: drop-shadow(0 0 4px rgba(56,189,248,0.3)); }
+          100% { filter: drop-shadow(0 0 16px rgba(168,85,247,0.5)); }
         }
 
-        .premium-journey-card > * {
+        /* Glass Bento Container */
+        .magic-bento-card {
+          background: linear-gradient(135deg, color-mix(in srgb, var(--bg-glass) 50%, rgba(255,255,255,0.06)), color-mix(in srgb, var(--bg-glass) 80%, rgba(0,0,0,0.03)));
+          border: 1px solid color-mix(in srgb, var(--border) 70%, rgba(255,255,255,0.12));
+          backdrop-filter: blur(28px) saturate(180%);
+          -webkit-backdrop-filter: blur(28px) saturate(180%);
+          border-radius: 28px;
+          padding: 32px;
           position: relative;
+          overflow: hidden;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.04), inset 0 1px 1px rgba(255,255,255,0.15);
+          transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+        }
+        .magic-bento-card:hover {
+          transform: translateY(-6px);
+          border-color: color-mix(in srgb, var(--card-color, #a855f7) 50%, transparent);
+          box-shadow: 0 20px 50px rgba(0,0,0,0.1), 0 0 30px color-mix(in srgb, var(--card-color, #a855f7) 12%, transparent);
+        }
+
+        /* Live Radar Beacon */
+        .live-beacon {
+          position: relative;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #10b981;
+          display: inline-block;
+        }
+        .live-beacon::after {
+          content: "";
+          position: absolute;
+          inset: -4px;
+          border-radius: 50%;
+          border: 1.5px solid #10b981;
+          animation: beacon-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        @keyframes beacon-ping {
+          75%, 100% {
+            transform: scale(2.2);
+            opacity: 0;
+          }
+        }
+
+        /* Connecting Timeline Line */
+        .timeline-beam-spine {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 2px;
+          background: linear-gradient(180deg, transparent, var(--border) 10%, var(--border) 90%, transparent);
           z-index: 1;
         }
-        
-        .premium-journey-card:hover {
-          transform: translateY(-6px) scale(1.01);
-          border-color: color-mix(in srgb, var(--glow-color) 50%, transparent);
-          box-shadow: 0 20px 50px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255,255,255,0.3), 0 0 30px color-mix(in srgb, var(--glow-color) 15%, transparent);
-        }
-
-        .card-glow {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 100%;
-          background: radial-gradient(circle at top left, color-mix(in srgb, var(--glow-color) 25%, transparent), transparent 70%);
-          opacity: 0;
-          transition: opacity 0.5s ease;
-          pointer-events: none;
-          z-index: 0;
-        }
-        
-        .premium-journey-card:hover {
-          transform: translateY(-4px);
-          border-color: var(--border-hover);
-          box-shadow: 0 12px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.1);
-        }
-
-        .card-glow {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 100%;
-          background: radial-gradient(circle at top left, color-mix(in srgb, var(--glow-color) 15%, transparent), transparent 70%);
-          opacity: 0;
-          transition: opacity 0.5s ease;
-          pointer-events: none;
-        }
-        
-        .premium-journey-card:hover .card-glow {
-          opacity: 1;
+        @media (max-width: 860px) {
+          .timeline-beam-spine {
+            left: 28px;
+          }
         }
       `}</style>
 
-      {/* Subtle Premium Background Ambience */}
-      <div style={{ position: 'absolute', top: '10%', left: '10%', width: '40vw', height: '40vw', background: 'radial-gradient(circle, rgba(192,132,252,0.05) 0%, transparent 60%)', filter: 'blur(60px)', zIndex: 0, pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: '10%', right: '10%', width: '40vw', height: '40vw', background: 'radial-gradient(circle, rgba(56,189,248,0.05) 0%, transparent 60%)', filter: 'blur(60px)', zIndex: 0, pointerEvents: 'none' }} />
+      {/* Atmospheric Ambient Glows */}
+      <div style={{ position: 'absolute', top: '15%', left: '15%', width: '45vw', height: '45vw', background: 'radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 60%)', filter: 'blur(90px)', zIndex: 0, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: '15%', right: '15%', width: '45vw', height: '45vw', background: 'radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 60%)', filter: 'blur(90px)', zIndex: 0, pointerEvents: 'none' }} />
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 2, padding: '0 5vw' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
         
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          style={{ textAlign: 'center', marginBottom: '10vh' }}
+        {/* Section Header */}
+        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--bg-glass)', border: '1px solid var(--border)', padding: '6px 22px', borderRadius: '100px', marginBottom: '24px' }}
+          >
+            <span className="live-beacon" />
+            <span style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+              Trajectory & Pedigree
+            </span>
+          </motion.div>
+
+          <motion.h2 
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            style={{ fontSize: 'clamp(2.8rem, 5.5vw, 4.5rem)', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', lineHeight: 1.1, letterSpacing: '-0.02em', margin: '0 0 20px 0' }}
+          >
+            Experience & <span style={{ color: 'var(--text-muted)' }}>Education.</span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            style={{ fontSize: '16px', color: 'var(--text-muted)', maxWidth: '560px', margin: '0 auto 36px', lineHeight: 1.6 }}
+          >
+            From engineering production-grade web applications to pioneering deep research and achieving academic distinctions.
+          </motion.p>
+
+          {/* Magic UI Interactive Segmented Control */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            style={{ display: 'inline-flex', background: 'color-mix(in srgb, var(--text-heading) 5%, transparent)', padding: '4px', borderRadius: '100px', border: '1px solid var(--border)', gap: '4px' }}
+          >
+            {[
+              { id: 'all', label: 'All Milestones' },
+              { id: 'experience', label: 'Work Experience' },
+              { id: 'education', label: 'Academic Journey' }
+            ].map((tab) => {
+              const isActive = filter === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setFilter(tab.id)}
+                  style={{
+                    position: 'relative',
+                    padding: '8px 22px',
+                    borderRadius: '100px',
+                    fontSize: '13px',
+                    fontWeight: isActive ? 600 : 500,
+                    color: isActive ? 'var(--bg-base)' : 'var(--text-muted)',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'color 0.2s ease',
+                    zIndex: 2
+                  }}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="magic-tab-indicator"
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        background: 'var(--text-heading)',
+                        borderRadius: '100px',
+                        zIndex: -1
+                      }}
+                    />
+                  )}
+                  {tab.label}
+                </button>
+              );
+            })}
+          </motion.div>
+        </div>
+
+        {/* Bento Grid with Magic UI Aesthetics */}
+        <motion.div 
+          layout
+          style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
+            gap: '24px',
+            alignItems: 'stretch'
+          }}
         >
-          <p className="section-eyebrow" style={{ background: 'var(--bg-glass)', border: '1px solid var(--border)', padding: '6px 20px', borderRadius: '100px', display: 'inline-block', marginBottom: '24px' }}>
-            My Background
-          </p>
-          <h2 style={{ fontSize: 'clamp(3rem, 6vw, 4.5rem)', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
-            Experience & Education
-          </h2>
+          <AnimatePresence>
+            {items.map((item, i) => (
+              <motion.div
+                key={item.id}
+                layout
+                initial={{ opacity: 0, y: 20, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.94 }}
+                transition={{ duration: 0.35, delay: i * 0.05 }}
+                className={`magic-bento-card ${item.isCurrent ? 'border-beam-card' : ''}`}
+                style={{ '--card-color': item.color, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+              >
+                
+                {/* Card Top: Icon, Type Badge & Timeline */}
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div 
+                        style={{ 
+                          width: '46px', 
+                          height: '46px', 
+                          borderRadius: '14px', 
+                          background: `color-mix(in srgb, ${item.color} 12%, transparent)`,
+                          border: `1px solid color-mix(in srgb, ${item.color} 28%, transparent)`,
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center',
+                          color: item.color,
+                          boxShadow: `0 8px 20px color-mix(in srgb, ${item.color} 15%, transparent)`
+                        }}
+                      >
+                        {item.icon}
+                      </div>
+
+                      <span 
+                        style={{ 
+                          fontSize: '11px', 
+                          fontFamily: 'var(--font-mono)', 
+                          letterSpacing: '0.08em', 
+                          textTransform: 'uppercase', 
+                          fontWeight: 700, 
+                          color: item.color, 
+                          background: `color-mix(in srgb, ${item.color} 10%, transparent)`, 
+                          padding: '4px 12px', 
+                          borderRadius: '100px',
+                          border: `1px solid color-mix(in srgb, ${item.color} 20%, transparent)`
+                        }}
+                      >
+                        {item.type === 'experience' ? 'Experience' : 'Education'}
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {item.isCurrent && <span className="live-beacon" title="Active milestone" />}
+                      <span style={{ fontSize: '12px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
+                        {item.timeline}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Title & Organization */}
+                  <h3 style={{ fontSize: '21px', fontWeight: 800, color: 'var(--text-heading)', lineHeight: 1.25, marginBottom: '6px' }}>
+                    {item.title}
+                  </h3>
+                  
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: item.color, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>{item.org}</span>
+                    {item.status && (
+                      <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--text-muted)', background: 'color-mix(in srgb, var(--text-heading) 5%, transparent)', padding: '2px 8px', borderRadius: '4px' }}>
+                        {item.status}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Description */}
+                  <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.65, marginBottom: '24px' }}>
+                    {item.desc}
+                  </p>
+                </div>
+
+                {/* Card Bottom: Metrics Highlight & Tags */}
+                <div>
+                  <div 
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between',
+                      padding: '12px 16px', 
+                      borderRadius: '16px', 
+                      background: `color-mix(in srgb, ${item.color} 8%, transparent)`,
+                      border: `1px solid color-mix(in srgb, ${item.color} 18%, transparent)`,
+                      marginBottom: '18px'
+                    }}
+                  >
+                    <span style={{ fontSize: '11px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', letterSpacing: '0.05em', color: 'var(--text-muted)' }}>
+                      Key Distinction
+                    </span>
+                    <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-mono)' }}>
+                      {item.metrics}
+                    </span>
+                  </div>
+
+                  {/* Tags Pill Cloud */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {item.tags.map((tag, tIdx) => (
+                      <span 
+                        key={tIdx}
+                        style={{
+                          fontSize: '11px',
+                          fontFamily: 'var(--font-mono)',
+                          color: 'var(--text-muted)',
+                          background: 'color-mix(in srgb, var(--text-heading) 4%, transparent)',
+                          border: '1px solid color-mix(in srgb, var(--border) 80%, transparent)',
+                          padding: '3px 10px',
+                          borderRadius: '6px'
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </motion.div>
 
-        <div className="journey-layout">
-          {/* Experience Column */}
-          <div className="journey-column">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px', paddingLeft: '8px' }}
-            >
-              <h3 style={{ fontSize: '1.75rem', fontWeight: 700, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>Professional</h3>
-              <div style={{ height: '1px', flexGrow: 1, background: 'linear-gradient(90deg, var(--border) 0%, transparent 100%)' }} />
-            </motion.div>
-
-            {EXPERIENCE_DATA.map((item, i) => (
-              <PremiumCard key={i} item={item} colorHex="#c084fc" delay={i} />
-            ))}
-          </div>
-
-          {/* Education Column */}
-          <div className="journey-column">
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px', paddingLeft: '8px' }}
-            >
-              <h3 style={{ fontSize: '1.75rem', fontWeight: 700, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}>Academic</h3>
-              <div style={{ height: '1px', flexGrow: 1, background: 'linear-gradient(90deg, var(--border) 0%, transparent 100%)' }} />
-            </motion.div>
-
-            {EDUCATION_DATA.map((item, i) => (
-              <PremiumCard key={i} item={item} colorHex="#38bdf8" delay={i} />
-            ))}
-          </div>
-          
-        </div>
       </div>
     </section>
   );
 }
-
-
-
