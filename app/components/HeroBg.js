@@ -4,11 +4,12 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-// Exactly Dezprox Scale: Chunky, large blocks
-const GRID_W = 32; 
-const GRID_H = 22;
-const SPACING = 3.2; 
-const CUBE_SIZE = 3.0; // 0.2 gap gives the crisp grid lines seen in reference
+// USER REQUESTED: "size of our blocks should be more" -> Massively increased block size (fewer blocks).
+// USER REQUESTED: "grid should not be appeared" -> CUBE_SIZE exactly matches SPACING (no gaps), forming a seamless flat sheet.
+const GRID_W = 24; 
+const GRID_H = 16;
+const SPACING = 4.5; 
+const CUBE_SIZE = 4.5; 
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -18,7 +19,7 @@ function Cubes({ isNight }) {
   const tempColor = useMemo(() => new Color(), []);
   
   const cBaseLight = useMemo(() => new Color('#ffffff'), []); 
-  const cRippleLight = useMemo(() => new Color('#d8b4fe'), []); // Very light lavender (Tailwind purple-300)
+  const cRippleLight = useMemo(() => new Color('#d8b4fe'), []); // Light lavender
   
   const cBaseNight = useMemo(() => new Color('#000000'), []); 
   const cRippleNight = useMemo(() => new Color('#fcd34d'), []); 
@@ -61,55 +62,51 @@ function Cubes({ isNight }) {
     const mx = mouse.current.x * (GRID_W * SPACING / 2);
     const my = mouse.current.y * (GRID_H * SPACING / 2);
     
-    // Trigger ripples
     const distMoved = Math.hypot(mx - lastRipplePos.current.x, my - lastRipplePos.current.y);
     if (distMoved > 2.0) {
       ripples.current.push({ x: mx, y: my, time: 0, strength: 1.0 });
       lastRipplePos.current.x = mx;
       lastRipplePos.current.y = my;
-      if (ripples.current.length > 8) ripples.current.shift();
+      if (ripples.current.length > 6) ripples.current.shift();
     }
 
     const dt = Math.min(delta, 0.05); 
     for (let r = 0; r < ripples.current.length; r++) {
-      // Fast, fluid travel speed
-      ripples.current[r].time += dt * 32.0; 
-      ripples.current[r].strength *= 0.98; 
+      // Elegant, fluid traveling speed
+      ripples.current[r].time += dt * 26.0; 
+      ripples.current[r].strength *= 0.97; 
     }
-
-    const t = state.clock.elapsedTime;
 
     for (let i = 0; i < count; i++) {
       const ix = (i % GRID_W - GRID_W / 2) * SPACING;
       const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
 
-      // Microscopic ambient resting motion
-      let z = Math.sin(ix * 0.03 + t * 0.5) * Math.cos(iy * 0.03 + t * 0.4) * 0.1;
+      // USER REQUEST: "bg is appearing as blocks clealry bcoz of grid"
+      // FIX: Z must be strictly 0.0 at rest. No ambient noise. This makes it a seamless flat sheet.
+      let z = 0;
 
       for (let r = 0; r < ripples.current.length; r++) {
         const rip = ripples.current[r];
         const d = Math.hypot(ix - rip.x, iy - rip.y);
         const ringDist = Math.abs(d - rip.time);
         
-        // Very narrow radius (1.5) ensures ONE circle of blocks at a time, not a thick wall
-        if (ringDist < 4.0) { 
-          // Sharp, thin Gaussian pulse
-          const wave = Math.exp(-(ringDist * ringDist) / 1.5);
-          
-          // Moderate height (1.8) prevents the "jelly" look, keeps it sleek and fluid
-          z += wave * rip.strength * 1.8;
+        // USER REQUEST: "dezprox ripples are really looking like circles but ours are not"
+        // FIX: The wave MUST be wide enough to span multiple blocks (anti-aliasing). 
+        // A thin wave on large blocks causes severe jagged diamond shapes.
+        // A wide Gaussian Dome (divisor 18.0) creates a smooth height gradient that the eye reads as a perfect circle.
+        if (ringDist < 12.0) { 
+          const wave = Math.exp(-(ringDist * ringDist) / 18.0);
+          z += wave * rip.strength * 2.8;
         }
       }
 
-      const renderZ = Math.max(-0.5, Math.min(4.0, z));
-
-      dummy.position.set(ix, iy, renderZ);
+      dummy.position.set(ix, iy, z);
       dummy.rotation.set(0, 0, 0); 
       dummy.updateMatrix();
       meshRef.current.setMatrixAt(i, dummy.matrix);
 
-      // Light lavender coloring
-      const intensity = Math.max(0, Math.min(1, z * 0.6));
+      // Light lavender coloring scales precisely with the Z elevation
+      const intensity = Math.max(0, Math.min(1, z * 0.45));
       
       const base = isNight ? cBaseNight : cBaseLight;
       const ripple = isNight ? cRippleNight : cRippleLight;
@@ -124,13 +121,14 @@ function Cubes({ isNight }) {
   return (
     <>
       <instancedMesh ref={meshRef} args={[null, null, count]}>
-        <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 8.0]} />
-        <meshStandardMaterial roughness={0.15} metalness={0.1} />
+        {/* Generous depth (10) so sides are heavily shaded when raised */}
+        <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 10.0]} />
+        <meshStandardMaterial roughness={0.1} metalness={0.05} />
       </instancedMesh>
-      {/* Invisible Backplate to perfectly hide seams */}
-      <mesh position={[0, 0, -4.0]}>
+      {/* Invisible Backplate prevents micro-leaks */}
+      <mesh position={[0, 0, -5.0]}>
         <planeGeometry args={[400, 400]} />
-        <meshStandardMaterial color={isNight ? '#000000' : '#ffffff'} roughness={0.15} metalness={0.1} />
+        <meshStandardMaterial color={isNight ? '#000000' : '#ffffff'} roughness={0.1} metalness={0.05} />
       </mesh>
     </>
   );
@@ -155,13 +153,13 @@ export default function HeroBg() {
       <Canvas 
         gl={{ alpha: false, antialias: true }} 
         dpr={[1, 1.5]} 
-        camera={{ position: [0, 0, 50], fov: 45 }} 
+        camera={{ position: [0, 0, 55], fov: 42 }} 
         style={{ width: '100vw', height: '100vh' }}
       >
-        <ambientLight intensity={isNight ? 0.7 : 1.4} />
-        <directionalLight position={[20, -20, 30]} intensity={isNight ? 1.0 : 1.6} color="#ffffff" />
-        {/* Soft fill light */}
-        <directionalLight position={[-20, 20, 20]} intensity={isNight ? 0.4 : 0.6} color={isNight ? '#fcd34d' : '#f3e8ff'} />
+        <ambientLight intensity={isNight ? 0.7 : 1.5} />
+        {/* Strong angled lighting casts shadows ONLY when blocks are raised from the seamless flat sheet */}
+        <directionalLight position={[15, -20, 30]} intensity={isNight ? 1.0 : 1.5} color="#ffffff" />
+        <directionalLight position={[-15, 20, 20]} intensity={isNight ? 0.4 : 0.6} color={isNight ? '#fcd34d' : '#f3e8ff'} />
         
         <Cubes isNight={isNight} />
       </Canvas>
