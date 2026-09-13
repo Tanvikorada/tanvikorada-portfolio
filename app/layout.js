@@ -1,15 +1,13 @@
-import { DM_Serif_Display, Plus_Jakarta_Sans, JetBrains_Mono, Dancing_Script } from 'next/font/google';
+import { Outfit, Inter, JetBrains_Mono, Caveat } from 'next/font/google';
 import './globals.css';
 
-const dmSerif = DM_Serif_Display({
-  weight: ['400'],
-  style: ['normal', 'italic'],
+const outfit = Outfit({
   subsets: ['latin'],
-  variable: '--font-serif',
+  variable: '--font-serif', // Reusing the variable name to apply seamlessly to headings
   display: 'swap',
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
+const inter = Inter({
   subsets: ['latin'],
   variable: '--font-sans',
   display: 'swap',
@@ -21,7 +19,7 @@ const jetBrainsMono = JetBrains_Mono({
   display: 'swap',
 });
 
-const dancingScript = Dancing_Script({
+const caveat = Caveat({
   subsets: ['latin'],
   variable: '--font-script',
   display: 'swap',
@@ -29,10 +27,10 @@ const dancingScript = Dancing_Script({
 
 export const metadata = {
   metadataBase: new URL('https://portfolio-ks-projects-477f2cd9.vercel.app'),
-  title: 'Korada Tanvi — Full-Stack AI Engineer',
+  title: 'Korada Tanvi - Full-Stack AI Engineer',
   description: 'B.Tech CSE student at SRMIST building full-stack AI-native web products. Specializing in React, Next.js, Node.js, and LLM pipelines.',
   openGraph: {
-    title: 'Korada Tanvi — Full-Stack AI Engineer',
+    title: 'Korada Tanvi - Full-Stack AI Engineer',
     description: 'B.Tech CSE student at SRMIST building full-stack AI-native web products.',
     url: 'https://portfolio-ks-projects-477f2cd9.vercel.app',
     siteName: 'Korada Tanvi Portfolio',
@@ -49,7 +47,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Korada Tanvi — Full-Stack AI Engineer',
+    title: 'Korada Tanvi - Full-Stack AI Engineer',
     description: 'Building AI-native web products at the intersection of great engineering and real-world impact.',
     images: ['/images/og-image.jpg'],
   },
@@ -57,7 +55,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${dmSerif.variable} ${plusJakarta.variable} ${jetBrainsMono.variable} ${dancingScript.variable}`}>
+    <html lang="en" className={`${outfit.variable} ${inter.variable} ${jetBrainsMono.variable} ${caveat.variable}`}>
       <body>
         {children}
       </body>
