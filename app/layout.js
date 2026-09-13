@@ -1,16 +1,24 @@
-import { IBM_Plex_Mono, Caveat } from 'next/font/google';
+import { JetBrains_Mono, DM_Sans, Bricolage_Grotesque } from 'next/font/google';
 import './globals.css';
 
-const ibmPlexMono = IBM_Plex_Mono({
-  weight: ['400', '500', '600'],
+const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
-  variable: '--font-mono',
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-serif',
   display: 'swap',
 });
 
-const caveat = Caveat({
+const dmSans = DM_Sans({
   subsets: ['latin'],
-  variable: '--font-script',
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-mono',
   display: 'swap',
 });
 
@@ -40,14 +48,8 @@ export default function RootLayout({ children }) {
     <html lang="en" className="dark">
       <head>
         <link rel="icon" href="/favicon.ico" />
-        {/* Awwwards #1 Typography Pairing: Clash Display & Satoshi */}
-        <link rel="preconnect" href="https://api.fontshare.com" />
-        <link 
-          href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@400,500,700&display=swap" 
-          rel="stylesheet" 
-        />
       </head>
-      <body className={`${ibmPlexMono.variable} ${caveat.variable} night`} suppressHydrationWarning>
+      <body className={`${bricolage.variable} ${dmSans.variable} ${jetbrainsMono.variable} night`} suppressHydrationWarning>
         <div id="grain-overlay"></div>
         {children}
       </body>
