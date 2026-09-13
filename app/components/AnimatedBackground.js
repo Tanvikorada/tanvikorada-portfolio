@@ -353,7 +353,7 @@ export default function AnimatedBackground() {
       const timelines = [
         createSectionTimeline("#stack", "stack", "hero"),
         createSectionTimeline("#work", "hidden", "stack"),
-        createSectionTimeline("#experience", "hidden", "hidden")
+        createSectionTimeline("#journey", "hidden", "hidden")
       ].filter(Boolean);
       
       return timelines;
@@ -514,6 +514,7 @@ export default function AnimatedBackground() {
     </>
   );
 }
+
 
 
 
