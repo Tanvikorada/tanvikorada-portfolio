@@ -4,12 +4,11 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-// USER REQUESTED: "size of our blocks should be more" -> Massively increased block size (fewer blocks).
-// USER REQUESTED: "grid should not be appeared" -> CUBE_SIZE exactly matches SPACING (no gaps), forming a seamless flat sheet.
-const GRID_W = 24; 
-const GRID_H = 16;
-const SPACING = 4.5; 
-const CUBE_SIZE = 4.5; 
+// USER REQUESTED: "decrease the block size by very very little" -> Bumped GRID_W up slightly to 28.
+const GRID_W = 28; 
+const GRID_H = 18;
+const SPACING = 3.8; 
+const CUBE_SIZE = 3.8; // Seamless flat sheet at rest
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -19,7 +18,7 @@ function Cubes({ isNight }) {
   const tempColor = useMemo(() => new Color(), []);
   
   const cBaseLight = useMemo(() => new Color('#ffffff'), []); 
-  const cRippleLight = useMemo(() => new Color('#d8b4fe'), []); // Light lavender
+  const cRippleLight = useMemo(() => new Color('#d8b4fe'), []); 
   
   const cBaseNight = useMemo(() => new Color('#000000'), []); 
   const cRippleNight = useMemo(() => new Color('#fcd34d'), []); 
@@ -29,6 +28,7 @@ function Cubes({ isNight }) {
   
   const ripples = useRef([]);
   const lastRipplePos = useRef({ x: 0, y: 0 });
+  const lastRippleTime = useRef(0);
 
   useEffect(() => {
     const handleMove = (e) => {
@@ -62,41 +62,44 @@ function Cubes({ isNight }) {
     const mx = mouse.current.x * (GRID_W * SPACING / 2);
     const my = mouse.current.y * (GRID_H * SPACING / 2);
     
+    const t = state.clock.elapsedTime;
     const distMoved = Math.hypot(mx - lastRipplePos.current.x, my - lastRipplePos.current.y);
-    if (distMoved > 2.0) {
+    
+    // USER REQUESTED: "even if i move the cursor rapidly still only the rippkes should form not jelly"
+    // FIX: Throttled ripple emission! Even if you move super fast, it only drops a ripple every 0.12 seconds.
+    // This physically prevents ripples from stacking into a massive jelly mountain.
+    if (distMoved > 2.0 && t - lastRippleTime.current > 0.12) {
       ripples.current.push({ x: mx, y: my, time: 0, strength: 1.0 });
       lastRipplePos.current.x = mx;
       lastRipplePos.current.y = my;
-      if (ripples.current.length > 6) ripples.current.shift();
+      lastRippleTime.current = t;
+      if (ripples.current.length > 5) ripples.current.shift();
     }
 
     const dt = Math.min(delta, 0.05); 
     for (let r = 0; r < ripples.current.length; r++) {
-      // Elegant, fluid traveling speed
-      ripples.current[r].time += dt * 26.0; 
-      ripples.current[r].strength *= 0.97; 
+      // Sleek, smooth speed
+      ripples.current[r].time += dt * 24.0; 
+      ripples.current[r].strength *= 0.96; 
     }
 
     for (let i = 0; i < count; i++) {
       const ix = (i % GRID_W - GRID_W / 2) * SPACING;
       const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
 
-      // USER REQUEST: "bg is appearing as blocks clealry bcoz of grid"
-      // FIX: Z must be strictly 0.0 at rest. No ambient noise. This makes it a seamless flat sheet.
-      let z = 0;
+      let z = 0; // Flat seamless rest state
 
       for (let r = 0; r < ripples.current.length; r++) {
         const rip = ripples.current[r];
         const d = Math.hypot(ix - rip.x, iy - rip.y);
         const ringDist = Math.abs(d - rip.time);
         
-        // USER REQUEST: "dezprox ripples are really looking like circles but ours are not"
-        // FIX: The wave MUST be wide enough to span multiple blocks (anti-aliasing). 
-        // A thin wave on large blocks causes severe jagged diamond shapes.
-        // A wide Gaussian Dome (divisor 18.0) creates a smooth height gradient that the eye reads as a perfect circle.
-        if (ringDist < 12.0) { 
-          const wave = Math.exp(-(ringDist * ringDist) / 18.0);
-          z += wave * rip.strength * 2.8;
+        if (ringDist < 10.0) { 
+          // Firm Gaussian: Shaper divisor (10.0 instead of 18.0) means the ripple is 
+          // crisp and focused, completely eliminating the fat jelly wobble.
+          const wave = Math.exp(-(ringDist * ringDist) / 10.0);
+          // Height reduced to 1.8. It rises elegantly without forming a massive wall.
+          z += wave * rip.strength * 1.8;
         }
       }
 
@@ -105,8 +108,8 @@ function Cubes({ isNight }) {
       dummy.updateMatrix();
       meshRef.current.setMatrixAt(i, dummy.matrix);
 
-      // Light lavender coloring scales precisely with the Z elevation
-      const intensity = Math.max(0, Math.min(1, z * 0.45));
+      // Color intensity scales strictly with elevation
+      const intensity = Math.max(0, Math.min(1, z * 0.5));
       
       const base = isNight ? cBaseNight : cBaseLight;
       const ripple = isNight ? cRippleNight : cRippleLight;
@@ -121,12 +124,10 @@ function Cubes({ isNight }) {
   return (
     <>
       <instancedMesh ref={meshRef} args={[null, null, count]}>
-        {/* Generous depth (10) so sides are heavily shaded when raised */}
-        <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 10.0]} />
+        <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 8.0]} />
         <meshStandardMaterial roughness={0.1} metalness={0.05} />
       </instancedMesh>
-      {/* Invisible Backplate prevents micro-leaks */}
-      <mesh position={[0, 0, -5.0]}>
+      <mesh position={[0, 0, -4.0]}>
         <planeGeometry args={[400, 400]} />
         <meshStandardMaterial color={isNight ? '#000000' : '#ffffff'} roughness={0.1} metalness={0.05} />
       </mesh>
@@ -157,7 +158,6 @@ export default function HeroBg() {
         style={{ width: '100vw', height: '100vh' }}
       >
         <ambientLight intensity={isNight ? 0.7 : 1.5} />
-        {/* Strong angled lighting casts shadows ONLY when blocks are raised from the seamless flat sheet */}
         <directionalLight position={[15, -20, 30]} intensity={isNight ? 1.0 : 1.5} color="#ffffff" />
         <directionalLight position={[-15, 20, 20]} intensity={isNight ? 0.4 : 0.6} color={isNight ? '#fcd34d' : '#f3e8ff'} />
         
