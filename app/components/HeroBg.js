@@ -4,11 +4,11 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-// EXACT Dezprox block size (larger, chunkier premium tiles)
-const GRID_W = 28; 
-const GRID_H = 18;
-const SPACING = 3.8; 
-const CUBE_SIZE = 3.75; // Small premium crevice between the large blocks
+// Perfectly balanced grid: Dense enough for flawless circles, chunky enough for 3D depth
+const GRID_W = 42; 
+const GRID_H = 28;
+const SPACING = 2.5; 
+const CUBE_SIZE = 2.38; // Clean gap to ensure shadows perfectly define each block
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -18,7 +18,7 @@ function Cubes({ isNight }) {
   const tempColor = useMemo(() => new Color(), []);
   
   const cBaseLight = useMemo(() => new Color('#ffffff'), []); 
-  const cRippleLight = useMemo(() => new Color('#8b5cf6'), []); // Ultra-premium glowing lavender
+  const cRippleLight = useMemo(() => new Color('#c084fc'), []); // Beautiful, soft Light Lavender!
   
   const cBaseNight = useMemo(() => new Color('#000000'), []); 
   const cRippleNight = useMemo(() => new Color('#fbbf24'), []); 
@@ -61,6 +61,7 @@ function Cubes({ isNight }) {
     const mx = mouse.current.x * (GRID_W * SPACING / 2);
     const my = mouse.current.y * (GRID_H * SPACING / 2);
     
+    // Trigger perfect circular ripples
     const distMoved = Math.hypot(mx - lastRipplePos.current.x, my - lastRipplePos.current.y);
     if (distMoved > 2.0) {
       ripples.current.push({ x: mx, y: my, time: 0, strength: 1.0 });
@@ -71,8 +72,8 @@ function Cubes({ isNight }) {
 
     const dt = Math.min(delta, 0.05); 
     for (let r = 0; r < ripples.current.length; r++) {
-      ripples.current[r].time += dt * 32.0; // Faster ripple because coordinate space is larger
-      ripples.current[r].strength *= 0.98; 
+      ripples.current[r].time += dt * 22.0; // Perfect, elegant expansion speed
+      ripples.current[r].strength *= 0.985; 
     }
 
     const t = state.clock.elapsedTime;
@@ -81,34 +82,37 @@ function Cubes({ isNight }) {
       const ix = (i % GRID_W - GRID_W / 2) * SPACING;
       const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
 
-      // Scaled ambient motion (extremely wide so large blocks don't look jagged)
-      let z = Math.sin(ix * 0.015 + t * 0.8) * Math.cos(iy * 0.015 + t * 0.6) * 0.4;
+      // Rest perfectly flat like Dezprox, with only the tiniest microscopic breath
+      let z = Math.sin(ix * 0.02 + t * 0.5) * Math.cos(iy * 0.02 + t * 0.4) * 0.15;
 
       for (let r = 0; r < ripples.current.length; r++) {
         const rip = ripples.current[r];
         const d = Math.hypot(ix - rip.x, iy - rip.y);
         const ringDist = Math.abs(d - rip.time);
         
-        // Massive radius (12.0) to smoothly cover the large Dezprox blocks!
-        if (ringDist < 12.0) { 
-          // Stretched wave equation for smooth transitions across large tiles
-          const wave = Math.cos(ringDist * 0.4) * Math.exp(-ringDist * 0.15);
+        // Massive, wide radius guarantees perfectly smooth, non-pixelated circles
+        if (ringDist < 14.0) { 
+          // Pure Gaussian Dome curve: Always pushes UP.
+          // This ensures the blocks rise cleanly and vividly like the reference, instead of dipping chaotically.
+          const wave = Math.exp(-(ringDist * ringDist) / 16.0);
           
-          const distanceAmplify = 1.0 + (d * 0.02); 
+          const distanceAmplify = 1.0 + (d * 0.03); 
           
-          // Gentle max height (1.8) so they never explode like jagged pillars again
-          z += wave * rip.strength * 1.8 * distanceAmplify;
+          // Blocks rise boldly up to ~3.5 units so their 3D sides perfectly catch the light
+          z += wave * rip.strength * 3.5 * distanceAmplify;
         }
       }
 
-      const renderZ = Math.max(-5.0, Math.min(5.0, z));
+      // Keep it constrained and elegant
+      const renderZ = Math.max(-1.0, Math.min(8.0, z));
 
       dummy.position.set(ix, iy, renderZ);
       dummy.rotation.set(0, 0, 0); 
       dummy.updateMatrix();
       meshRef.current.setMatrixAt(i, dummy.matrix);
 
-      const intensity = Math.max(0, Math.min(1, Math.abs(z) * 0.4));
+      // Distinct, glowing light lavender
+      const intensity = Math.max(0, Math.min(1, z * 0.4));
       
       const base = isNight ? cBaseNight : cBaseLight;
       const ripple = isNight ? cRippleNight : cRippleLight;
@@ -158,7 +162,8 @@ export default function HeroBg() {
       >
         <ambientLight intensity={isNight ? 0.7 : 1.3} />
         <directionalLight position={[20, -20, 30]} intensity={isNight ? 1.0 : 1.5} color="#ffffff" />
-        <directionalLight position={[-20, 20, 20]} intensity={isNight ? 0.4 : 0.5} color={isNight ? '#fbbf24' : '#8b5cf6'} />
+        {/* Using a pure, clean light lavender for the directional glow */}
+        <directionalLight position={[-20, 20, 20]} intensity={isNight ? 0.4 : 0.5} color={isNight ? '#fbbf24' : '#c084fc'} />
         
         <Cubes isNight={isNight} />
       </Canvas>
