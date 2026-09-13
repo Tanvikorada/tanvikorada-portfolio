@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 
 import SpotlightCard from './ui/SpotlightCard';
-import AccordionGallery from './ui/AccordionGallery';
+import InfiniteSpiral from './ui/InfiniteSpiral';
 
 
 
@@ -91,18 +91,23 @@ export default function MoreProjects() {
 
           
 
-          <AccordionGallery
-            items={SLIDER_ITEMS}
-            defaultIndex={2}
-            expandRatio={0.52}
-            trigger="hover"
-            height={500}
-            gap={10}
-            radius={24}
-            accentColor="var(--accent)"
-            overlayColor="#020617"
-            grayscale={true}
-          />
+          <div style={{ height: "600px", position: "relative", overflow: "hidden", borderRadius: "24px" }}>
+            <InfiniteSpiral
+              items={SLIDER_ITEMS.map(i => ({ src: i.image, alt: i.label }))}
+              animationMode="all"
+              speed={0.55}
+              radius={200}
+              cardWidth={280}
+              cardHeight={160}
+              verticalSpacing={80}
+              perspective={1000}
+              cardRadius={24}
+              centerScale={1.2}
+              edgeBlur={6}
+              cardsPerTurn={6}
+              pauseOnHover={true}
+            />
+          </div>
         </div>
       </div>
 
@@ -156,6 +161,7 @@ export default function MoreProjects() {
     </section>
   );
 }
+
 
 
 
