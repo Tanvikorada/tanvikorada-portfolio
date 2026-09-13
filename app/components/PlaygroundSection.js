@@ -8,7 +8,6 @@ export default function PlaygroundSection() {
   const landRef = useRef(null);
   const [isNight, setIsNight] = useState(true);
 
-  // Sync theme
   useEffect(() => {
     setIsNight(document.body.classList.contains('night'));
     const observer = new MutationObserver(() => {
@@ -19,78 +18,74 @@ export default function PlaygroundSection() {
   }, []);
 
   useEffect(() => {
-    if (!containerRef.current || !gardenRef.current) return;
-    const footer = containerRef.current;
     const garden = gardenRef.current;
-    
-    // Cleanup previous garden
-    garden.innerHTML = '';
-    
-    const rnd = (a, b) => a + Math.random() * (b - a);
-    const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
-    const pick = a => a[(Math.random() * a.length) | 0];
-    
-    const CREAM = ['#faf5e6', '#fbf7ec', '#f7f1df'];
-    const PETAL_EDGE = '#e2d5b0';
-    const DISC = '#e89a1c', DISC_HI = '#f6c740', DISC_SH = '#b9791a';
-    const STEM = ['#b06a4d', '#a95c42', '#bb765b'];
-    const OLIVE = ['#33361a', '#2b2e14', '#3c4020', '#454a24'];
-    const LAV = ['#7c5fa6', '#684c90', '#8f73b8', '#5b4680', '#9a80c2'];
-    const LEAFG = ['#5c7d3f', '#4a6b33', '#6f9450'];
+    const footer = containerRef.current;
+    if (!garden || !footer) return;
 
-    function petalPath(len, w, col, extra) {
-      return `<path d="M0 0 C ${-w} ${(-len * 0.42).toFixed(1)} ${(-w * 0.55).toFixed(1)} ${-len} 0 ${-len} C ${(w * 0.55).toFixed(1)} ${-len} ${w} ${(-len * 0.42).toFixed(1)} 0 0 Z" fill="${col}" ${extra || ''}/>`;
+    garden.innerHTML = ''; // Reset
+
+    const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
+    const rnd = (min, max) => min + Math.random() * (max - min);
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+    const ORANGE = ['#f97316', '#fb923c', '#ea580c'];
+    const WHITE = ['#ffffff', '#f8fafc', '#f1f5f9'];
+    const BLUE = ['#38bdf8', '#0ea5e9', '#7dd3fc'];
+    const OLIVE = ['#65a30d', '#4d7c0f', '#3f6212', '#84cc16'];
+    const LAVENDER = ['#c084fc', '#a855f7', '#d8b4fe'];
+
+    function wrap(w, h, inner) { return `<svg viewBox="-${w / 2} -${h} ${w} ${h}" width="${w}" height="${h}" style="overflow:visible; filter:url(#ft-paint)">${inner}</svg>`; }
+
+    function leaf(x, y, ang, len, col) {
+      return `<path d="M ${x} ${y} Q ${x + Math.sin(ang - 0.2) * len} ${y - Math.cos(ang - 0.2) * len} ${x + Math.sin(ang) * len * 1.5} ${y - Math.cos(ang) * len * 1.5} Q ${x + Math.sin(ang + 0.2) * len} ${y - Math.cos(ang + 0.2) * len} ${x} ${y}" fill="${col}"/>`;
     }
-    function blade(x, y, ang, len, col) {
-      const tx = x + Math.sin(ang * Math.PI / 180) * len, ty = y - Math.cos(ang * Math.PI / 180) * len;
-      return `<path d="M${x} ${y} Q ${((x + tx) / 2 + rnd(-3, 3)).toFixed(1)} ${((y + ty) / 2).toFixed(1)} ${tx.toFixed(1)} ${ty.toFixed(1)}" stroke="${col}" stroke-width="${rnd(2.4, 3.6).toFixed(1)}" fill="none" stroke-linecap="round"/>`;
-    }
+
     function frond(x, y, ang, len, col) {
-      const fingers = 3 + ((Math.random() * 3) | 0);
-      let g = `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${ang.toFixed(1)})">`;
-      for (let i = 0; i < fingers; i++) {
-        const fa = (i - (fingers - 1) / 2) * rnd(15, 21);
-        const fl = len * (1 - Math.abs(i - (fingers - 1) / 2) * 0.1) * rnd(0.8, 1);
-        g += `<g transform="rotate(${fa.toFixed(1)})">${petalPath(fl, rnd(6, 9), col)}</g>`;
+      let g = `<path d="M ${x} ${y} Q ${x + Math.sin(ang) * len / 2} ${y - Math.cos(ang) * len / 2} ${x + Math.sin(ang) * len} ${y - Math.cos(ang) * len}" stroke="${col}" stroke-width="2" fill="none"/>`;
+      const steps = 6;
+      for (let i = 1; i <= steps; i++) {
+        const t = i / steps;
+        const px = x + Math.sin(ang) * len * t;
+        const py = y - Math.cos(ang) * len * t;
+        const ll = len * 0.3 * (1 - t);
+        g += leaf(px, py, ang - 1, ll, col) + leaf(px, py, ang + 1, ll, col);
       }
-      return g + '</g>';
-    }
-    function wrap(w, h, inner) {
-      return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible"><g filter="url(#ft-paint)">${inner}</g></svg>`;
+      return g;
     }
 
     function buildDaisy() {
-      const h = rnd(185, 265), w = 96, cx = w / 2, top = 28, bend = rnd(-15, 15);
-      const stemC = pick(STEM), olive = pick(OLIVE), cream = pick(CREAM);
-      const stem = `<path d="M${cx} ${h} C ${(cx + bend).toFixed(1)} ${(h * 0.6).toFixed(1)} ${(cx - bend).toFixed(1)} ${(h * 0.34).toFixed(1)} ${cx} ${top + 6}" stroke="${stemC}" stroke-width="${rnd(3.4, 4.6).toFixed(1)}" fill="none" stroke-linecap="round"/>`;
-      let base = frond(cx + rnd(-4, 4), h - 2, rnd(-42, -22), rnd(48, 70), olive)
-               + frond(cx + rnd(-4, 4), h - 2, rnd(22, 42), rnd(48, 70), olive)
-               + frond(cx + rnd(-3, 3), h - 2, rnd(-10, 10), rnd(40, 58), olive);
-      const calyx = `<path d="M${cx - 11} ${top + 2} q11 15 22 0 q-3 12 -11 12 q-8 0 -11 -12 z" fill="${olive}"/>`;
-      const n = 11 + ((Math.random() * 4) | 0);
-      let petals = '';
-      for (let i = 0; i < n; i++) {
-        const a = 360 / n * i + rnd(-4, 4), L = rnd(27, 35);
-        petals += `<g transform="translate(${cx} ${top}) rotate(${a.toFixed(1)})">${petalPath(L, rnd(7, 10), cream, `stroke="${PETAL_EDGE}" stroke-width="1"`)}</g>`;
+      const h = rnd(100, 160), w = 120, cx = w / 2;
+      const petals = Math.random() < 0.5 ? WHITE : ORANGE;
+      const olive = pick(OLIVE);
+      let stem = `<path d="M ${cx} ${h} Q ${cx + rnd(-20, 20)} ${h / 2} ${cx} 15" stroke="${olive}" stroke-width="4" fill="none"/>`;
+      let leaves = '';
+      for (let i = 0; i < 3; i++) {
+        const y = h * rnd(0.3, 0.8);
+        leaves += leaf(cx, y, Math.random() > 0.5 ? -1.2 : 1.2, rnd(30, 50), olive);
       }
-      const cr = rnd(8.5, 10.5);
-      let disc = `<circle cx="${cx}" cy="${top}" r="${cr.toFixed(1)}" fill="${DISC}"/>`;
-      for (let i = 0; i < 16; i++) { const aa = rnd(0, 6.28), rr = rnd(0, cr * 0.82); disc += `<circle cx="${(cx + Math.cos(aa) * rr).toFixed(1)}" cy="${(top + Math.sin(aa) * rr).toFixed(1)}" r="${rnd(0.8, 1.6).toFixed(1)}" fill="${Math.random() < 0.5 ? DISC_HI : DISC_SH}"/>`; }
-      return { svg: wrap(w, h, base + stem + `<g class="head">${calyx}${petals}${disc}</g>`), h };
+      const np = 12; let fl = '';
+      for (let i = 0; i < np; i++) {
+        const a = (i / np) * Math.PI * 2;
+        fl += leaf(cx, 15, a, 25, pick(petals));
+      }
+      fl += `<circle cx="${cx}" cy="15" r="8" fill="#eab308"/>`;
+      return { svg: wrap(w, h, leaves + stem + `<g class="head">${fl}</g>`), h };
     }
 
     function buildLavender() {
-      const h = rnd(170, 235), w = 56, cx = w / 2;
-      const green = pick(LEAFG);
-      const stem = `<path d="M${cx} ${h} C ${(cx + rnd(-6, 6)).toFixed(1)} ${(h * 0.6).toFixed(1)} ${(cx + rnd(-4, 4)).toFixed(1)} ${(h * 0.42).toFixed(1)} ${cx} ${(h * 0.3).toFixed(1)}" stroke="${green}" stroke-width="2.8" fill="none" stroke-linecap="round"/>`;
-      const leaves = blade(cx, h, rnd(-32, -18), rnd(46, 66), green) + blade(cx, h, rnd(18, 32), rnd(46, 66), green);
-      const spikeBot = h * 0.34, spikeTop = 12;
+      const h = rnd(120, 180), w = 80, cx = w / 2;
+      const olive = pick(OLIVE);
+      let stem = `<path d="M ${cx} ${h} Q ${cx + rnd(-10, 10)} ${h / 2} ${cx} 10" stroke="${olive}" stroke-width="3" fill="none"/>`;
+      let leaves = '';
+      for (let i = 0; i < 4; i++) {
+        const y = h * rnd(0.4, 0.9);
+        leaves += leaf(cx, y, Math.random() > 0.5 ? -1 : 1, rnd(20, 40), olive);
+      }
       let florets = '';
-      const rows = 11 + ((Math.random() * 6) | 0);
-      for (let i = 0; i <= rows; i++) {
-        const t = i / rows, yy = spikeBot + (spikeTop - spikeBot) * t, spread = (1 - t) * 7 + 3;
-        for (let k = 0; k < 2 + ((Math.random() * 2) | 0); k++)
-          florets += `<circle cx="${(cx + rnd(-spread, spread)).toFixed(1)}" cy="${(yy + rnd(-3, 3)).toFixed(1)}" r="${rnd(2.6, 4.3).toFixed(1)}" fill="${pick(LAV)}" opacity="${rnd(0.78, 1).toFixed(2)}"/>`;
+      for (let y = 15; y < h * 0.4; y += 8) {
+        for (let i = 0; i < 3; i++) {
+          florets += `<circle cx="${cx + rnd(-8, 8)}" cy="${y + rnd(-4, 4)}" r="${rnd(3, 6)}" fill="${pick(LAVENDER)}"/>`;
+        }
       }
       return { svg: wrap(w, h, leaves + stem + `<g class="head">${florets}</g>`), h };
     }
@@ -104,7 +99,6 @@ export default function PlaygroundSection() {
       return { svg: wrap(w, h, `<g class="head">${g}</g>`), h };
     }
 
-    // Shared paint filter definition
     const defs = document.createElement('div');
     defs.setAttribute('aria-hidden', 'true');
     defs.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
@@ -134,10 +128,9 @@ export default function PlaygroundSection() {
       } catch (e) { return null; }
     }
 
-    // We fetch the terrain image asynchronously and THEN place the plants on its ridge.
     const imgSrc = isNight ? '/assets/land meadow-night.png' : '/assets/footer-land.png';
     const landImg = new Image();
-    landImg.crossOrigin = 'Anonymous'; // Just in case
+    landImg.crossOrigin = 'Anonymous'; 
     landImg.onload = () => {
       ridgeProf = buildRidge(landImg, !isNight);
       
@@ -145,7 +138,7 @@ export default function PlaygroundSection() {
       const fr = footer.getBoundingClientRect();
       landH = lr.height; landW = lr.width;
       footerW = fr.width;
-      landTop = lr.top - fr.top; // offset inside the section
+      landTop = lr.top - fr.top; 
       
       function imgFrac(xf) {
         if (!landW) return clamp(xf, 0, 1);
@@ -158,32 +151,29 @@ export default function PlaygroundSection() {
         return ridgeProf[i] * (1 - f) + ridgeProf[Math.min(ridgeProf.length - 1, i + 1)] * f;
       }
 
-      function soilY(xf) { return landTop + ridgeFrac(xf) * landH + 12; } // +12 sinks them firmly in
+      function soilY(xf) { return landTop + ridgeFrac(xf) * landH + 12; } 
 
       const N = 26;
       const nc = 6;
       const centers = [];
       for (let c = 0; c < nc; c++) centers.push(clamp((c + 0.5) / nc * 100 + rnd(-5, 5), 7, 93));
 
-      // Build the elements
       for (let i = 0; i < N; i++) {
         const roll = Math.random();
         const built = roll < 0.45 ? buildDaisy() : roll < 0.8 ? buildLavender() : buildFoliage();
         const el = document.createElement('div');
         el.className = 'ft-plant';
         const xPct = clamp(centers[i % nc] + rnd(-8, 8), 2, 98);
-        const depthPx = rnd(5, 30); // Random z-depth planting
+        const depthPx = rnd(5, 30); 
         const baseY = soilY(xPct / 100) + depthPx;
 
         el.style.position = 'absolute';
         el.style.left = xPct + '%';
-        // Position them from the top of the container downwards to plant them on the ridge!
         el.style.top = (baseY - built.h) + 'px';
         el.style.zIndex = String(10 + Math.round(depthPx / 12));
         el.style.transform = `translateX(-50%)`;
         el.style.transformOrigin = `50% 100%`;
         
-        // Gentle sway animation
         el.style.animation = `sway ${rnd(4, 7)}s ease-in-out infinite alternate`;
         el.style.animationDelay = `${rnd(-5, 0)}s`;
 
@@ -193,26 +183,95 @@ export default function PlaygroundSection() {
     };
     landImg.src = imgSrc;
 
-    // A simple keyframes injection for the sway if not in CSS
     if (!document.getElementById('ft-sway-style')) {
       const style = document.createElement('style');
       style.id = 'ft-sway-style';
-      style.innerHTML = `@keyframes sway { 0% { transform: translateX(-50%) rotate(-3deg); } 100% { transform: translateX(-50%) rotate(3deg); } }`;
+      style.innerHTML = `
+        @keyframes sway { 0% { transform: translateX(-50%) rotate(-3deg); } 100% { transform: translateX(-50%) rotate(3deg); } }
+        @keyframes fall { 0% { top: -20px; opacity: 1; transform: scaleY(1); } 90% { transform: scaleY(1.5); opacity: 1; } 100% { top: calc(100% - 10px); opacity: 0; transform: scaleY(0.5); } }
+        @keyframes splash { 0% { transform: scale(0); opacity: 0.8; } 100% { transform: scale(2); opacity: 0; } }
+        @keyframes grow { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } 100% { transform: translateX(-50%) scale(1); } }
+      `;
       document.head.appendChild(style);
     }
     
   }, [isNight]);
 
+  // WATERING LOGIC
+  const handleWaterClick = (e) => {
+    if (!containerRef.current) return;
+    
+    // Create water drop
+    const drop = document.createElement('div');
+    const dropSize = 12;
+    
+    // Calculate relative coordinates
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    drop.style.position = 'absolute';
+    drop.style.left = `${x - dropSize / 2}px`;
+    drop.style.width = `${dropSize}px`;
+    drop.style.height = `${dropSize * 1.5}px`;
+    drop.style.backgroundColor = '#38bdf8';
+    drop.style.borderRadius = '50% 50% 50% 50% / 60% 60% 40% 40%'; // Teardrop shape
+    drop.style.zIndex = '100';
+    drop.style.animation = 'fall 0.6s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards';
+    drop.style.pointerEvents = 'none';
+    drop.style.boxShadow = '0 0 10px rgba(56, 189, 248, 0.5)';
+    
+    // We append to container so it falls from mouse click down to bottom of container
+    containerRef.current.appendChild(drop);
+
+    // Splash effect and trigger growth
+    setTimeout(() => {
+      // Clean up drop
+      if (drop.parentNode) drop.parentNode.removeChild(drop);
+
+      // Create splash ring
+      const splash = document.createElement('div');
+      splash.style.position = 'absolute';
+      splash.style.left = `${x - 15}px`;
+      splash.style.bottom = '10%'; // Approx ground level
+      splash.style.width = '30px';
+      splash.style.height = '10px';
+      splash.style.border = '2px solid #38bdf8';
+      splash.style.borderRadius = '50%';
+      splash.style.animation = 'splash 0.5s ease-out forwards';
+      splash.style.pointerEvents = 'none';
+      splash.style.zIndex = '90';
+      containerRef.current.appendChild(splash);
+      
+      setTimeout(() => {
+        if (splash.parentNode) splash.parentNode.removeChild(splash);
+      }, 500);
+
+      // Make all plants nearby grow
+      const plants = document.querySelectorAll('.ft-plant');
+      const clickXPct = (x / rect.width) * 100;
+      
+      plants.forEach(plant => {
+        const plantLeft = parseFloat(plant.style.left);
+        // If plant is within 15% horizontal distance of the drop
+        if (Math.abs(plantLeft - clickXPct) < 15) {
+          // Remove old grow animation to re-trigger
+          plant.style.animation = 'none';
+          void plant.offsetWidth; // Trigger reflow
+          // Apply grow animation then revert to sway
+          plant.style.animation = 'grow 1s ease-out forwards, sway 5s ease-in-out infinite alternate';
+        }
+      });
+
+    }, 600);
+  };
+
   return (
     <>
-      {/* 
-        This section uses a strong backdrop-blur.
-        It strictly prevents the 3D grid from overwhelming the garden, 
-        giving the "Click to water" text and the garden clean breathing room. 
-      */}
       <section 
         ref={containerRef}
         id="playground" 
+        onClick={handleWaterClick}
         style={{ 
           position: 'relative', 
           width: '100%', 
@@ -223,14 +282,10 @@ export default function PlaygroundSection() {
           justifyContent: 'flex-start',
           alignItems: 'center',
           paddingTop: '10vh',
-          background: isNight ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.45)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          borderTop: '1px solid var(--border)'
+          cursor: 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'24\' height=\'24\' fill=\'none\' stroke=\'%2338bdf8\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><path d=\'M12 2v20M17 7l-5-5-5 5\'/></svg>") 12 12, crosshair',
         }}
       >
-        {/* TEXT: Positioned high up so it never overlaps the flowers! */}
-        <div style={{ position: 'relative', zIndex: 60, textAlign: 'center', padding: '0 20px' }}>
+        <div style={{ position: 'relative', zIndex: 60, textAlign: 'center', padding: '0 20px', pointerEvents: 'none' }}>
           <motion.p
             className="section-eyebrow"
             initial={{ opacity: 0, y: 16 }}
@@ -258,15 +313,10 @@ export default function PlaygroundSection() {
           </motion.h2>
         </div>
 
-        {/* 
-          THE SOIL TERRAIN (Exactly matching reference) 
-          This is absolutely positioned at the bottom.
-        */}
         <div style={{ 
           position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)',
           width: '100%', minWidth: '1200px', zIndex: 20, pointerEvents: 'none'
         }}>
-          {/* We render the image explicitly so the bounding rect can be measured, but we also use it as the visual ground. */}
           <img 
             ref={landRef}
             src={isNight ? "/assets/land meadow-night.png" : "/assets/footer-land.png"} 
@@ -275,7 +325,6 @@ export default function PlaygroundSection() {
           />
         </div>
         
-        {/* The garden bed where the SVGs are spawned using the extracted functions */}
         <div ref={gardenRef} style={{ position: 'absolute', inset: 0, zIndex: 10, pointerEvents: 'none' }} />
       </section>
     </>

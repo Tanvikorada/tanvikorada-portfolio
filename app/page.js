@@ -37,7 +37,7 @@ export default function Home() {
           <TechStack />
         </section>
 
-        <div style={{ position: 'relative', pointerEvents: 'auto' }}>
+        <div style={{ position: "relative", pointerEvents: "auto", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", background: "color-mix(in srgb, var(--bg-base) 60%, transparent)", borderTop: "1px solid var(--border)" }}>
 
           <section style={{ position: 'relative', zIndex: 30 }}>
             <ScrollExpand
@@ -87,6 +87,7 @@ export default function Home() {
     </>
   );
 }
+
 
 
 
