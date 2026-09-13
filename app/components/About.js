@@ -59,7 +59,7 @@ export default function About() {
           .bento-stats { grid-column: span 2 !important; }
           .bento-skills { grid-column: span 2 !important; }
           .bento-status { grid-column: span 2 !important; }
-          .bento-fun { grid-column: span 2 !important; }
+          .bento-clubs { grid-column: span 2 !important; }
         }
 
         @media (max-width: 600px) {
@@ -72,24 +72,39 @@ export default function About() {
           }
         }
 
-        .apple-glass-card {
-          background: var(--bg-glass);
-          backdrop-filter: blur(40px) saturate(180%);
-          -webkit-backdrop-filter: blur(40px) saturate(180%);
-          border: 1px solid var(--border);
+                .apple-glass-card {
+          background: linear-gradient(135deg, color-mix(in srgb, var(--bg-glass) 70%, rgba(255,255,255,0.1)), color-mix(in srgb, var(--bg-glass) 90%, rgba(0,0,0,0.05)));
+          backdrop-filter: blur(40px) saturate(200%);
+          -webkit-backdrop-filter: blur(40px) saturate(200%);
+          border: 1px solid color-mix(in srgb, var(--border) 60%, rgba(255,255,255,0.15));
           border-radius: 32px;
           padding: 32px;
           position: relative;
           overflow: hidden;
-          box-shadow: 0 8px 32px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.06);
+          box-shadow: 0 10px 40px rgba(31, 38, 135, 0.07), inset 0 1px 1px rgba(255,255,255,0.2), inset 0 0 20px rgba(56, 189, 248, 0.05);
           transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
           display: flex;
           flex-direction: column;
         }
+
+        .apple-glass-card::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(circle at 0% 0%, rgba(255,255,255,0.1), transparent 50%),
+                      radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.08), transparent 50%);
+          z-index: 0;
+          pointer-events: none;
+        }
+        
+        .apple-glass-card > * {
+          position: relative;
+          z-index: 1;
+        }
         
         .apple-glass-card:hover {
           transform: translateY(-4px) scale(1.01);
-          box-shadow: 0 16px 48px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.1);
+          box-shadow: 0 20px 50px rgba(31, 38, 135, 0.1), inset 0 1px 1px rgba(255,255,255,0.3), inset 0 0 30px rgba(56, 189, 248, 0.1);
         }
 
         .bento-photo { grid-column: span 1; grid-row: span 2; padding: 0; }
@@ -97,10 +112,10 @@ export default function About() {
         .bento-map { grid-column: span 1; grid-row: span 2; padding: 0; }
         
         .bento-status { grid-column: span 2; grid-row: span 1; justify-content: center; }
-        .bento-skills { grid-column: span 2; grid-row: span 2; }
         .bento-stats { grid-column: span 2; grid-row: span 1; justify-content: center; }
         
-        .bento-fun { grid-column: span 4; grid-row: span 1; }
+        .bento-skills { grid-column: span 2; grid-row: span 2; }
+        .bento-clubs { grid-column: span 2; grid-row: span 2; display: flex; flex-direction: column; justify-content: space-between; }
 
         .apple-label {
           font-family: var(--font-mono);
@@ -189,15 +204,14 @@ export default function About() {
           </AppleGlassCard>
 
           {/* 3. Location / Map Tile (USER REQUESTED: MAP) */}
-          <AppleGlassCard className="bento-map">
-            <div style={{ position: 'absolute', top: '24px', left: '24px', zIndex: 10, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', padding: '10px 16px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                    <AppleGlassCard className="bento-map">
+            <div style={{ position: 'absolute', top: '24px', left: '24px', zIndex: 10, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', padding: '10px 16px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.15)' }}>
               <p style={{ margin: 0, fontSize: '11px', fontFamily: 'var(--font-mono)', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Location</p>
-              <p style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#fff', fontFamily: 'var(--font-serif)' }}>Chennai, IN</p>
+              <p style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#fff', fontFamily: 'var(--font-serif)' }}>SRMIST, Chennai</p>
             </div>
-            {/* Directly embedded beautiful dark/light map via iframe */}
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124440.40795413151!2d80.11729452098028!3d13.047374780512702!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5265ea4f7d3361%3A0x6e61a70b686314bf!2sChennai%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1707572346912!5m2!1sen!2sin" 
-              style={{ width: '100%', height: '100%', border: 0, filter: 'invert(90%) hue-rotate(180deg) contrast(85%)', objectFit: 'cover' }} 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.3130198089456!2d80.04018317572709!3d12.823032987479427!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52f712b82a78d9%3A0xfdb944a3aee53831!2sSRM%20Institute%20of%20Science%20and%20Technology!5e0!3m2!1sen!2sin!4v1707572346912!5m2!1sen!2sin" 
+              style={{ width: '100%', height: '100%', border: 0, objectFit: 'cover' }} 
               allowFullScreen="" 
               loading="lazy" 
               referrerPolicy="no-referrer-when-downgrade"
@@ -296,4 +310,7 @@ export default function About() {
     </section>
   );
 }
+
+
+
 
