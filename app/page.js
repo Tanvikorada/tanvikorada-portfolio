@@ -35,7 +35,7 @@ export default function Home() {
 
         <TechStackKeyboard />
 
-        <div style={{ position: "relative", pointerEvents: "auto", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", background: "color-mix(in srgb, var(--bg-base) 60%, transparent)", }}>
+        <div style={{ position: "relative", pointerEvents: "auto", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", background: "color-mix(in srgb, var(--bg-base) 80%, transparent)", }}>
 
           <section style={{ position: 'relative', zIndex: 30 }}>
             <ScrollExpand
@@ -85,6 +85,7 @@ export default function Home() {
     </>
   );
 }
+
 
 
 

@@ -203,7 +203,7 @@ export default function TechStackKeyboard() {
       </div>
 
       <div style={{ width: '100%', height: '70vh', cursor: 'grab' }} onMouseDown={e => e.currentTarget.style.cursor = 'grabbing'} onMouseUp={e => e.currentTarget.style.cursor = 'grab'}>
-        <Canvas camera={{ position: [0, 8, 5], fov: 50 }}>
+        <Canvas camera={{ position: [0, 8, 5], fov: 50 }} dpr={[1, 1.5]} gl={{ powerPreference: "high-performance", antialias: false }} performance={{ min: 0.5 }}>
           <ambientLight intensity={1.5} />
           <directionalLight position={[10, 10, 5]} intensity={2} castShadow />
           <spotLight position={[-10, 10, 10]} intensity={1.5} color="#c084fc" />
@@ -268,7 +268,7 @@ export default function TechStackKeyboard() {
             </Float>
           </PresentationControls>
           
-          <ContactShadows position={[0, -2.5, 0]} opacity={0.5} scale={25} blur={2.5} far={4} color="#000000" />
+          <ContactShadows position={[0, -2.5, 0]} opacity={0.5} scale={25} blur={2.5} far={4} color="#000000" resolution={256} frames={1} />
         </Canvas>
       </div>
       
@@ -280,4 +280,5 @@ export default function TechStackKeyboard() {
     </section>
   );
 }
+
 
