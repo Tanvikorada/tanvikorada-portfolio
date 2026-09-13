@@ -10,6 +10,10 @@ export default function PlaygroundSection() {
   const [isNight, setIsNight] = useState(true);
   const [isHovering, setIsHovering] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
+  
+  // Store plants in a ref so we can update them without re-rendering
+  const plantsRef = useRef([]);
+  const ridgeRef = useRef(null);
 
   useEffect(() => {
     setIsNight(document.body.classList.contains('night'));
@@ -25,7 +29,9 @@ export default function PlaygroundSection() {
     const footer = containerRef.current;
     if (!garden || !footer) return;
 
-    garden.innerHTML = ''; // Reset
+    // Reset garden
+    garden.innerHTML = '';
+    plantsRef.current = [];
 
     const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
     const rnd = (min, max) => min + Math.random() * (max - min);
@@ -59,7 +65,7 @@ export default function PlaygroundSection() {
     }
 
     function buildDaisy() {
-      const h = rnd(100, 160), w = 120, cx = w / 2;
+      const h = rnd(120, 180), w = 120, cx = w / 2;
       const petals = Math.random() < 0.5 ? WHITE : ORANGE;
       const olive = pick(OLIVE);
       let stem = `<path d="M ${cx} ${h} Q ${cx + rnd(-20, 20)} ${h / 2} ${cx} 15" stroke="${olive}" stroke-width="4" fill="none"/>`;
@@ -78,7 +84,7 @@ export default function PlaygroundSection() {
     }
 
     function buildLavender() {
-      const h = rnd(120, 180), w = 80, cx = w / 2;
+      const h = rnd(140, 200), w = 80, cx = w / 2;
       const olive = pick(OLIVE);
       let stem = `<path d="M ${cx} ${h} Q ${cx + rnd(-10, 10)} ${h / 2} ${cx} 10" stroke="${olive}" stroke-width="3" fill="none"/>`;
       let leaves = '';
@@ -96,7 +102,7 @@ export default function PlaygroundSection() {
     }
 
     function buildFoliage() {
-      const h = rnd(90, 140), w = 110, cx = w / 2;
+      const h = rnd(100, 150), w = 110, cx = w / 2;
       const olive = pick(OLIVE);
       let g = '';
       const n = 4 + ((Math.random() * 3) | 0);
@@ -112,8 +118,6 @@ export default function PlaygroundSection() {
       <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
     </filter></defs></svg>`;
     garden.appendChild(defs);
-
-    let ridgeProf = null, landTop = 0, landH = 0, landW = 0, footerW = 0;
     
     function buildRidge(img, requireDark) {
       try {
@@ -133,31 +137,37 @@ export default function PlaygroundSection() {
       } catch (e) { return null; }
     }
 
-    const imgSrc = isNight ? '/assets/land meadow-night.png' : '/assets/footer-land.png';
-    const landImg = new Image();
-    landImg.crossOrigin = 'Anonymous'; 
-    landImg.onload = () => {
-      ridgeProf = buildRidge(landImg, !isNight);
-      
+    const reroot = () => {
       const lr = landRef.current ? landRef.current.getBoundingClientRect() : { top: 0, height: 400, width: window.innerWidth };
       const fr = footer.getBoundingClientRect();
-      landH = lr.height; landW = lr.width;
-      footerW = fr.width;
-      landTop = lr.top - fr.top; 
+      const landH = lr.height; 
+      const landW = lr.width;
+      const footerW = fr.width;
+      const landTop = lr.top - fr.top; 
       
-      function imgFrac(xf) {
+      const imgFrac = (xf) => {
         if (!landW) return clamp(xf, 0, 1);
         return clamp(0.5 + (clamp(xf, 0, 1) - 0.5) * (footerW / landW), 0, 1);
       }
       
-      function ridgeFrac(xf) {
-        if (!ridgeProf) return 0.42;
-        const t = imgFrac(xf) * (ridgeProf.length - 1), i = t | 0, f = t - i;
-        return ridgeProf[i] * (1 - f) + ridgeProf[Math.min(ridgeProf.length - 1, i + 1)] * f;
+      const ridgeFrac = (xf) => {
+        if (!ridgeRef.current) return 0.42;
+        const t = imgFrac(xf) * (ridgeRef.current.length - 1), i = t | 0, f = t - i;
+        return ridgeRef.current[i] * (1 - f) + ridgeRef.current[Math.min(ridgeRef.current.length - 1, i + 1)] * f;
       }
 
-      function soilY(xf) { return landTop + ridgeFrac(xf) * landH + 12; } 
+      plantsRef.current.forEach(pl => {
+        const baseY = landTop + ridgeFrac(pl.xPct / 100) * landH + 12 + pl.depthPx;
+        pl.el.style.bottom = (footer.clientHeight - baseY).toFixed(1) + 'px';
+      });
+    };
 
+    const imgSrc = isNight ? '/assets/land meadow-night.png' : '/assets/footer-land.png';
+    const landImg = new Image();
+    landImg.crossOrigin = 'Anonymous'; 
+    landImg.onload = () => {
+      ridgeRef.current = buildRidge(landImg, !isNight);
+      
       const N = 26;
       const nc = 6;
       const centers = [];
@@ -170,35 +180,49 @@ export default function PlaygroundSection() {
         el.className = 'ft-plant';
         const xPct = clamp(centers[i % nc] + rnd(-8, 8), 2, 98);
         const depthPx = rnd(5, 30); 
-        const baseY = soilY(xPct / 100) + depthPx;
-
+        
         el.style.position = 'absolute';
         el.style.left = xPct + '%';
-        el.style.top = (baseY - built.h) + 'px';
         el.style.zIndex = String(10 + Math.round(depthPx / 12));
-        el.style.transform = `translateX(-50%)`;
-        el.style.transformOrigin = `50% 100%`;
         
-        el.style.animation = `sway ${rnd(4, 7)}s ease-in-out infinite alternate`;
-        el.style.animationDelay = `${rnd(-5, 0)}s`;
+        // Use a CSS variable for growth scale, starting small
+        const initG = rnd(0.1, 0.3);
+        el.style.setProperty('--g', initG);
+        el.style.transform = `translateX(-50%) scale(var(--g))`;
+        el.style.transformOrigin = `50% 100%`;
+        el.style.transition = `transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)`;
 
-        el.innerHTML = built.svg;
+        const stalk = document.createElement('div');
+        stalk.style.animation = `sway ${rnd(4, 7)}s ease-in-out infinite alternate`;
+        stalk.style.animationDelay = `${rnd(-5, 0)}s`;
+        stalk.style.transformOrigin = '50% 100%';
+        stalk.innerHTML = built.svg;
+
+        el.appendChild(stalk);
         garden.appendChild(el);
+        plantsRef.current.push({ el, xPct, depthPx, g: initG, fullH: built.h });
       }
+      
+      reroot();
     };
     landImg.src = imgSrc;
+
+    // Relayout on resize
+    const ro = new ResizeObserver(() => reroot());
+    ro.observe(footer);
+    if (landRef.current) ro.observe(landRef.current);
 
     if (!document.getElementById('ft-sway-style')) {
       const style = document.createElement('style');
       style.id = 'ft-sway-style';
       style.innerHTML = `
-        @keyframes sway { 0% { transform: translateX(-50%) rotate(-3deg); } 100% { transform: translateX(-50%) rotate(3deg); } }
+        @keyframes sway { 0% { transform: rotate(-3deg); } 100% { transform: rotate(3deg); } }
         @keyframes splash { 0% { transform: scale(0); opacity: 0.8; } 100% { transform: scale(2); opacity: 0; } }
-        @keyframes grow { 0% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.05); } 100% { transform: translateX(-50%) scale(1); } }
       `;
       document.head.appendChild(style);
     }
     
+    return () => ro.disconnect();
   }, [isNight]);
 
   const handleMouseMove = (e) => {
@@ -206,7 +230,6 @@ export default function PlaygroundSection() {
       const rect = containerRef.current.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      // offset by 44, 43 so the tip of the can touches the cursor
       cursorRef.current.style.transform = `translate(${x - 44}px, ${y - 43}px) ${isClicking ? 'rotate(-25deg)' : ''}`;
     }
   };
@@ -238,16 +261,13 @@ export default function PlaygroundSection() {
       if (splash.parentNode) splash.parentNode.removeChild(splash);
     }, 500);
 
-    // Make all plants nearby grow
-    const plants = document.querySelectorAll('.ft-plant');
+    // Grow plants!
     const clickXPct = (x / rect.width) * 100;
-    
-    plants.forEach(plant => {
-      const plantLeft = parseFloat(plant.style.left);
-      if (Math.abs(plantLeft - clickXPct) < 15) {
-        plant.style.animation = 'none';
-        void plant.offsetWidth; // Trigger reflow
-        plant.style.animation = 'grow 1s ease-out forwards, sway 5s ease-in-out infinite alternate';
+    plantsRef.current.forEach(pl => {
+      if (Math.abs(pl.xPct - clickXPct) < 15) {
+        // Grow by a random chunk
+        pl.g = Math.min(1.2, pl.g + (0.2 + Math.random() * 0.2));
+        pl.el.style.setProperty('--g', pl.g);
       }
     });
   };
