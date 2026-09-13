@@ -200,7 +200,9 @@ const ScrollExpand = ({
         loop
         playsInline
       />
-    ) : mediaType === 'color' ? (
+    ) : mediaType === 'glass' ? (
+        <div ref={mediaRef} className="scroll-expand__media" style={{ background: 'var(--bg-card)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', border: '1px solid var(--border)' }} />
+      ) : mediaType === 'color' ? (
       <div ref={mediaRef} className="scroll-expand__media" style={{ background: src }} />
     ) : (
       <img ref={mediaRef} className="scroll-expand__media" src={src} alt={alt} draggable={false} />
@@ -241,5 +243,6 @@ const ScrollExpand = ({
 };
 
 export default ScrollExpand;
+
 
 

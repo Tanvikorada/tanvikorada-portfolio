@@ -38,6 +38,22 @@ export default function Home() {
         </section>
 
         <div style={{ position: 'relative', pointerEvents: 'auto' }}>
+
+          <section style={{ position: 'relative', zIndex: 30 }}>
+            <ScrollExpand
+              mediaType="glass"
+              title="Engineered for Scale"
+              scrollHint="Scroll to reveal"
+              useWindowScroll
+              overlayScrim={0}
+              textColor="var(--text-heading)" noShadow={true}
+            >
+              <div style={{ textAlign: 'center', padding: '3rem' }}>
+                <h2 style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 'bold', color: 'var(--text-heading)', marginBottom: '1rem', letterSpacing: '-0.02em' }}>Every pixel, crafted.</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', maxWidth: '500px', margin: '0 auto', lineHeight: 1.6 }}>From complex backend microservices to silky smooth frontend experiences.</p>
+              </div>
+            </ScrollExpand>
+          </section>
           
           <section style={{ position: 'relative' }}>
             <div style={{ position: 'absolute', inset: 0, background: 'var(--bg-glass)', zIndex: 10, borderTop: '1px solid var(--border)' }} />
@@ -47,17 +63,6 @@ export default function Home() {
           </section>
 
           <section style={{ position: 'relative', zIndex: 30 }}>
-            <ScrollExpand
-              src="/images/engineered_scale.jpg"
-              title="Engineered for Scale"
-              scrollHint="Scroll to reveal"
-              useWindowScroll
-            >
-              <div style={{ textAlign: 'center', background: 'rgba(0,0,0,0.5)', padding: '3rem', borderRadius: '24px', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <h2 style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 'bold', color: 'white', marginBottom: '1rem', letterSpacing: '-0.02em' }}>Every pixel, crafted.</h2>
-                <p style={{ color: '#ccc', fontSize: '1.2rem', maxWidth: '500px', margin: '0 auto', lineHeight: 1.6 }}>From complex backend microservices to silky smooth frontend experiences.</p>
-              </div>
-            </ScrollExpand>
             <MoreProjects />
           </section>
 
@@ -82,6 +87,8 @@ export default function Home() {
     </>
   );
 }
+
+
 
 
 
