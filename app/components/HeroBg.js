@@ -4,11 +4,11 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-// Exact Dezprox dimensions: Massive chunky blocks (~20 across the screen)
-const GRID_W = 22; 
-const GRID_H = 14;
-const SPACING = 4.2; 
-const CUBE_SIZE = 4.12; // Creates a deep structural crevice between blocks
+// Smooth, dense grid for a premium liquid look
+const GRID_W = 52; 
+const GRID_H = 34;
+const SPACING = 2.0; 
+const CUBE_SIZE = 1.95; // Tiny gap for structural lines
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -18,7 +18,7 @@ function Cubes({ isNight }) {
   const tempColor = useMemo(() => new Color(), []);
   
   const cBaseLight = useMemo(() => new Color('#ffffff'), []); 
-  const cRippleLight = useMemo(() => new Color('#ff6b00'), []); // Premium global orange accent!
+  const cRippleLight = useMemo(() => new Color('#7c3aed'), []); // Premium Lavender / Violet
   
   const cBaseNight = useMemo(() => new Color('#000000'), []); 
   const cRippleNight = useMemo(() => new Color('#fbbf24'), []); 
@@ -26,7 +26,6 @@ function Cubes({ isNight }) {
   const targetMouse = useRef({ x: 0, y: 0 });
   const mouse = useRef({ x: 0, y: 0 });
   
-  // Explicit mathematical ripples (Guarantees perfect circular waves that travel across the screen)
   const ripples = useRef([]);
   const lastRipplePos = useRef({ x: 0, y: 0 });
 
@@ -62,61 +61,59 @@ function Cubes({ isNight }) {
     const mx = mouse.current.x * (GRID_W * SPACING / 2);
     const my = mouse.current.y * (GRID_H * SPACING / 2);
     
-    // 1. Drop perfect circular ripples based on mouse movement
+    // Create new ripples
     const distMoved = Math.hypot(mx - lastRipplePos.current.x, my - lastRipplePos.current.y);
     if (distMoved > 2.0) {
       ripples.current.push({ x: mx, y: my, time: 0, strength: 1.0 });
       lastRipplePos.current.x = mx;
       lastRipplePos.current.y = my;
-      if (ripples.current.length > 8) ripples.current.shift(); // Keep memory usage low
+      if (ripples.current.length > 8) ripples.current.shift();
     }
 
-    // 2. Update ripple expanding radius
-    // Delta limits ensure physics don't explode if tab is in background
+    // Update ripples
     const dt = Math.min(delta, 0.05); 
     for (let r = 0; r < ripples.current.length; r++) {
-      ripples.current[r].time += dt * 25.0; // Speed of the wave traveling outward
-      ripples.current[r].strength *= 0.985; // Slow decay so it crosses the whole screen
+      ripples.current[r].time += dt * 18.0; 
+      ripples.current[r].strength *= 0.98; 
     }
 
     const t = state.clock.elapsedTime;
 
-    // 3. Render exact height for every block
     for (let i = 0; i < count; i++) {
       const ix = (i % GRID_W - GRID_W / 2) * SPACING;
       const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
 
-      // Ambient Dezprox watery layer (constant rolling hills)
-      let z = Math.sin(ix * 0.1 + t * 1.5) * Math.cos(iy * 0.1 + t * 1.2) * 1.2;
+      // Extremely subtle, wide ambient ocean swell (so it doesn't look like jagged blocks)
+      let z = Math.sin(ix * 0.03 + t * 0.8) * Math.cos(iy * 0.03 + t * 0.6) * 0.3;
 
-      // Add exact mathematical ripples
+      // Ripples
       for (let r = 0; r < ripples.current.length; r++) {
         const rip = ripples.current[r];
         const d = Math.hypot(ix - rip.x, iy - rip.y);
         const ringDist = Math.abs(d - rip.time);
         
-        if (ringDist < 8.0) { // If the block is touching the expanding wave front
-          // Beautiful water pulse: dips down, shoots UP high, dips down
-          const wave = Math.cos(ringDist * 0.7) * Math.exp(-ringDist * 0.3);
+        if (ringDist < 6.0) { 
+          // Smooth, subtle wave pulse
+          const wave = Math.cos(ringDist * 0.8) * Math.exp(-ringDist * 0.25);
           
-          // Amplifies the wave height as it goes further away! (Exactly what the user requested)
-          const distanceAmplify = 1.0 + (d * 0.15); 
+          // Amplifies slightly as it goes far, but controlled so it doesn't explode
+          const distanceAmplify = 1.0 + (d * 0.03); 
           
-          // Massive 6.0 multiplier so they shoot up like skyscrapers
-          z += wave * rip.strength * 6.0 * distanceAmplify;
+          // Max amplitude is very controlled (1.5) so it stays smooth and liquid
+          z += wave * rip.strength * 1.5 * distanceAmplify;
         }
       }
 
-      // Clamp Z so blocks don't fly off screen
-      const renderZ = Math.max(-18.0, Math.min(18.0, z));
+      // Safe clamp
+      const renderZ = Math.max(-4.0, Math.min(4.0, z));
 
       dummy.position.set(ix, iy, renderZ);
-      dummy.rotation.set(0, 0, 0); // Straight up and down like real skyscrapers
+      dummy.rotation.set(0, 0, 0); 
       dummy.updateMatrix();
       meshRef.current.setMatrixAt(i, dummy.matrix);
 
-      // Intensity glow matching the huge Z spikes
-      const intensity = Math.max(0, Math.min(1, Math.abs(z) * 0.25));
+      // Color mix based on height
+      const intensity = Math.max(0, Math.min(1, Math.abs(z) * 0.5));
       
       const base = isNight ? cBaseNight : cBaseLight;
       const ripple = isNight ? cRippleNight : cRippleLight;
@@ -131,11 +128,10 @@ function Cubes({ isNight }) {
   return (
     <>
       <instancedMesh ref={meshRef} args={[null, null, count]}>
-        {/* Incredible depth (16.0) for that extreme 3D skyscraper look! */}
-        <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 16.0]} />
+        <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 8.0]} />
         <meshStandardMaterial roughness={0.15} metalness={0.1} />
       </instancedMesh>
-      <mesh position={[0, 0, -8.0]}>
+      <mesh position={[0, 0, -4.0]}>
         <planeGeometry args={[400, 400]} />
         <meshStandardMaterial color={isNight ? '#000000' : '#ffffff'} roughness={0.15} metalness={0.1} />
       </mesh>
@@ -162,13 +158,12 @@ export default function HeroBg() {
       <Canvas 
         gl={{ alpha: false, antialias: true }} 
         dpr={[1, 1.5]} 
-        // Perspective Camera positioned to reveal the 3D sides of the blocks perfectly
-        camera={{ position: [0, 0, 50], fov: 50 }} 
+        camera={{ position: [0, 0, 50], fov: 45 }} 
         style={{ width: '100vw', height: '100vh' }}
       >
         <ambientLight intensity={isNight ? 0.7 : 1.3} />
         <directionalLight position={[20, -20, 30]} intensity={isNight ? 1.0 : 1.5} color="#ffffff" />
-        <directionalLight position={[-20, 20, 20]} intensity={isNight ? 0.4 : 0.5} color={isNight ? '#fbbf24' : '#ff6b00'} />
+        <directionalLight position={[-20, 20, 20]} intensity={isNight ? 0.4 : 0.5} color={isNight ? '#fbbf24' : '#7c3aed'} />
         
         <Cubes isNight={isNight} />
       </Canvas>
