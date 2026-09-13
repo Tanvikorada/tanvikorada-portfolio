@@ -4,11 +4,11 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-// Expanded grid for higher resolution ripples
-const GRID_W = 34; 
-const GRID_H = 20;
-const SPACING = 3.0;
-const CUBE_SIZE = 3.0; // ZERO GAP! Forms a perfectly seamless wall at rest.
+// Higher resolution grid for liquid smoothness
+const GRID_W = 46; 
+const GRID_H = 28;
+const SPACING = 2.4;
+const CUBE_SIZE = 2.4; // Zero gap.
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -17,11 +17,11 @@ function Cubes({ isNight }) {
   
   const tempColor = useMemo(() => new Color(), []);
   
-  const cBaseLight = useMemo(() => new Color('#ffffff'), []); // pure white
-  const cRippleLight = useMemo(() => new Color('#c084fc'), []); // glowing lavender
+  const cBaseLight = useMemo(() => new Color('#ffffff'), []); // Pure white
+  const cRippleLight = useMemo(() => new Color('#a855f7'), []); // Glowing lavender
   
-  const cBaseNight = useMemo(() => new Color('#000000'), []); // pure black
-  const cRippleNight = useMemo(() => new Color('#fbbf24'), []); // fluid gold
+  const cBaseNight = useMemo(() => new Color('#000000'), []); // Pure black
+  const cRippleNight = useMemo(() => new Color('#fbbf24'), []); // Fluid gold
 
   const targetMouse = useRef({ x: 0, y: 0 });
   const mouse = useRef({ x: 0, y: 0 });
@@ -55,6 +55,7 @@ function Cubes({ isNight }) {
         const ix = (i % GRID_W - GRID_W / 2) * SPACING;
         const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
         dummy.position.set(ix, iy, 0);
+        dummy.rotation.set(0, 0, 0);
         dummy.updateMatrix();
         meshRef.current.setMatrixAt(i, dummy.matrix);
         
@@ -69,8 +70,9 @@ function Cubes({ isNight }) {
   useFrame(() => {
     prevMouse.current.x = mouse.current.x;
     prevMouse.current.y = mouse.current.y;
-    mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.2);
-    mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.2);
+    // Smoother mouse tracking for liquid feel
+    mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.1);
+    mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.1);
 
     const mx = mouse.current.x * (GRID_W * SPACING / 2);
     const my = mouse.current.y * (GRID_H * SPACING / 2);
@@ -79,21 +81,21 @@ function Cubes({ isNight }) {
 
     let needsUpdate = false;
 
-    // 1. Mouse Disturbance (Drop a stone in the water)
+    // 1. Mouse Disturbance (Wider, softer splash = liquid feel)
     for (let i = 0; i < count; i++) {
       const ix = (i % GRID_W - GRID_W / 2) * SPACING;
       const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
       const dist = Math.hypot(mx - ix, my - iy);
 
-      if (dist < 6.0 && mouseSpeed > 0.001) {
-        // push tiles inward
-        states[i].vZ -= 0.15 * (1 - dist / 6.0);
+      if (dist < 12.0 && mouseSpeed > 0.001) {
+        // Soft gradient push
+        states[i].vZ -= 0.06 * (1 - dist / 12.0);
       }
     }
 
-    // 2. 2D Wave Propagation (Neighbors pull each other)
+    // 2. 2D Wave Propagation (Faster spread for liquid fluidity)
     const newTargetZ = new Float32Array(count);
-    const waveSpread = 0.25; 
+    const waveSpread = 0.38; 
     
     for (let i = 0; i < count; i++) {
       let sum = 0;
@@ -111,8 +113,9 @@ function Cubes({ isNight }) {
       newTargetZ[i] = states[i].pZ + (avg - states[i].pZ) * waveSpread;
     }
 
-    const tension = 0.02; // spring back to 0
-    const damping = 0.95; // more frictionless liquid flow
+    // Heavy liquid physics
+    const tension = 0.015; // Slow spring back
+    const damping = 0.975; // Ultra low friction, ripples roll beautifully
 
     for (let i = 0; i < count; i++) {
       const ix = (i % GRID_W - GRID_W / 2) * SPACING;
@@ -129,22 +132,20 @@ function Cubes({ isNight }) {
       if (Math.abs(states[i].vZ) > 0.001 || Math.abs(states[i].pZ) > 0.001) {
         needsUpdate = true;
         
-        // Depth limit so it doesn't break
-        const renderZ = Math.max(-2.5, Math.min(2.5, states[i].pZ));
+        const renderZ = Math.max(-3.0, Math.min(3.0, states[i].pZ));
 
         dummy.position.set(ix, iy, renderZ);
         
-        // Tilt the cubes based on the wave to create a 3D catching-light effect
-        dummy.rotation.x = states[i].pZ * 0.1;
-        dummy.rotation.y = states[i].pZ * 0.05;
+        // Tilt dynamic to wave gradient! This gives the true 3D liquid faceted look
+        dummy.rotation.x = states[i].pZ * 0.12;
+        dummy.rotation.y = states[i].pZ * 0.12;
         
         dummy.updateMatrix();
         meshRef.current.setMatrixAt(i, dummy.matrix);
 
-        // Fluid color mapping that travels with the wave
+        // Fluid color mapping
         const pressDepth = Math.abs(states[i].pZ);
-        // The further it sinks, the brighter the color glow!
-        const intensity = Math.max(0, Math.min(1, pressDepth * 0.8));
+        const intensity = Math.max(0, Math.min(1, pressDepth * 0.7));
         
         const base = isNight ? cBaseNight : cBaseLight;
         const ripple = isNight ? cRippleNight : cRippleLight;
@@ -160,19 +161,30 @@ function Cubes({ isNight }) {
   });
 
   return (
-    <instancedMesh ref={meshRef} args={[null, null, count]}>
-      {/* 3D Depth added here (12.0)! Instead of paper-thin squares (0.1), they are now thick 3D columns! */}
-      <boxGeometry args={[CUBE_SIZE * 0.99, CUBE_SIZE * 0.99, 4.0]} />
-      {/* High smoothness so when they tilt in the ripple, they catch the light fluidly */}
-      <meshStandardMaterial roughness={0.15} metalness={0.2} />
-    </instancedMesh>
+    <>
+      <instancedMesh ref={meshRef} args={[null, null, count]} position={[0, 0, 1]}>
+        {/* Deep columns so you see the 3D sides when they ripple */}
+        <boxGeometry args={[CUBE_SIZE, CUBE_SIZE, 8.0]} />
+        <meshStandardMaterial roughness={0.1} metalness={0.1} />
+      </instancedMesh>
+      
+      {/* 
+        THE SECRET TO ZERO WHITE LINES:
+        A massive backplate right behind the cubes with the EXACT same material and color.
+        If a gap opens, it just reveals the identical lit background, making the grid 100% invisible at rest!
+      */}
+      <mesh position={[0, 0, -3.5]}>
+        <planeGeometry args={[400, 400]} />
+        <meshStandardMaterial color={isNight ? '#000000' : '#ffffff'} roughness={0.1} metalness={0.1} />
+      </mesh>
+    </>
   );
 }
 
 export default function HeroBg() {
   const [isNight, setIsNight] = useState(true);
   const { scrollYProgress } = useScroll();
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.4], [0, 0.5]);
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.4], [0, 0.4]);
 
   useEffect(() => {
     setIsNight(document.body.classList.contains('night'));
@@ -186,16 +198,15 @@ export default function HeroBg() {
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: 'none' }}>
       <Canvas 
-        gl={{ alpha: true, antialias: true }} 
+        gl={{ alpha: false, antialias: true }} // alpha false because we have the backplate
         dpr={[1, 1.5]} 
-        camera={{ position: [0, 0, 120], fov: 15 }} 
-        style={{ width: '100vw', height: '100vh', background: isNight ? '#000000' : '#ffffff', transition: 'background 0.5s ease' }}
+        camera={{ position: [0, 0, 80], fov: 20 }} 
+        style={{ width: '100vw', height: '100vh' }}
       >
-        <color attach="background" args={[isNight ? '#000000' : '#ffffff']} />
-        
-        <ambientLight intensity={isNight ? 0.7 : 1.2} />
-        <directionalLight position={[10, -10, 20]} intensity={isNight ? 1.0 : 1.5} color="#ffffff" />
-        <directionalLight position={[-10, 10, 15]} intensity={isNight ? 0.4 : 0.6} color={isNight ? '#fbbf24' : '#c084fc'} />
+        <ambientLight intensity={isNight ? 0.8 : 1.4} />
+        {/* Soft, beautiful studio lighting */}
+        <directionalLight position={[20, -20, 30]} intensity={isNight ? 1.0 : 1.2} color="#ffffff" />
+        <directionalLight position={[-20, 20, 20]} intensity={isNight ? 0.3 : 0.4} color={isNight ? '#fbbf24' : '#a855f7'} />
         
         <Cubes isNight={isNight} />
       </Canvas>
@@ -210,6 +221,3 @@ export default function HeroBg() {
     </div>
   );
 }
-
-
-
