@@ -48,7 +48,20 @@ export default function MoreProjects() {
         {EXTRA_PROJECTS.map((p, i) => (
             <SpotlightCard 
               key={i} 
-              className="more-project-card"
+              style={{
+                flex: '0 0 400px',
+                scrollSnapAlign: 'center',
+                position: 'relative',
+                padding: '32px',
+                background: 'linear-gradient(145deg, var(--bg-surface), var(--bg-base))',
+                border: '1px solid var(--border-mid)',
+                borderRadius: '32px',
+                boxShadow: 'var(--shadow-lg), inset 0 2px 4px rgba(255,255,255,0.05)',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+                cursor: 'pointer'
+              }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
@@ -124,21 +137,7 @@ export default function MoreProjects() {
         .more-projects-scroll::-webkit-scrollbar {
           display: none;
         }
-        .more-project-card {
-          flex: 0 0 400px;
-          scroll-snap-align: center;
-          position: relative;
-          padding: 32px;
-          background: linear-gradient(145deg, var(--bg-surface), var(--bg-base));
-          border: 1px solid var(--border);
-          borderRadius: 24px;
-          box-shadow: var(--shadow-sm);
-          display: flex;
-          flex-direction: column;
-          border-radius: 24px;
-          overflow: hidden;
-          cursor: pointer;
-        }
+        
         .card-glare {
           position: absolute;
           top: 0;
