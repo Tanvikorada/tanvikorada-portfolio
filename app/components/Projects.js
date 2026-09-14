@@ -1,6 +1,7 @@
 'use client';
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import KineticText from './ui/KineticText';
 
 const projects = [
   {
@@ -165,9 +166,7 @@ export default function Projects() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 800, fontFamily: 'var(--font-serif)', color: 'var(--text-heading)' }}
-        >
-          Case Studies
-        </motion.h2>
+        ><KineticText text="Case Studies" /></motion.h2>
       </div>
 
       <div style={{ position: 'relative', paddingBottom: '10vh' }}>
@@ -188,5 +187,7 @@ export default function Projects() {
     </section>
   );
 }
+
+
 
 
