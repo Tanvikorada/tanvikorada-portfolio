@@ -240,22 +240,18 @@ function InteractiveSpace({ scrollYProgress }) {
 
   return (
     <group ref={groupRef}>
-      <Stars radius={100} depth={100} count={9000} factor={6} saturation={1} fade speed={2} />
-      <Sparkles count={800} scale={200} size={6} color="#a855f7" speed={0.4} opacity={0.5} />
-      <Sparkles count={400} scale={150} size={8} color="#38bdf8" speed={0.6} opacity={0.3} />
-      
-      <points>
-        <bufferGeometry>
-          <bufferAttribute attach="attributes-position" count={stardustCount} array={stardustPositions} itemSize={3} />
-          <bufferAttribute attach="attributes-color" count={stardustCount} array={stardustColors} itemSize={3} />
-        </bufferGeometry>
-        <pointsMaterial size={1.5} vertexColors transparent opacity={0.6} sizeAttenuation blending={THREE.AdditiveBlending} depthWrite={false} />
-      </points>
-      
-      <lineSegments ref={shootingStarRef} material={linesMat}>
-        <bufferGeometry />
-      </lineSegments>
-    </group>
+        {/* Layer 1: Distant dense background stars */}
+        <Stars radius={100} depth={150} count={5000} factor={4} saturation={0.5} fade speed={1} />
+        {/* Layer 2: Medium purple-tinted stars */}
+        <Stars radius={80} depth={100} count={2000} factor={6} saturation={1} color="#c084fc" fade speed={1.5} />
+        {/* Layer 3: Close large bright stars */}
+        <Stars radius={50} depth={50} count={500} factor={8} saturation={1} color="#38bdf8" fade speed={2} />
+        
+        {/* Shooting stars */}
+        <lineSegments ref={shootingStarRef} material={linesMat}>
+          <bufferGeometry />
+        </lineSegments>
+      </group>
   );
 }
 
