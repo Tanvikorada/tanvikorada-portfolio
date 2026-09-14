@@ -14,14 +14,14 @@ const coreTech = [
   { slug: 'prisma', color: '#2D3748' },
   { slug: 'mongodb', color: '#47A248' },
   { slug: 'firebase', color: '#FFCA28' },
-  { slug: 'amazonaws', color: '#232F3E' },
+  { slug: 'redis', color: '#DC382D' },
   { slug: 'docker', color: '#2496ED' },
   { slug: 'git', color: '#F05032' },
   { slug: 'github', color: '#181717' },
   { slug: 'vercel', color: '#000000' },
   { slug: 'figma', color: '#F24E1E' },
   { slug: 'html5', color: '#E34F26' },
-  { slug: 'css3', color: '#1572B6' },
+  { slug: 'css', color: '#1572B6' },
   { slug: 'tailwindcss', color: '#06B6D4' }
 ];
 
