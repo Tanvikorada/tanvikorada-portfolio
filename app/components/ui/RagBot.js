@@ -21,14 +21,25 @@ const QUICK_QUESTIONS = [
 ];
 
 
+
 function InteractiveRobotButton({ isOpen, onClick }) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [isBlinking, setIsBlinking] = useState(false);
 
+  // Blinking Loop
+  useEffect(() => {
+    const blinkInterval = setInterval(() => {
+      setIsBlinking(true);
+      setTimeout(() => setIsBlinking(false), 150);
+    }, 4000);
+    return () => clearInterval(blinkInterval);
+  }, []);
+
+  // Mouse Tracking
   useEffect(() => {
     const handleMouseMove = (e) => {
-      // Normalize mouse position to range [-1, 1] across the screen
       const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = (e.clientY / window.innerHeight) * 2 - 1;
       mouseX.set(x);
@@ -38,14 +49,15 @@ function InteractiveRobotButton({ isOpen, onClick }) {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Spring physics for the eyes tracking the mouse
-  const springConfig = { damping: 25, stiffness: 300, mass: 0.5 };
-  const smoothX = useSpring(mouseX, springConfig);
-  const smoothY = useSpring(mouseY, springConfig);
-
-  // Map normalized mouse to pixel movement for eyes
-  const eyeLookX = useTransform(smoothX, [-1, 1], [-5, 5]);
-  const eyeLookY = useTransform(smoothY, [-1, 1], [-5, 5]);
+  const smoothX = useSpring(mouseX, { damping: 20, stiffness: 200, mass: 0.5 });
+  const smoothY = useSpring(mouseY, { damping: 20, stiffness: 200, mass: 0.5 });
+  
+  // Parallax calculations
+  const eyeLookX = useTransform(smoothX, [-1, 1], [-8, 8]);
+  const eyeLookY = useTransform(smoothY, [-1, 1], [-6, 6]);
+  
+  const tiltX = useTransform(smoothY, [-1, 1], [25, -25]);
+  const tiltY = useTransform(smoothX, [-1, 1], [-25, 25]);
 
   return (
     <motion.button
@@ -56,78 +68,110 @@ function InteractiveRobotButton({ isOpen, onClick }) {
         position: 'fixed',
         bottom: '32px',
         right: '32px',
-        width: '64px',
-        height: '64px',
+        width: '72px',
+        height: '72px',
         borderRadius: '50%',
-        background: 'var(--text-heading)',
-        color: 'var(--bg-true)',
+        background: 'linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-base) 100%)',
+        border: '1px solid var(--border-mid)',
+        boxShadow: '0 12px 40px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.1)',
+        cursor: 'pointer',
+        zIndex: 9999,
+        outline: 'none',
+        perspective: '400px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.2)',
-        cursor: 'pointer',
-        zIndex: 9999,
-        border: 'none',
-        outline: 'none',
+        overflow: 'visible'
       }}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >
-      <div style={{ position: 'relative', width: '32px', height: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        
-        {/* Left Eye */}
-        <motion.div
-          animate={{
-            height: isOpen ? '4px' : isHovered ? '20px' : '12px',
-            width: isOpen ? '16px' : isHovered ? '8px' : '8px',
-            borderRadius: isOpen ? '2px' : '4px',
-            rotate: isOpen ? 15 : 0
-          }}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-          style={{
-            background: 'var(--bg-solid)',
-            x: eyeLookX,
-            y: eyeLookY
-          }}
-        />
-
-        {/* Right Eye */}
-        <motion.div
-          animate={{
-            height: isOpen ? '4px' : isHovered ? '20px' : '12px',
-            width: isOpen ? '16px' : isHovered ? '8px' : '8px',
-            borderRadius: isOpen ? '2px' : '4px',
-            rotate: isOpen ? -15 : 0
-          }}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-          style={{
-            background: 'var(--bg-solid)',
-            x: eyeLookX,
-            y: eyeLookY
-          }}
-        />
-
-      </div>
-      
-      {/* Floating Sparkle / Antenna Indicator */}
+      {/* 3D Tilting Inner Wrapper */}
       <motion.div
-        animate={{
-          scale: isHovered ? 1 : 0,
-          opacity: isHovered ? 1 : 0,
-          y: isHovered ? -15 : 0,
-          rotate: isHovered ? 45 : 0
-        }}
         style={{
-          position: 'absolute',
-          top: '-8px',
-          right: '4px',
-          width: '12px',
-          height: '12px',
-          borderRadius: '2px',
-          background: 'var(--primary)',
-          boxShadow: '0 0 10px var(--primary)'
+          width: '100%', height: '100%',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          rotateX: isHovered ? tiltX : 0,
+          rotateY: isHovered ? tiltY : 0,
+          transformStyle: 'preserve-3d'
         }}
-      />
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      >
+        {/* Visor Screen */}
+        <div style={{
+          width: '52px', height: '36px',
+          background: '#0a0f1d', // Very dark blue/black
+          borderRadius: '18px',
+          boxShadow: 'inset 0 4px 12px rgba(0,0,0,0.8), 0 2px 4px rgba(255,255,255,0.05)',
+          position: 'relative',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+          transform: 'translateZ(10px)', // pop out slightly in 3D
+          overflow: 'hidden'
+        }}>
+          {/* Left Eye */}
+          <motion.div
+            animate={{
+              height: isBlinking ? '2px' : isHovered ? '16px' : isOpen ? '12px' : '14px',
+              width: isOpen ? '18px' : isHovered ? '14px' : '10px',
+              borderRadius: isHovered ? '50% 50% 2px 2px' : '6px',
+              backgroundColor: isOpen ? '#10b981' : isHovered ? '#38bdf8' : '#0ea5e9',
+              boxShadow: isOpen ? '0 0 12px #10b981' : isHovered ? '0 0 16px #38bdf8' : '0 0 8px #0ea5e9',
+              rotate: isOpen ? 10 : 0
+            }}
+            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+            style={{ x: eyeLookX, y: eyeLookY, position: 'relative' }}
+          />
+          {/* Right Eye */}
+          <motion.div
+            animate={{
+              height: isBlinking ? '2px' : isHovered ? '16px' : isOpen ? '12px' : '14px',
+              width: isOpen ? '18px' : isHovered ? '14px' : '10px',
+              borderRadius: isHovered ? '50% 50% 2px 2px' : '6px',
+              backgroundColor: isOpen ? '#10b981' : isHovered ? '#38bdf8' : '#0ea5e9',
+              boxShadow: isOpen ? '0 0 12px #10b981' : isHovered ? '0 0 16px #38bdf8' : '0 0 8px #0ea5e9',
+              rotate: isOpen ? -10 : 0
+            }}
+            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+            style={{ x: eyeLookX, y: eyeLookY, position: 'relative' }}
+          />
+
+          {/* Blush (Only visible on hover) */}
+          <motion.div
+            animate={{ opacity: isHovered ? 0.7 : 0 }}
+            style={{
+               position: 'absolute', left: '6px', top: '22px', width: '10px', height: '6px',
+               background: '#f472b6', borderRadius: '50%', filter: 'blur(3px)'
+            }}
+          />
+          <motion.div
+            animate={{ opacity: isHovered ? 0.7 : 0 }}
+            style={{
+               position: 'absolute', right: '6px', top: '22px', width: '10px', height: '6px',
+               background: '#f472b6', borderRadius: '50%', filter: 'blur(3px)'
+            }}
+          />
+        </div>
+        
+        {/* Robot Ears / Antennas on sides */}
+        <div style={{ position: 'absolute', left: '2px', width: '4px', height: '12px', background: 'var(--border-mid)', borderRadius: '2px', transform: 'translateZ(5px)' }} />
+        <div style={{ position: 'absolute', right: '2px', width: '4px', height: '12px', background: 'var(--border-mid)', borderRadius: '2px', transform: 'translateZ(5px)' }} />
+
+        {/* Floating Notification Indicator when closed */}
+        <motion.div
+          animate={{
+            scale: isOpen ? 0 : 1,
+            opacity: isOpen ? 0 : 1,
+            y: [0, -4, 0]
+          }}
+          transition={{ y: { duration: 2, repeat: Infinity, ease: 'easeInOut' } }}
+          style={{
+            position: 'absolute', top: '4px', right: '8px',
+            width: '10px', height: '10px', borderRadius: '50%',
+            background: '#f43f5e', boxShadow: '0 0 10px #f43f5e',
+            border: '2px solid var(--bg-surface)'
+          }}
+        />
+      </motion.div>
     </motion.button>
   );
 }
