@@ -378,7 +378,7 @@ export default function About() {
       <div className="apple-bento-grid">
         
         {/* 1. Photo Tile */}
-        <AppleGlassCard className="apple-photo" style={{ padding: 0 }}>
+        <AppleGlassCard className="apple-photo" noPadding={true}>
           <RippleDistortion 
             src="/images/about-profile.jpg"
             grayscale={true}
@@ -390,7 +390,7 @@ export default function About() {
         </AppleGlassCard>
 
         {/* 2. Bio */}
-        <AppleGlassCard className="apple-bio" style={{ gridColumn: 'span 2' }}>
+        <AppleGlassCard className="apple-bio" style={{ gridColumn: 'span 2' }} withRipple={true}>
           <p className="apple-label">Who I Am</p>
           <h3 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-heading)', marginBottom: '16px', fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em' }}>
             <KineticText text="Korada Tanvi" />
@@ -401,7 +401,7 @@ export default function About() {
         </AppleGlassCard>
 
         {/* 3. Availability / Status */}
-        <AppleGlassCard className="apple-status">
+        <AppleGlassCard className="apple-status" withRipple={true}>
           <p className="apple-label">Availability</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
             <span style={{ position: 'relative', display: 'flex', width: '12px', height: '12px' }}>
@@ -419,7 +419,7 @@ export default function About() {
         </AppleGlassCard>
 
         {/* 4. Map / Location */}
-        <AppleGlassCard className="apple-map" style={{ padding: 0 }}>
+        <AppleGlassCard className="apple-map" noPadding={true}>
           <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '200px' }}>
             <iframe 
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124424.31825553645!2d80.08182745330036!3d12.833917849419612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a525bc8120b0805%3A0x6b19a008c2a11b0e!2sSRM%20Institute%20of%20Science%20and%20Technology%2C%20Kattankulathur!5e0!3m2!1sen!2sin!4v1707907576595!5m2!1sen!2sin" 
@@ -437,7 +437,7 @@ export default function About() {
         </AppleGlassCard>
 
         {/* 5. Stats / Numbers */}
-        <AppleGlassCard className="apple-stats" style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', flexWrap: 'wrap', gap: '24px' }}>
+        <AppleGlassCard className="apple-stats" withRipple={true} style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', flexWrap: 'wrap', gap: '24px' }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', letterSpacing: '-0.03em' }}>9.27</div>
             <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', fontWeight: 600 }}>CGPA</div>
@@ -455,7 +455,7 @@ export default function About() {
         </AppleGlassCard>
 
         {/* 6. Technical Arsenal */}
-        <AppleGlassCard className="apple-skills" style={{ gridColumn: 'span 2' }}>
+        <AppleGlassCard className="apple-skills" style={{ gridColumn: 'span 2' }} withRipple={true}>
           <p className="apple-label"><KineticText text="Technical Arsenal" /></p>
           <div style={{ marginBottom: '20px' }}>
             <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px', fontWeight: 600 }}>AI & GenAI</div>
@@ -469,7 +469,7 @@ export default function About() {
 
         
         {/* Live Activity */}
-        <AppleGlassCard className="apple-activity" style={{ display: 'flex', flexDirection: 'column' }}>
+        <AppleGlassCard className="apple-activity" style={{ display: 'flex', flexDirection: 'column' }} withRipple={true}>
           <p className="apple-label">Live Updates</p>
           <div style={{ flex: 1, position: 'relative', marginTop: '12px', minHeight: '260px' }}>
             <div style={{ position: 'absolute', inset: 0, overflowY: 'hidden', paddingRight: '4px' }}>
@@ -486,7 +486,7 @@ export default function About() {
         </AppleGlassCard>
 
         {/* 7. Fun / Roles */}
-        <AppleGlassCard className="apple-clubs" style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px' }}>
+        <AppleGlassCard className="apple-clubs" style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px' }} withRipple={true}>
           <div>
             <p className="apple-label">Extracurriculars</p>
             <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)' }}>Clubs & Roles</h3>
