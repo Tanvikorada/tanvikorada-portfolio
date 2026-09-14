@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import KineticText from './ui/KineticText';
 import ClickSpark from './ui/ClickSpark';
 import { useRef } from 'react';
 import SpotlightCard from './ui/SpotlightCard';
@@ -280,9 +281,7 @@ export default function About() {
           {/* 2. Bio Tile */}
           <AppleGlassCard className="apple-bio">
             <p className="apple-label">Who I am</p>
-            <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', marginBottom: '16px', lineHeight: 1.1 }}>
-              Korada Tanvi
-            </h2>
+            <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', marginBottom: '16px', lineHeight: 1.1 }}><KineticText text="Korada Tanvi" /></h2>
             <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', lineHeight: 1.6, fontWeight: 500 }}>
               B.Tech CSE (Cloud Computing) student at SRMIST Chennai. I build and ship full-stack AI-native web products using React, Next.js, Node.js, and LLM APIs. Published first-author research on LLM pipeline architecture. Currently freelancing and building in public.
             </p>
@@ -342,7 +341,7 @@ export default function About() {
 
           {/* 6. Skills */}
           <AppleGlassCard className="apple-skills">
-            <p className="apple-label">Technical Arsenal</p>
+            <p className="apple-label"><KineticText text="Technical Arsenal" /></p>
             <div style={{ marginBottom: '20px' }}>
               <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px', fontWeight: 600 }}>AI & GenAI</div>
               {AI_SKILLS.map(s => <span key={s} className="skill-pill">{s}</span>)}
@@ -411,6 +410,8 @@ export default function About() {
     </section>
   );
 }
+
+
 
 
 
