@@ -275,7 +275,17 @@ export default function About() {
           padding: 0 5vw;
         }
 
-        @media (max-width: 1024px) {
+        
+          .apple-photo { grid-column: span 1; grid-row: span 2; }
+          .apple-bio { grid-column: span 2; grid-row: span 2; display: flex; flex-direction: column; justify-content: center; }
+          .apple-map { grid-column: span 1; grid-row: span 2; }
+          .apple-status { grid-column: span 2; grid-row: span 1; display: flex; flex-direction: column; justify-content: center; }
+          .apple-stats { grid-column: span 2; grid-row: span 1; display: flex; flex-direction: column; justify-content: center; }
+          .apple-skills { grid-column: span 2; grid-row: span 2; }
+          .apple-activity { grid-column: span 2; grid-row: span 2; }
+          .apple-clubs { grid-column: span 4; grid-row: span 1; display: flex; flex-direction: column; justify-content: center; }
+
+          @media (max-width: 1024px) {
           .apple-bento-grid {
             grid-template-columns: repeat(2, 1fr);
           }
