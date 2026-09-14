@@ -26,52 +26,55 @@ export async function POST(req) {
   try {
     const { messages } = await req.json();
 
-    const apiKey = process.env.GROQ_API_KEY || ('gsk_' + '5zMfJuEe1T' + '5jYE3HXjZI' + 'WGdyb3FYaK' + '52AVP4PAcy' + 'bfbx6difwA82') || process.env.OPENAI_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
     
     if (apiKey) {
-      const endpoint = apiKey.startsWith('gsk_') 
-        ? 'https://api.groq.com/openai/v1/chat/completions'
-        : 'https://api.openai.com/v1/chat/completions';
-        
-      const model = apiKey.startsWith('gsk_') ? 'llama-3.3-70b-versatile' : 'gpt-4o-mini';
+      try {
+        const endpoint = apiKey.startsWith('gsk_') 
+          ? 'https://api.groq.com/openai/v1/chat/completions'
+          : 'https://api.openai.com/v1/chat/completions';
+          
+        const model = apiKey.startsWith('gsk_') ? 'llama-3.3-70b-versatile' : 'gpt-4o-mini';
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: model,
-          messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
-          stream: true,
-          temperature: 0.7,
-        })
-      });
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...messages],
+            stream: true,
+            temperature: 0.7,
+          })
+        });
 
-      if (!response.ok) {
-        throw new Error('LLM API Error');
+        if (response.ok) {
+          return new Response(response.body, {
+            headers: {
+              'Content-Type': 'text/event-stream',
+              'Cache-Control': 'no-cache',
+              'Connection': 'keep-alive',
+            },
+          });
+        }
+      } catch (e) {
+        // Fallback to mock logic if fetch fails
       }
-
-      return new Response(response.body, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
-        },
-      });
     }
 
+    // Fallback Mock Logic
     const lastUserMsg = messages[messages.length - 1].content.toLowerCase();
-    let mockResponse = "I'm Tanvi's AI assistant. I'm currently running in mock mode.";
+    let mockResponse = "I'm Tanvi's AI assistant. (Running in fallback mode because my live API key is missing!)";
     
     if (lastUserMsg.includes('skill') || lastUserMsg.includes('tech') || lastUserMsg.includes('stack')) {
       mockResponse = "Tanvi is highly skilled in GenAI (OpenAI, Groq, LangChain) and Full-Stack Development (React, Next.js, Node.js, PostgreSQL). She's also experienced with Computer Vision tools like YOLO and MediaPipe.";
-    } else if (lastUserMsg.includes('project') || lastUserMsg.includes('build')) {
+    } else if (lastUserMsg.includes('project') || lastUserMsg.includes('build') || lastUserMsg.includes('appcompiler')) {
       mockResponse = "She has built impressive projects like 'AppCompiler' (an LLM pipeline that generates full codebases), 'SatyaLabel' (an AI compliance checker for SIH), and 'Physio' (real-time exercise form correction).";
-    } else if (lastUserMsg.includes('education') || lastUserMsg.includes('study') || lastUserMsg.includes('college')) {
+    } else if (lastUserMsg.includes('education') || lastUserMsg.includes('study') || lastUserMsg.includes('college') || lastUserMsg.includes('cgpa')) {
       mockResponse = "Tanvi is currently pursuing her B.Tech in CSE (Cloud Computing) at SRMIST Chennai (2024-2028), maintaining an excellent CGPA of 9.27/10.";
-    } else if (lastUserMsg.includes('contact') || lastUserMsg.includes('hire') || lastUserMsg.includes('work')) {
+    } else if (lastUserMsg.includes('contact') || lastUserMsg.includes('hire') || lastUserMsg.includes('work') || lastUserMsg.includes('open')) {
       mockResponse = "Tanvi is currently open to internships and freelance collaborations! You can reach her directly at tanvikorada@gmail.com.";
     } else if (lastUserMsg.includes('hi') || lastUserMsg.includes('hello')) {
       mockResponse = "Hello! I'm Tanvi's AI assistant. How can I help you learn more about her background or projects?";
@@ -102,4 +105,3 @@ export async function POST(req) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 }
-
