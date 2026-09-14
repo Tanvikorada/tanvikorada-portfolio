@@ -43,8 +43,8 @@ const EDUCATION = [
     id: 'tirumala',
     title: 'Intermediate',
     org: 'Tirumala Junior College',
-    period: '2022 – 2024',
-    desc: 'Maths, Physics, Chemistry focus. Secured 977/1000 in Boards. Built foundational logic for algorithms.',
+    period: '2022 - 2024',
+    desc: 'Maths, Physics, and Chemistry focus. Secured 977/1000 in Boards. Built foundational analytical logic.',
     tags: ['MPC', '97.7%'],
   },
   {
@@ -52,8 +52,8 @@ const EDUCATION = [
     title: 'Secondary Education',
     org: 'Ravindra Bharathi School',
     period: '2012 – 2022',
-    desc: 'Overall Top Rank. Secured 10/10 GPA in 10th standard state boards.',
-    tags: ['10.0 GPA'],
+    desc: 'Completed secondary education with a strong foundation in sciences and mathematics. Secured 88% in 10th standard boards.',
+    tags: ['88%'],
   }
 ];
 
