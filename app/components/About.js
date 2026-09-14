@@ -18,7 +18,7 @@ const SVG_ICONS = {
   default: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
 };
 
-function AppleGlassCard({ children, className = "", style = {} }) {
+function AppleGlassCard({ children, className = "", style = {}, noPadding = false, withRipple = false }) {
   const x = useMotionValue(0.5);
   const y = useMotionValue(0.5);
   
@@ -67,8 +67,30 @@ function AppleGlassCard({ children, className = "", style = {} }) {
           flexDirection: "column"
         }}
       >
-        <SpotlightCard className="apple-glass-card" style={{ flex: 1, margin: 0, padding: 0 }}>
-          {children}
+        <SpotlightCard className="apple-glass-card" style={{ flex: 1, margin: 0, padding: noPadding ? 0 : '32px' }}>
+          {withRipple && (
+            <div style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.1, mixBlendMode: 'overlay', pointerEvents: 'none' }}>
+              <RippleDistortion 
+                src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop"
+                grayscale={true}
+                strength={0.8}
+                swirl={1.5}
+                trigger="hover"
+              />
+            </div>
+          )}
+          <div style={{ 
+            position: 'relative', zIndex: 2, 
+            display: 'flex', 
+            flexDirection: style.flexDirection || 'column', 
+            width: '100%', height: '100%', 
+            flexWrap: style.flexWrap, 
+            alignItems: style.alignItems, 
+            justifyContent: style.justifyContent, 
+            gap: style.gap 
+          }}>
+            {children}
+          </div>
         </SpotlightCard>
       </motion.div>
     </motion.div>
