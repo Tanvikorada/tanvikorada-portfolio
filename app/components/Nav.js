@@ -1,67 +1,9 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
-import Link from 'next/link';
+import { Home, Briefcase, User, Gamepad2, FileText } from 'lucide-react';
 
-// --- PREMIUM SVG ICONS ---
-const SvgGradient = () => (
-  <svg width="0" height="0" style={{ position: 'absolute' }}>
-    <defs>
-      <linearGradient id="premium-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="var(--primary)" />
-        <stop offset="100%" stopColor="#f472b6" />
-      </linearGradient>
-      <linearGradient id="premium-glow" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="var(--primary)" stopOpacity="0.8" />
-        <stop offset="100%" stopColor="#fbbf24" stopOpacity="0.9" />
-      </linearGradient>
-    </defs>
-  </svg>
-);
-
-const HomeIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>
-    <path d="M3 9.5L12 3l9 6.5" stroke="url(#premium-grad)" strokeWidth="2.5" />
-    <path d="M19 11v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-9" strokeOpacity="0.7" />
-    <rect width="4" height="6" x="10" y="14" fill="url(#premium-glow)" stroke="none" rx="1" />
-  </svg>
-);
-
-const WorkIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>
-    <rect width="20" height="14" x="2" y="7" rx="3" ry="3" strokeOpacity="0.7" />
-    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" stroke="url(#premium-grad)" strokeWidth="2.5" />
-    <circle cx="12" cy="14" r="2.5" fill="url(#premium-glow)" stroke="none" />
-  </svg>
-);
-
-const UserIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>
-    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" strokeOpacity="0.7" />
-    <circle cx="12" cy="7" r="4.5" stroke="url(#premium-grad)" strokeWidth="2.5" />
-    <circle cx="12" cy="7" r="2" fill="url(#premium-glow)" stroke="none" />
-  </svg>
-);
-
-const GamepadIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>
-    <rect width="20" height="12" x="2" y="6" rx="4" strokeOpacity="0.7" />
-    <path d="M6 12h4m-2-2v4" stroke="url(#premium-grad)" strokeWidth="2.5" />
-    <circle cx="15" cy="11" r="1.5" fill="url(#premium-glow)" stroke="none" />
-    <circle cx="17" cy="13" r="1.5" fill="url(#premium-glow)" stroke="none" />
-  </svg>
-);
-
-const FileIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>
-    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" strokeOpacity="0.7" />
-    <polyline points="14 2 14 8 20 8" stroke="url(#premium-grad)" strokeWidth="2.5" />
-    <line x1="9" y1="13" x2="15" y2="13" stroke="url(#premium-glow)" strokeWidth="2" />
-    <line x1="9" y1="17" x2="13" y2="17" stroke="url(#premium-glow)" strokeWidth="2" />
-  </svg>
-);
-
-
+// Theme toggler component with morphing animation
 const AnimatedThemeIcon = ({ isNight }) => {
   return (
     <svg
@@ -69,11 +11,11 @@ const AnimatedThemeIcon = ({ isNight }) => {
       height="24"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="url(#premium-grad)"
+      stroke="currentColor"
       strokeWidth="2.5"
       strokeLinecap="round"
       strokeLinejoin="round"
-      style={{ overflow: 'visible', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}
+      style={{ overflow: 'visible' }}
     >
       <mask id="theme-mask">
         <rect x="0" y="0" width="100%" height="100%" fill="white" />
@@ -93,7 +35,7 @@ const AnimatedThemeIcon = ({ isNight }) => {
           cx="12"
           cy="12"
           mask="url(#theme-mask)"
-          fill="url(#premium-glow)"
+          fill="currentColor"
           initial={false}
           animate={{
             r: isNight ? 8 : 5,
@@ -102,7 +44,7 @@ const AnimatedThemeIcon = ({ isNight }) => {
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
         />
         <motion.g
-          stroke="url(#premium-grad)"
+          stroke="currentColor"
           initial={false}
           animate={{
             scale: isNight ? 0 : 1,
@@ -123,10 +65,14 @@ const AnimatedThemeIcon = ({ isNight }) => {
     </svg>
   );
 };
+
+
 // --- DOCK ITEM (Magnifying effect) ---
 function DockIcon({ mouseX, onClick, icon, label, scrolled }) {
   const ref = useRef(null);
 
+  // Using getBoundingClientRect() which is relative to the viewport.
+  // mouseX is set to e.clientX (also relative to viewport).
   const distance = useTransform(mouseX, (val) => {
     const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
     return val - bounds.x - bounds.width / 2;
@@ -148,7 +94,11 @@ function DockIcon({ mouseX, onClick, icon, label, scrolled }) {
         aria-label={label}
         whileTap={{ scale: 0.9 }}
       >
-        <motion.div style={{ scale: useTransform(width, [baseWidth, hoverWidth], [1, 1.35]) }}>
+        <motion.div style={{ 
+          scale: useTransform(width, [baseWidth, hoverWidth], [1, 1.35]),
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'var(--text-heading)'
+        }}>
           {icon}
         </motion.div>
       </motion.button>
@@ -175,7 +125,9 @@ export default function Nav() {
       document.body.classList.add('night');
     }
 
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -198,7 +150,6 @@ export default function Nav() {
 
   return (
     <>
-      <SvgGradient />
       <style>{`
         .nav-wrapper {
           position: fixed;
@@ -213,7 +164,8 @@ export default function Nav() {
                       width 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
                       border-radius 0.5s cubic-bezier(0.16, 1, 0.3, 1),
                       background 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                      top 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+                      top 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                      box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .dock-container {
@@ -240,24 +192,21 @@ export default function Nav() {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%);
-          border: 1px solid rgba(255,255,255,0.1);
-          color: var(--text-heading);
+          background: rgba(0, 0, 0, 0.03);
+          border: 1px solid rgba(0, 0, 0, 0.05);
           cursor: pointer;
           transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
           outline: none;
-          box-shadow: inset 1px 1px 2px rgba(255,255,255,0.1);
         }
         
         body.night .dock-icon-btn {
-          background: linear-gradient(135deg, rgba(30,41,59,0.5) 0%, rgba(15,23,42,0.2) 100%);
-          border-color: rgba(56,189,248,0.15);
+          background: rgba(255, 255, 255, 0.05);
+          border-color: rgba(255, 255, 255, 0.1);
         }
 
         .dock-icon-btn:hover {
-          background: var(--primary-glow);
+          background: var(--primary-glow, rgba(0,210,255,0.15));
           border-color: var(--primary);
-          box-shadow: 0 10px 20px var(--primary-glow), inset 1px 1px 2px rgba(255,255,255,0.3);
         }
 
         .dock-divider {
@@ -326,7 +275,8 @@ export default function Nav() {
           WebkitBackdropFilter: scrolled ? 'blur(24px) saturate(150%)' : 'blur(0px)'
         }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        onMouseMove={(e) => mouseX.set(e.pageX)}
+        // CRITICAL FIX: use clientX so it works identically regardless of scroll position!
+        onMouseMove={(e) => mouseX.set(e.clientX)}
         onMouseLeave={() => mouseX.set(Infinity)}
       >
         
@@ -349,10 +299,10 @@ export default function Nav() {
 
         {/* DOCK ICONS */}
         <div className="dock-container" style={{ marginLeft: scrolled ? '0' : 'auto' }}>
-          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('top')} icon={<HomeIcon />} label="Home" />
-          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('work')} icon={<WorkIcon />} label="Work" />
-          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('about')} icon={<UserIcon />} label="About" />
-          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('playground')} icon={<GamepadIcon />} label="Playground" />
+          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('top')} icon={<Home strokeWidth={2.5} size={24} />} label="Home" />
+          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('work')} icon={<Briefcase strokeWidth={2.5} size={24} />} label="Work" />
+          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('about')} icon={<User strokeWidth={2.5} size={24} />} label="About" />
+          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('playground')} icon={<Gamepad2 strokeWidth={2.5} size={24} />} label="Playground" />
           
           <div className="dock-divider" />
           
@@ -368,7 +318,7 @@ export default function Nav() {
             scrolled={scrolled}
             mouseX={mouseX} 
             onClick={() => window.open('/resume.pdf', '_blank')} 
-            icon={<FileIcon />} 
+            icon={<FileText strokeWidth={2.5} size={24} />} 
             label="Resume" 
           />
         </div>
