@@ -23,43 +23,143 @@ function AppleGlassCard({ children, className = "", style = {} }) {
 }
 
 
-const LIVE_UPDATES = [
+
+// Fallback static data if Github API limits are hit
+const FALLBACK_UPDATES = [
   { id: 1, name: "Deployed new feature", description: "Portfolio update pushed to prod", time: "2m ago", icon: "🚀", color: "rgba(14, 165, 233, 0.2)", textColor: "#0ea5e9" },
-  { id: 2, name: "Merged Pull Request", description: "Open source contribution", time: "1h ago", icon: "🎉", color: "rgba(34, 197, 94, 0.2)", textColor: "#22c55e" },
-  { id: 3, name: "Solved LeetCode Hard", description: "Dynamic Programming", time: "3h ago", icon: "🏆", color: "rgba(234, 179, 8, 0.2)", textColor: "#eab308" },
-  { id: 4, name: "Starred a repository", description: "Magic UI", time: "5h ago", icon: "🌟", color: "rgba(245, 158, 11, 0.2)", textColor: "#f59e0b" },
-  { id: 5, name: "Published article", description: "LLM Pipeline Architecture", time: "1d ago", icon: "📝", color: "rgba(236, 72, 153, 0.2)", textColor: "#ec4899" },
+  { id: 2, name: "Merged Pull Request", description: "Open source contribution", time: "1h ago", icon: "🐙", color: "rgba(34, 197, 94, 0.2)", textColor: "#22c55e" },
+  { id: 3, name: "Solved LeetCode Hard", description: "Dynamic Programming", time: "3h ago", icon: "🧠", color: "rgba(234, 179, 8, 0.2)", textColor: "#eab308" },
+  { id: 4, name: "Starred a repository", description: "Magic UI", time: "5h ago", icon: "⭐", color: "rgba(245, 158, 11, 0.2)", textColor: "#f59e0b" },
 ];
+
+function getTimeAgo(dateString) {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now - date) / 1000);
+  
+  if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) return `${diffInHours}h ago`;
+  const diffInDays = Math.floor(diffInHours / 24);
+  return `${diffInDays}d ago`;
+}
+
+function mapGithubEvent(event, index) {
+  const repoName = event.repo.name.split('/')[1] || event.repo.name;
+  
+  let name = "Activity";
+  let description = repoName;
+  let icon = "💻";
+  let color = "rgba(14, 165, 233, 0.2)";
+  let textColor = "#0ea5e9";
+
+  switch (event.type) {
+    case 'PushEvent':
+      name = "Pushed Code";
+      description = `To ${repoName}`;
+      icon = "🚀";
+      color = "rgba(34, 197, 94, 0.2)";
+      textColor = "#22c55e";
+      break;
+    case 'WatchEvent':
+      name = "Starred a Repo";
+      description = repoName;
+      icon = "⭐";
+      color = "rgba(234, 179, 8, 0.2)";
+      textColor = "#eab308";
+      break;
+    case 'PullRequestEvent':
+      name = event.payload.action === 'opened' ? "Opened PR" : "Merged PR";
+      description = `In ${repoName}`;
+      icon = "🐙";
+      color = "rgba(168, 85, 247, 0.2)";
+      textColor = "#a855f7";
+      break;
+    case 'CreateEvent':
+      name = `Created ${event.payload.ref_type || 'Repo'}`;
+      description = repoName;
+      icon = "✨";
+      color = "rgba(236, 72, 153, 0.2)";
+      textColor = "#ec4899";
+      break;
+    case 'IssuesEvent':
+      name = `${event.payload.action === 'opened' ? 'Opened' : 'Closed'} Issue`;
+      description = `In ${repoName}`;
+      icon = "🐛";
+      color = "rgba(239, 68, 68, 0.2)";
+      textColor = "#ef4444";
+      break;
+  }
+
+  return {
+    id: event.id || index,
+    uniqueId: event.id || `${index}-${Date.now()}`,
+    name,
+    description,
+    time: getTimeAgo(event.created_at),
+    icon,
+    color,
+    textColor
+  };
+}
 
 function LiveActivityList() {
   const [items, setItems] = useState([]);
+  const [eventPool, setEventPool] = useState([]);
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    // Start with one item
-    setItems([{ ...LIVE_UPDATES[0], uniqueId: 0 }]);
-    setIndex(1);
+    async function fetchGithubActivity() {
+      try {
+        const res = await fetch('https://api.github.com/users/Tanvikorada/events/public?per_page=15');
+        if (!res.ok) throw new Error('Rate limited or error');
+        const data = await res.json();
+        
+        const parsedEvents = data.map((ev, i) => mapGithubEvent(ev, i));
+        if (parsedEvents.length > 0) {
+          setEventPool(parsedEvents);
+          setItems([parsedEvents[0]]);
+          setIndex(1);
+          return;
+        }
+      } catch (err) {
+        console.warn('Failed to fetch github activity, using fallback data.', err);
+      }
+      
+      // Fallback
+      setEventPool(FALLBACK_UPDATES);
+      setItems([{ ...FALLBACK_UPDATES[0], uniqueId: Date.now() }]);
+      setIndex(1);
+    }
+    
+    fetchGithubActivity();
+  }, []);
+
+  useEffect(() => {
+    if (eventPool.length === 0) return;
 
     const interval = setInterval(() => {
       setIndex((prevIndex) => {
-        const nextItem = LIVE_UPDATES[prevIndex % LIVE_UPDATES.length];
+        const nextItem = eventPool[prevIndex % eventPool.length];
         setItems((prevItems) => {
           // Add new item at the top, keep max 4 items
           return [{ ...nextItem, uniqueId: Date.now() }, ...prevItems].slice(0, 4);
         });
         return prevIndex + 1;
       });
-    }, 3500); // Add a new notification every 3.5 seconds
+    }, 4000); 
 
     return () => clearInterval(interval);
-  }, []);
+  }, [eventPool]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', height: '100%', overflow: 'hidden', padding: '4px' }}>
       <AnimatePresence initial={false}>
         {items.map((item) => (
           <motion.div
-            key={item.uniqueId || item.id}
+            key={item.uniqueId}
             layout
             initial={{ height: 0, opacity: 0, scale: 0.95 }}
             animate={{ height: 'auto', opacity: 1, scale: 1 }}
