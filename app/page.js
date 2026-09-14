@@ -45,6 +45,9 @@ export default function Home() {
               useWindowScroll
               overlayScrim={0}
               textColor="var(--text-heading)" noShadow={true}
+              endWidth={94}
+              endHeight={88}
+              endRadius={32}
             >
               <div style={{ textAlign: 'center', padding: '3rem' }}>
                 <h2 style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 'bold', color: 'var(--text-heading)', marginBottom: '1rem', letterSpacing: '-0.02em' }}>Every pixel, crafted.</h2>

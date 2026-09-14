@@ -21,6 +21,8 @@ const ScrollExpand = ({
   scrollHint = '',
   startWidth = 42,
   startHeight = 58,
+  endWidth = 100,
+  endHeight = 100,
   startRadius = 24,
   endRadius = 0,
   mediaZoom = 1.35,
@@ -49,6 +51,8 @@ const ScrollExpand = ({
   propsRef.current = {
     startWidth,
     startHeight,
+    endWidth,
+    endHeight,
     startRadius,
     endRadius,
     mediaZoom,
@@ -68,8 +72,8 @@ const ScrollExpand = ({
 
     const e = smoothstep(0, 1, p);
 
-    const w = c.startWidth + (100 - c.startWidth) * e;
-    const h = c.startHeight + (100 - c.startHeight) * e;
+    const w = c.startWidth + (c.endWidth - c.startWidth) * e;
+    const h = c.startHeight + (c.endHeight - c.startHeight) * e;
     const ix = Math.max(0, (100 - w) / 2);
     const iy = Math.max(0, (100 - h) / 2);
     const r = c.startRadius + (c.endRadius - c.startRadius) * e;
