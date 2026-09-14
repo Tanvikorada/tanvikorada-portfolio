@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import KineticText from './ui/KineticText';
 import ClickSpark from './ui/ClickSpark';
 import { useRef } from 'react';
@@ -11,14 +11,67 @@ const AI_SKILLS = ['OpenAI', 'Groq', 'Claude', 'Gemini', 'LangChain', 'MediaPipe
 const FRONTEND = ['React', 'Next.js', 'Tailwind', 'Three.js (R3F)'];
 const BACKEND = ['Node.js', 'PostgreSQL', 'Firebase', 'Supabase', 'Python'];
 
+const SVG_ICONS = {
+  push: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"/><polyline points="14 2 14 8 20 8"/><path d="m3 15 3 3 3-3"/><path d="M6 18v-7"/></svg>,
+  star: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>,
+  pr: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><path d="M13 6h3a2 2 0 0 1 2 2v7"></path><line x1="6" y1="9" x2="6" y2="21"></line></svg>,
+  default: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+};
+
 function AppleGlassCard({ children, className = "", style = {} }) {
+  const x = useMotionValue(0.5);
+  const y = useMotionValue(0.5);
+  
+  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 40 });
+  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 40 });
+  
+  const rotateX = useTransform(mouseYSpring, [0, 1], ["3deg", "-3deg"]);
+  const rotateY = useTransform(mouseXSpring, [0, 1], ["-3deg", "3deg"]);
+  
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
+    x.set(mouseX / width);
+    y.set(mouseY / height);
+  };
+  
+  const handleMouseLeave = () => {
+    x.set(0.5);
+    y.set(0.5);
+  };
+
   return (
-    <SpotlightCard 
-      className={`apple-glass-card ${className}`}
-      style={style}
+    <motion.div
+      className={className}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        perspective: 1200,
+        ...style
+      }}
     >
-      {children}
-    </SpotlightCard>
+      <motion.div
+        whileHover={{ scale: 1.02 }}
+        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        style={{
+          rotateX,
+          rotateY,
+          transformStyle: "preserve-3d",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column"
+        }}
+      >
+        <SpotlightCard className="apple-glass-card" style={{ flex: 1, margin: 0, padding: 0 }}>
+          {children}
+        </SpotlightCard>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -26,10 +79,10 @@ function AppleGlassCard({ children, className = "", style = {} }) {
 
 // Fallback static data if Github API limits are hit
 const FALLBACK_UPDATES = [
-  { id: 1, name: "Deployed new feature", description: "Portfolio update pushed to prod", time: "2m ago", icon: "🚀", color: "rgba(14, 165, 233, 0.2)", textColor: "#0ea5e9" },
-  { id: 2, name: "Merged Pull Request", description: "Open source contribution", time: "1h ago", icon: "🐙", color: "rgba(34, 197, 94, 0.2)", textColor: "#22c55e" },
-  { id: 3, name: "Solved LeetCode Hard", description: "Dynamic Programming", time: "3h ago", icon: "🧠", color: "rgba(234, 179, 8, 0.2)", textColor: "#eab308" },
-  { id: 4, name: "Starred a repository", description: "Magic UI", time: "5h ago", icon: "⭐", color: "rgba(245, 158, 11, 0.2)", textColor: "#f59e0b" },
+  { id: 1, name: "Deployed new feature", description: "Portfolio update pushed to prod", time: "2m ago", icon: SVG_ICONS.push, color: "rgba(14, 165, 233, 0.2)", textColor: "#0ea5e9" },
+  { id: 2, name: "Merged Pull Request", description: "Open source contribution", time: "1h ago", icon: SVG_ICONS.pr, color: "rgba(34, 197, 94, 0.2)", textColor: "#22c55e" },
+  { id: 3, name: "Solved LeetCode Hard", description: "Dynamic Programming", time: "3h ago", icon: SVG_ICONS.default, color: "rgba(234, 179, 8, 0.2)", textColor: "#eab308" },
+  { id: 4, name: "Starred a repository", description: "Magic UI", time: "5h ago", icon: SVG_ICONS.star, color: "rgba(245, 158, 11, 0.2)", textColor: "#f59e0b" },
 ];
 
 function getTimeAgo(dateString) {
@@ -51,7 +104,7 @@ function mapGithubEvent(event, index) {
   
   let name = "Activity";
   let description = repoName;
-  let icon = "💻";
+  let icon = SVG_ICONS.default;
   let color = "rgba(14, 165, 233, 0.2)";
   let textColor = "#0ea5e9";
 
@@ -59,37 +112,30 @@ function mapGithubEvent(event, index) {
     case 'PushEvent':
       name = "Pushed Code";
       description = `To ${repoName}`;
-      icon = "🚀";
+      icon = SVG_ICONS.push;
       color = "rgba(34, 197, 94, 0.2)";
       textColor = "#22c55e";
       break;
     case 'WatchEvent':
       name = "Starred a Repo";
       description = repoName;
-      icon = "⭐";
+      icon = SVG_ICONS.star;
       color = "rgba(234, 179, 8, 0.2)";
       textColor = "#eab308";
       break;
     case 'PullRequestEvent':
       name = event.payload.action === 'opened' ? "Opened PR" : "Merged PR";
       description = `In ${repoName}`;
-      icon = "🐙";
+      icon = SVG_ICONS.pr;
       color = "rgba(168, 85, 247, 0.2)";
       textColor = "#a855f7";
       break;
     case 'CreateEvent':
-      name = `Created ${event.payload.ref_type || 'Repo'}`;
+      name = "Created Repo";
       description = repoName;
-      icon = "✨";
-      color = "rgba(236, 72, 153, 0.2)";
-      textColor = "#ec4899";
-      break;
-    case 'IssuesEvent':
-      name = `${event.payload.action === 'opened' ? 'Opened' : 'Closed'} Issue`;
-      description = `In ${repoName}`;
-      icon = "🐛";
-      color = "rgba(239, 68, 68, 0.2)";
-      textColor = "#ef4444";
+      icon = SVG_ICONS.default;
+      color = "rgba(168, 85, 247, 0.2)";
+      textColor = "#a855f7";
       break;
   }
 
@@ -182,17 +228,16 @@ function LiveActivityList() {
                 background: item.color,
                 color: item.textColor,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '20px',
                 flexShrink: 0
               }}>
                 {item.icon}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
-                  <span style={{ fontWeight: 600, color: 'var(--text-heading)', fontSize: '15px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</span>
-                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{item.time}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+                  <span style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-heading)' }}>{item.name}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{item.time}</span>
                 </div>
-                <div style={{ fontSize: '13px', color: 'var(--text-body)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: '13px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {item.description}
                 </div>
               </div>
@@ -206,11 +251,8 @@ function LiveActivityList() {
 
 export default function About() {
   const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start end", "end start"] });
+  
   const floatY1 = useTransform(scrollYProgress, [0, 1], [100, -100]);
   const floatRotate = useTransform(scrollYProgress, [0, 1], [-20, 20]);
 
@@ -245,7 +287,6 @@ export default function About() {
           .apple-status { grid-column: span 2 !important; }
           .apple-activity { grid-column: span 2; grid-row: span 2; }
           .apple-clubs { grid-column: span 2 !important; }
-            .apple-activity { grid-column: span 2 !important; }
         }
 
         @media (max-width: 600px) {
@@ -258,7 +299,7 @@ export default function About() {
           }
         }
 
-                .apple-glass-card {
+        .apple-glass-card {
           background: linear-gradient(135deg, color-mix(in srgb, var(--bg-glass) 70%, rgba(255,255,255,0.1)), color-mix(in srgb, var(--bg-glass) 90%, rgba(0,0,0,0.05)));
           backdrop-filter: blur(40px) saturate(200%);
           -webkit-backdrop-filter: blur(40px) saturate(200%);
@@ -268,9 +309,7 @@ export default function About() {
           position: relative;
           overflow: hidden;
           box-shadow: 0 10px 40px rgba(31, 38, 135, 0.07), inset 0 1px 1px rgba(255,255,255,0.2), inset 0 0 20px rgba(56, 189, 248, 0.05);
-          transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease;
-          display: flex;
-          flex-direction: column;
+          transition: box-shadow 0.4s ease;
         }
 
         .apple-glass-card::before {
@@ -278,31 +317,10 @@ export default function About() {
           position: absolute;
           inset: 0;
           background: radial-gradient(circle at 0% 0%, rgba(255,255,255,0.1), transparent 50%),
-                      radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.08), transparent 50%);
+                      radial-gradient(circle at 100% 100%, rgba(147, 51, 234, 0.05), transparent 50%);
           z-index: 0;
           pointer-events: none;
         }
-        
-        .apple-glass-card > * {
-          position: relative;
-          z-index: 1;
-        }
-        
-        .apple-glass-card:hover {
-          transform: translateY(-4px) scale(1.01);
-          box-shadow: 0 20px 50px rgba(31, 38, 135, 0.1), inset 0 1px 1px rgba(255,255,255,0.3), inset 0 0 30px rgba(56, 189, 248, 0.1);
-        }
-
-        .apple-photo { grid-column: span 1; grid-row: span 2; padding: 0; }
-        .apple-bio { grid-column: span 2; grid-row: span 2; justify-content: center; }
-        .apple-map { grid-column: span 1; grid-row: span 2; padding: 0; }
-        
-        .apple-status { grid-column: span 2; grid-row: span 1; justify-content: center; }
-        .apple-stats { grid-column: span 2; grid-row: span 1; justify-content: center; }
-        
-        .apple-skills { grid-column: span 2; grid-row: span 2; }
-          .apple-activity { grid-column: span 2; grid-row: span 2; }
-        .apple-clubs { grid-column: span 4; grid-row: span 2; display: flex; flex-direction: column; justify-content: space-between; }
 
         .apple-label {
           font-family: var(--font-mono);
@@ -310,24 +328,8 @@ export default function About() {
           text-transform: uppercase;
           letter-spacing: 0.1em;
           color: var(--text-muted);
-          margin-bottom: 16px;
+          margin-bottom: 24px;
           font-weight: 600;
-        }
-
-        /* Status card glowing outline */
-        .superb-status {
-          background: linear-gradient(135deg, color-mix(in srgb, var(--bg-glass) 90%, #22c55e), var(--bg-glass));
-        }
-        .pulse-dot {
-          width: 12px; height: 12px; border-radius: 50%;
-          background: #22c55e;
-          box-shadow: 0 0 10px #22c55e, 0 0 20px #22c55e;
-          animation: pulseGreen 2s infinite;
-        }
-        @keyframes pulseGreen {
-          0% { box-shadow: 0 0 0 0 rgba(34,197,94, 0.7); }
-          70% { box-shadow: 0 0 0 15px rgba(34,197,94, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(34,197,94, 0); }
         }
 
         .skill-pill {
@@ -340,12 +342,22 @@ export default function About() {
           font-size: 13px;
           font-weight: 500;
           color: var(--text-heading);
-          transition: all 0.2s;
+          transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+          cursor: pointer;
+          user-select: none;
         }
+        
         .skill-pill:hover {
+          transform: translateY(-4px) scale(1.05);
           border-color: #c084fc;
-          background: color-mix(in srgb, #c084fc 10%, transparent);
+          background: color-mix(in srgb, #c084fc 15%, transparent);
           color: #c084fc;
+          box-shadow: 0 8px 20px rgba(192, 132, 252, 0.25), inset 0 1px 1px rgba(255,255,255,0.2);
+        }
+
+        .skill-pill:active {
+          transform: translateY(2px) scale(0.95);
+          box-shadow: 0 2px 5px rgba(192, 132, 252, 0.15);
         }
       `}</style>
 
@@ -359,166 +371,149 @@ export default function About() {
           About Me
         </p>
         <h2 style={{ fontSize: 'clamp(3rem, 6vw, 4.5rem)', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
-          Builder. Thinker.
+          Pixels, AI & <br/> <span style={{ color: 'var(--text-muted)' }}>Everything In Between</span>
         </h2>
       </motion.div>
 
-      <ClickSpark sparkColor="rgba(147, 51, 234, 0.8)" sparkSize={12} sparkRadius={25} sparkCount={8} duration={500}>
-        <div className="apple-bento-grid">
-          
-          {/* 1. Photo Tile */}
-          <AppleGlassCard className="apple-photo">
-            <RippleDistortion
-              src="/images/about-profile.jpg"
-              grayscale={true}
-              swirl={1}
-              strength={0.25}
-              alignY={1.0}
-              trigger="hover"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '32px' }}
-            />
-          </AppleGlassCard>
+      <div className="apple-bento-grid">
+        
+        {/* 1. Photo Tile */}
+        <AppleGlassCard className="apple-photo" style={{ padding: 0 }}>
+          <RippleDistortion 
+            src="/images/about-profile.jpg"
+            grayscale={true}
+            swirl={1}
+            strength={0.25}
+            alignY={1.0}
+            trigger="hover"
+          />
+        </AppleGlassCard>
 
-          {/* 2. Bio Tile */}
-          <AppleGlassCard className="apple-bio">
-            <p className="apple-label">Who I am</p>
-            <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', marginBottom: '16px', lineHeight: 1.1 }}><KineticText text="Korada Tanvi" /></h2>
-            <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', lineHeight: 1.6, fontWeight: 500 }}>
-              B.Tech CSE (Cloud Computing) student at SRMIST Chennai. I build and ship full-stack AI-native web products using React, Next.js, Node.js, and LLM APIs. Published first-author research on LLM pipeline architecture. Currently freelancing and building in public.
-            </p>
-          </AppleGlassCard>
+        {/* 2. Bio */}
+        <AppleGlassCard className="apple-bio" style={{ gridColumn: 'span 2' }}>
+          <p className="apple-label">Who I Am</p>
+          <h3 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-heading)', marginBottom: '16px', fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em' }}>
+            <KineticText text="Korada Tanvi" />
+          </h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: 1.7, maxWidth: '100%' }}>
+            B.Tech CSE (Cloud Computing) student with a passion to build and ship full-stack AI-native applications using Next.js, Node.js, and LLM APIs. Previously published research on LLM pipeline architectures. Always learning and building in public.
+          </p>
+        </AppleGlassCard>
 
-          {/* 3. Location / Map Tile (USER REQUESTED: MAP) */}
-                    <AppleGlassCard className="apple-map">
-            <div style={{ position: 'absolute', top: '24px', left: '24px', zIndex: 10, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', padding: '10px 16px', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.15)' }}>
-              <p style={{ margin: 0, fontSize: '11px', fontFamily: 'var(--font-mono)', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Location</p>
-              <p style={{ margin: 0, fontSize: '15px', fontWeight: 700, color: '#fff', fontFamily: 'var(--font-serif)' }}>SRMIST, Chennai</p>
-            </div>
+        {/* 3. Availability / Status */}
+        <AppleGlassCard className="apple-status">
+          <p className="apple-label">Availability</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+            <span style={{ position: 'relative', display: 'flex', width: '12px', height: '12px' }}>
+              <span style={{ animate: 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite', position: 'absolute', display: 'inline-flex', height: '100%', width: '100%', borderRadius: '50%', background: '#22c55e', opacity: 0.75 }}></span>
+              <span style={{ position: 'relative', display: 'inline-flex', borderRadius: '50%', height: '12px', width: '12px', background: '#22c55e' }}></span>
+            </span>
+            <span style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)' }}>Open to Work</span>
+          </div>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '24px' }}>
+            Looking for Internships, Full-time roles, or Freelance collaborations. Let's build something extraordinary together.
+          </p>
+          <a href="mailto:tanvikorada@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-surface)', border: '1px solid var(--border)', padding: '10px 20px', borderRadius: '100px', color: 'var(--text-heading)', fontSize: '13px', fontWeight: 600, textDecoration: 'none', transition: 'all 0.2s' }}>
+            tanvikorada@gmail.com
+          </a>
+        </AppleGlassCard>
+
+        {/* 4. Map / Location */}
+        <AppleGlassCard className="apple-map" style={{ padding: 0 }}>
+          <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '200px' }}>
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.3130198089456!2d80.04018317572709!3d12.823032987479427!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52f712b82a78d9%3A0xfdb944a3aee53831!2sSRM%20Institute%20of%20Science%20and%20Technology!5e0!3m2!1sen!2sin!4v1707572346912!5m2!1sen!2sin" 
-              style={{ width: '100%', height: '100%', border: 0, objectFit: 'cover' }} 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d124424.31825553645!2d80.08182745330036!3d12.833917849419612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a525bc8120b0805%3A0x6b19a008c2a11b0e!2sSRM%20Institute%20of%20Science%20and%20Technology%2C%20Kattankulathur!5e0!3m2!1sen!2sin!4v1707907576595!5m2!1sen!2sin" 
+              style={{ border: 0, width: '100%', height: '100%', filter: 'grayscale(100%) contrast(1.2) opacity(0.8)' }} 
               allowFullScreen="" 
               loading="lazy" 
               referrerPolicy="no-referrer-when-downgrade"
             ></iframe>
-          </AppleGlassCard>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none', background: 'linear-gradient(to bottom, transparent, var(--bg-glass) 90%)' }}></div>
+            <div style={{ position: 'absolute', bottom: '24px', left: '24px', right: '24px' }}>
+              <div style={{ fontWeight: 700, color: 'var(--text-heading)', fontSize: '1.2rem', fontFamily: 'var(--font-serif)' }}>Chennai, India</div>
+              <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>SRMIST Kattankulathur</div>
+            </div>
+          </div>
+        </AppleGlassCard>
 
-          {/* 4. Availability Status */}
-          <AppleGlassCard className="apple-status superb-status">
-            <p className="apple-label">Availability</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-              <div className="pulse-dot" />
-              <span style={{ fontWeight: 800, color: 'var(--text-heading)', fontSize: '28px', letterSpacing: '-0.5px' }}>Open to Work</span>
-            </div>
-            <p style={{ fontSize: '15px', color: 'var(--text-muted)', marginBottom: '24px' }}>
-              Looking for Internships, Full-time roles, or Freelance collaborations. Let's build something extraordinary together.
-            </p>
-            <div>
-              <a href="mailto:tanvikorada@gmail.com" style={{ display: 'inline-block', fontFamily: 'var(--font-mono)', fontSize: '13px', color: 'var(--text-heading)', background: 'var(--bg-surface)', padding: '12px 20px', borderRadius: '100px', border: '1px solid var(--border)', fontWeight: 600, textDecoration: 'none' }}>
-                tanvikorada@gmail.com
-              </a>
-            </div>
-          </AppleGlassCard>
+        {/* 5. Stats / Numbers */}
+        <AppleGlassCard className="apple-stats" style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', flexWrap: 'wrap', gap: '24px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', letterSpacing: '-0.03em' }}>9.27</div>
+            <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', fontWeight: 600 }}>CGPA</div>
+          </div>
+          <div style={{ width: '1px', height: '60px', background: 'var(--border)' }}></div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', letterSpacing: '-0.03em' }}>6+</div>
+            <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', fontWeight: 600 }}>Projects</div>
+          </div>
+          <div style={{ width: '1px', height: '60px', background: 'var(--border)' }}></div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', letterSpacing: '-0.03em' }}>4+</div>
+            <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', fontWeight: 600 }}>Internships</div>
+          </div>
+        </AppleGlassCard>
 
-          {/* 5. Stats Row */}
-          <AppleGlassCard className="apple-stats" style={{ padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: '100%' }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)' }}>9.27</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>CGPA</div>
-              </div>
-              <div style={{ width: '1px', height: '40px', background: 'var(--border)' }} />
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)' }}>6+</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>Projects</div>
-              </div>
-              <div style={{ width: '1px', height: '40px', background: 'var(--border)' }} />
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)' }}>4+</div>
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>Internships</div>
-              </div>
-            </div>
-          </AppleGlassCard>
+        {/* 6. Technical Arsenal */}
+        <AppleGlassCard className="apple-skills" style={{ gridColumn: 'span 2' }}>
+          <p className="apple-label"><KineticText text="Technical Arsenal" /></p>
+          <div style={{ marginBottom: '20px' }}>
+            <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px', fontWeight: 600 }}>AI & GenAI</div>
+            {AI_SKILLS.map(s => <span key={s} className="skill-pill">{s}</span>)}
+          </div>
+          <div>
+            <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px', fontWeight: 600 }}>Web Dev</div>
+            {[...FRONTEND, ...BACKEND].map(s => <span key={s} className="skill-pill">{s}</span>)}
+          </div>
+        </AppleGlassCard>
 
-          {/* 6. Skills */}
-          <AppleGlassCard className="apple-skills">
-            <p className="apple-label"><KineticText text="Technical Arsenal" /></p>
-            <div style={{ marginBottom: '20px' }}>
-              <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px', fontWeight: 600 }}>AI & GenAI</div>
-              {AI_SKILLS.map(s => <span key={s} className="skill-pill">{s}</span>)}
+        
+        {/* Live Activity */}
+        <AppleGlassCard className="apple-activity" style={{ display: 'flex', flexDirection: 'column' }}>
+          <p className="apple-label">Live Updates</p>
+          <div style={{ flex: 1, position: 'relative', marginTop: '12px', minHeight: '260px' }}>
+            <div style={{ position: 'absolute', inset: 0, overflowY: 'hidden', paddingRight: '4px' }}>
+              <LiveActivityList />
             </div>
-            <div>
-              <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px', fontWeight: 600 }}>Web Dev</div>
-              {[...FRONTEND, ...BACKEND].map(s => <span key={s} className="skill-pill">{s}</span>)}
-            </div>
-          </AppleGlassCard>
+            {/* Fade out bottom */}
+            <div style={{
+              position: 'absolute', bottom: 0, left: 0, right: 0, height: '80px',
+              background: 'linear-gradient(to top, var(--bg-base), transparent)',
+              pointerEvents: 'none',
+              borderRadius: '0 0 24px 24px'
+            }} />
+          </div>
+        </AppleGlassCard>
 
-          
-          {/* Live Activity */}
-          <AppleGlassCard className="apple-activity" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
-            <p className="apple-label">Live Updates</p>
-            <div style={{ flex: 1, position: 'relative', marginTop: '12px', minHeight: '260px' }}>
-              <div style={{ position: 'absolute', inset: 0, overflowY: 'hidden', paddingRight: '4px' }}>
-                <LiveActivityList />
+        {/* 7. Fun / Roles */}
+        <AppleGlassCard className="apple-clubs" style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px' }}>
+          <div>
+            <p className="apple-label">Extracurriculars</p>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)' }}>Clubs & Roles</h3>
+          </div>
+          <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'color-mix(in srgb, #c084fc 10%, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c084fc' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
               </div>
-              {/* Fade out bottom */}
-              <div style={{
-                position: 'absolute', bottom: 0, left: 0, right: 0, height: '80px',
-                background: 'linear-gradient(to top, var(--bg-base), transparent)',
-                pointerEvents: 'none',
-                borderRadius: '0 0 24px 24px'
-              }} />
+              <div>
+                <div style={{ fontWeight: 700, color: 'var(--text-heading)' }}>Camogenics</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Photographer (Winner)</div>
+              </div>
             </div>
-          </AppleGlassCard>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'color-mix(in srgb, #38bdf8 10%, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#38bdf8' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div>
+                <div style={{ fontWeight: 700, color: 'var(--text-heading)' }}>SRMIST Lead</div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Tech Community</div>
+              </div>
+            </div>
+          </div>
+        </AppleGlassCard>
 
-          {/* 7. Fun / Roles */}
-          <AppleGlassCard className="apple-clubs" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px' }}>
-            <div>
-              <p className="apple-label">Extracurriculars</p>
-              <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)' }}>Clubs & Roles</h3>
-            </div>
-            <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'color-mix(in srgb, #c084fc 10%, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c084fc' }}>
-                  📸
-                </div>
-                <div>
-                  <div style={{ fontWeight: 700, color: 'var(--text-heading)' }}>Camogenics</div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Photographer (Winner)</div>
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'color-mix(in srgb, #38bdf8 10%, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#38bdf8' }}>
-                  📱
-                </div>
-                <div>
-                  <div style={{ fontWeight: 700, color: 'var(--text-heading)' }}>Andropedia</div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Media Team</div>
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'color-mix(in srgb, #fcd34d 10%, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fcd34d' }}>
-                  ⚙️
-                </div>
-                <div>
-                  <div style={{ fontWeight: 700, color: 'var(--text-heading)' }}>SlugNPlug</div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Hardware Club</div>
-                </div>
-              </div>
-            </div>
-          </AppleGlassCard>
-
-        </div>
-      </ClickSpark>
+      </div>
     </section>
   );
 }
-
-
-
-
-
-
-
-
-
