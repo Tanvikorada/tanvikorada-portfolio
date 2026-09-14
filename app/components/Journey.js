@@ -118,20 +118,23 @@ export default function Journey() {
           grid-template-columns: 200px 1fr 60px;
           gap: 32px;
           padding: 64px 24px;
-          border-bottom: 1px solid rgba(255,255,255,0.08);
+          border-bottom: 1px solid var(--border-mid);
           position: relative;
           transition: background 0.4s ease;
           cursor: crosshair;
         }
 
         .premium-list-item:hover {
+          background: rgba(0,0,0,0.015);
+        }
+        :global(.night) .premium-list-item:hover {
           background: rgba(255,255,255,0.015);
         }
 
         .item-period {
           font-family: var(--font-mono);
           font-size: 14px;
-          color: rgba(255,255,255,0.4);
+          color: var(--text-muted);
           letter-spacing: 0.05em;
           text-transform: uppercase;
           padding-top: 8px;
@@ -141,7 +144,7 @@ export default function Journey() {
           font-family: var(--font-serif);
           font-size: clamp(1.8rem, 3vw, 2.5rem);
           font-weight: 700;
-          color: #fff;
+          color: var(--text-heading);
           line-height: 1.1;
           margin-bottom: 10px;
           letter-spacing: -0.02em;
@@ -150,13 +153,13 @@ export default function Journey() {
 
         .premium-list-item:hover .item-title {
           transform: translateX(12px);
-          color: #00d2ff;
+          color: var(--primary);
         }
 
         .item-org {
           font-family: var(--font-sans);
           font-size: 1.2rem;
-          color: rgba(255,255,255,0.7);
+          color: var(--text-body);
           margin-bottom: 20px;
           transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -167,7 +170,7 @@ export default function Journey() {
 
         .item-desc {
           font-size: 1.05rem;
-          color: rgba(255,255,255,0.45);
+          color: var(--text-muted);
           line-height: 1.6;
           max-width: 640px;
           margin-bottom: 28px;
@@ -184,16 +187,16 @@ export default function Journey() {
           font-size: 12px;
           padding: 6px 16px;
           border-radius: 100px;
-          border: 1px solid rgba(255,255,255,0.1);
-          color: rgba(255,255,255,0.5);
-          background: rgba(255,255,255,0.02);
+          border: 1px solid var(--border);
+          color: var(--text-body);
+          background: var(--bg-surface);
           transition: all 0.3s;
         }
 
         .premium-list-item:hover .item-tags .tag {
-          border-color: rgba(0, 210, 255, 0.3);
-          color: #00d2ff;
-          background: rgba(0, 210, 255, 0.05);
+          border-color: var(--primary);
+          color: var(--primary);
+          background: rgba(59, 130, 246, 0.05);
         }
 
         .item-arrow {
@@ -201,7 +204,7 @@ export default function Journey() {
           justify-content: flex-end;
           align-items: flex-start;
           padding-top: 8px;
-          color: rgba(255,255,255,0.15);
+          color: var(--border-mid);
           transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -212,7 +215,7 @@ export default function Journey() {
         }
 
         .premium-list-item:hover .item-arrow {
-          color: #fff;
+          color: var(--text-heading);
         }
 
         .premium-list-item:hover .item-arrow svg {
@@ -249,7 +252,7 @@ export default function Journey() {
             style={{ padding: '0 24px' }}
           >
             <h2 className="premium-section-title">Experience.</h2>
-            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '1.2rem', maxWidth: '400px' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', maxWidth: '400px' }}>
               Building scalable web applications, AI pipelines, and production-ready systems.
             </p>
           </motion.div>
@@ -270,7 +273,7 @@ export default function Journey() {
             style={{ padding: '0 24px' }}
           >
             <h2 className="premium-section-title">Education.</h2>
-            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '1.2rem', maxWidth: '400px' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', maxWidth: '400px' }}>
               Academic foundations in computer science, cloud computing, and advanced mathematics.
             </p>
           </motion.div>

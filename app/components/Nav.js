@@ -4,12 +4,15 @@ import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import Link from 'next/link';
 
 export default function Nav() {
-  const [isNight, setIsNight] = useState(false);
+  const [isNight, setIsNight] = useState(true); // SSR is dark by default
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('theme');
-    if (stored === 'night') {
+    if (stored === 'day') {
+      setIsNight(false);
+      document.body.classList.remove('night');
+    } else {
       setIsNight(true);
       document.body.classList.add('night');
     }
