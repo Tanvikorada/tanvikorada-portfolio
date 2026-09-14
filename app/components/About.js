@@ -1,5 +1,6 @@
 'use client';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import ClickSpark from './ui/ClickSpark';
 import { useRef } from 'react';
 import SpotlightCard from './ui/SpotlightCard';
@@ -17,6 +18,88 @@ function AppleGlassCard({ children, className = "", style = {} }) {
     >
       {children}
     </SpotlightCard>
+  );
+}
+
+
+const LIVE_UPDATES = [
+  { id: 1, name: "Deployed new feature", description: "Portfolio update pushed to prod", time: "2m ago", icon: "🚀", color: "rgba(14, 165, 233, 0.2)", textColor: "#0ea5e9" },
+  { id: 2, name: "Merged Pull Request", description: "Open source contribution", time: "1h ago", icon: "🎉", color: "rgba(34, 197, 94, 0.2)", textColor: "#22c55e" },
+  { id: 3, name: "Solved LeetCode Hard", description: "Dynamic Programming", time: "3h ago", icon: "🏆", color: "rgba(234, 179, 8, 0.2)", textColor: "#eab308" },
+  { id: 4, name: "Starred a repository", description: "Magic UI", time: "5h ago", icon: "🌟", color: "rgba(245, 158, 11, 0.2)", textColor: "#f59e0b" },
+  { id: 5, name: "Published article", description: "LLM Pipeline Architecture", time: "1d ago", icon: "📝", color: "rgba(236, 72, 153, 0.2)", textColor: "#ec4899" },
+];
+
+function LiveActivityList() {
+  const [items, setItems] = useState([]);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    // Start with one item
+    setItems([{ ...LIVE_UPDATES[0], uniqueId: 0 }]);
+    setIndex(1);
+
+    const interval = setInterval(() => {
+      setIndex((prevIndex) => {
+        const nextItem = LIVE_UPDATES[prevIndex % LIVE_UPDATES.length];
+        setItems((prevItems) => {
+          // Add new item at the top, keep max 4 items
+          return [{ ...nextItem, uniqueId: Date.now() }, ...prevItems].slice(0, 4);
+        });
+        return prevIndex + 1;
+      });
+    }, 3500); // Add a new notification every 3.5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', height: '100%', overflow: 'hidden', padding: '4px' }}>
+      <AnimatePresence initial={false}>
+        {items.map((item) => (
+          <motion.div
+            key={item.uniqueId || item.id}
+            layout
+            initial={{ height: 0, opacity: 0, scale: 0.95 }}
+            animate={{ height: 'auto', opacity: 1, scale: 1 }}
+            exit={{ height: 0, opacity: 0, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 350, damping: 40 }}
+          >
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '14px',
+              padding: '14px',
+              background: 'var(--bg-surface)',
+              borderRadius: '16px',
+              border: '1px solid var(--border-mid)',
+              boxShadow: 'var(--shadow-sm)'
+            }}>
+              <div style={{
+                width: '42px', height: '42px',
+                borderRadius: '12px',
+                background: item.color,
+                color: item.textColor,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '20px',
+                flexShrink: 0
+              }}>
+                {item.icon}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2px' }}>
+                  <span style={{ fontWeight: 600, color: 'var(--text-heading)', fontSize: '15px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{item.time}</span>
+                </div>
+                <div style={{ fontSize: '13px', color: 'var(--text-body)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {item.description}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -59,7 +142,9 @@ export default function About() {
           .apple-stats { grid-column: span 2 !important; }
           .apple-skills { grid-column: span 2 !important; }
           .apple-status { grid-column: span 2 !important; }
+          .apple-activity { grid-column: span 2; grid-row: span 2; }
           .apple-clubs { grid-column: span 2 !important; }
+            .apple-activity { grid-column: span 2 !important; }
         }
 
         @media (max-width: 600px) {
@@ -115,7 +200,7 @@ export default function About() {
         .apple-stats { grid-column: span 2; grid-row: span 1; justify-content: center; }
         
         .apple-skills { grid-column: span 2; grid-row: span 2; }
-        .apple-clubs { grid-column: span 2; grid-row: span 2; display: flex; flex-direction: column; justify-content: space-between; }
+        .apple-clubs { grid-column: span 4; grid-row: span 2; display: flex; flex-direction: column; justify-content: space-between; }
 
         .apple-label {
           font-family: var(--font-mono);
@@ -268,6 +353,22 @@ export default function About() {
             </div>
           </AppleGlassCard>
 
+          
+          {/* Live Activity */}
+          <AppleGlassCard className="apple-activity" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
+            <p className="apple-label">Live Updates</p>
+            <div style={{ flex: 1, position: 'relative', marginTop: '12px', minHeight: '300px' }}>
+              <LiveActivityList />
+              {/* Fade out bottom */}
+              <div style={{
+                position: 'absolute', bottom: 0, left: 0, right: 0, height: '80px',
+                background: 'linear-gradient(to top, var(--bg-base), transparent)',
+                pointerEvents: 'none',
+                borderRadius: '0 0 24px 24px'
+              }} />
+            </div>
+          </AppleGlassCard>
+
           {/* 7. Fun / Roles */}
           <AppleGlassCard className="apple-clubs" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px' }}>
             <div>
@@ -310,6 +411,7 @@ export default function About() {
     </section>
   );
 }
+
 
 
 
