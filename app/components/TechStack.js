@@ -137,8 +137,22 @@ export default function TechStack() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   return (
-    <section id="tech-stack" style={{ padding: '16vh 4vw', position: 'relative', overflow: 'hidden', background: 'var(--bg-base)' }}>
+    <section id="tech-stack" style={{ padding: '16vh 4vw', position: 'relative', overflow: 'hidden', background: isNight ? 'transparent' : 'var(--bg-base)' }}>
       <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:'800px', height:'800px', background: isNight ? 'radial-gradient(circle, rgba(0, 210, 255, 0.05) 0%, rgba(3, 4, 8, 0) 60%)' : 'radial-gradient(circle, rgba(0, 210, 255, 0.03) 0%, rgba(255, 255, 255, 0) 60%)', filter:'blur(80px)', pointerEvents:'none', zIndex:0 }} />
+        
+        {isNight && (
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, opacity: 0.45, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+            <video 
+              autoPlay 
+              muted 
+              loop 
+              playsInline
+              style={{ minWidth: '100%', minHeight: '100%', objectFit: 'cover' }}
+            >
+              <source src="/videos/skills-bg.webm" type="video/webm" />
+            </video>
+          </div>
+        )}
       
       <div style={{ maxWidth:'1200px', margin:'0 auto', position:'relative', zIndex:2 }}>
         <div style={{ textAlign:'center', marginBottom:'4rem' }}>
