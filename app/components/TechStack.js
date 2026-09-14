@@ -183,7 +183,7 @@ export default function TechStack() {
               let iconUrl;
               if (isHovered) {
                 // If hovered, fetch the colored version directly or use the brand color
-                iconUrl = `https://cdn.simpleicons.org/${pt.slug}/${pt.color.replace('#', '')}`;
+                iconUrl = `https://cdn.simpleicons.org/${pt.slug}/white`; // Solid colored bubble requires a white icon for contrast
               } else {
                 // Not hovered: white if night mode, black if day mode
                 iconUrl = isNight 
@@ -211,10 +211,10 @@ export default function TechStack() {
                     opacity: pt.opacity,
                     zIndex: isHovered ? 9999 : pt.zIndex,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: isHovered ? `${pt.color}15` : 'var(--bg-surface)',
+                    background: isHovered ? pt.color : 'var(--bg-surface)',
                     border: isHovered ? `1px solid ${pt.color}` : '1px solid var(--border-mid)',
                     borderRadius: '50%',
-                    boxShadow: isHovered ? `0 0 20px ${pt.color}40` : 'inset 0 1px 3px rgba(255,255,255,0.05)',
+                    boxShadow: isHovered ? `0 10px 25px ${pt.color}80` : 'inset 0 1px 3px rgba(255,255,255,0.05)',
                     transition: 'border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.1s linear',
                     cursor: 'default' // Changed to default as requested (no clicking away)
                   }}
@@ -225,7 +225,7 @@ export default function TechStack() {
                     style={{ 
                       width: '28px', 
                       height: '28px', 
-                      filter: isHovered ? `drop-shadow(0 0 8px ${pt.color}80)` : 'grayscale(100%) opacity(0.8)',
+                      filter: isHovered ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' : 'grayscale(100%) opacity(0.8)',
                       transition: 'all 0.2s ease',
                       pointerEvents: 'none'
                     }} 
