@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
 
 const EDUCATION = [{"id":"srmist","title":"B.Tech - CSE (Cloud Computing)","org":"SRMIST Chennai","period":"2024 - 2028","desc":"Focus on distributed systems, deep learning architectures and full-stack AI engineering. CGPA: 9.27/10","tags":["Cloud Arch","AI / ML","DSA"]},{"id":"tirumala","title":"Intermediate","org":"Tirumala Junior College","period":"2022 - 2024","desc":"Maths, Physics, and Chemistry focus. Secured 977/1000 in Boards. Built foundational analytical logic.","tags":["MPC","97.7%"]},{"id":"ravindra","title":"Secondary Education","org":"Ravindra Bharathi School","period":"2012 - 2022","desc":"Completed secondary education with a strong foundation in sciences and mathematics. Secured 88% in 10th standard boards.","tags":["88%"]}];
-const EXPERIENCE = [{"id":"dataleaf","title":"SDE Intern","org":"Dataleaf Health","period":"Oct 2024 - Jan 2025","desc":"Architected highly available API gateways, built fault-tolerant CI/CD pipelines, and led microservices deployment for robust health-tech solutions.","tags":["Next.js","PostgreSQL","Tailwind CSS","AWS","Redis"]}];
+const EXPERIENCE = [];
 
 function TimelineItem({ item, index }) {
   const mouseX = useMotionValue(0);
@@ -86,7 +86,7 @@ export default function Journey() {
         }
 
         /* Fluid Citrus Glass Card */
-        .fluid-glass-card { 
+        \.fluid-glass-card { 
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.0) 100%);
   backdrop-filter: blur(60px) saturate(200%);
   -webkit-backdrop-filter: blur(60px) saturate(200%);
@@ -106,7 +106,7 @@ export default function Journey() {
   --primary-glow: rgba(255, 255, 255, 0.3);
  }
 
-        :global(.night) .fluid-glass-card { 
+        :global(.night) \.fluid-glass-card { 
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.0) 100%);
   backdrop-filter: blur(60px) saturate(200%);
   -webkit-backdrop-filter: blur(60px) saturate(200%);
@@ -126,7 +126,7 @@ export default function Journey() {
   --primary-glow: rgba(255, 255, 255, 0.3);
  }
 
-        .fluid-glass-card:hover { 
+        \.fluid-glass-card:hover { 
   transform: translateY(-8px) scale(1.01);
   box-shadow: 
     0 50px 100px rgba(16, 185, 129, 0.15),
@@ -135,7 +135,7 @@ export default function Journey() {
     inset -2px -2px 4px rgba(0, 0, 0, 0.05);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%); }
 
-        :global(.night) .fluid-glass-card:hover { 
+        :global(.night) \.fluid-glass-card:hover { 
   transform: translateY(-8px) scale(1.01);
   box-shadow: 
     0 50px 100px rgba(16, 185, 129, 0.15),
@@ -243,7 +243,7 @@ export default function Journey() {
             flex-direction: column;
             gap: 16px;
           }
-          .fluid-glass-card { 
+          \.fluid-glass-card { 
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.0) 100%);
   backdrop-filter: blur(60px) saturate(200%);
   -webkit-backdrop-filter: blur(60px) saturate(200%);
@@ -275,6 +275,7 @@ export default function Journey() {
       <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
         
         {/* Experience Section */}
+        {EXPERIENCE.length > 0 && (
         <div style={{ marginBottom: '6rem' }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -294,6 +295,7 @@ export default function Journey() {
             ))}
           </div>
         </div>
+        )}
 
         {/* Education Section */}
         <div>
@@ -320,4 +322,3 @@ export default function Journey() {
     </section>
   );
 }
-
