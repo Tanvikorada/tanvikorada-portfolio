@@ -135,14 +135,7 @@ export default function TechStack() {
           cursor: pointer;
         }
 
-        .tnode-inner {
-          width: 100%; height: 100%;
-          border-radius: 16px;
-          background: var(--bg-surface);
-          border: 1px solid var(--border);
-          display: flex; align-items: center; justify-content: center;
-          box-shadow: var(--shadow-sm);
-        }
+        .tnode-inner { width: 100%; height: 100%; border-radius: 16px; background: var(--bg-surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
 
         .chip-wrap {
           position: absolute;
@@ -217,25 +210,7 @@ export default function TechStack() {
             onMouseLeave={() => setIsStageHovered(false)}
             style={{ transform: `rotateX(${TILT}deg) rotateZ(${rotAngle}deg)` }}
           >
-            {/* SVG Floor */}
-            <svg viewBox="0 0 800 800" style={{ position:'absolute', inset:0, width:'100%', height:'100%', overflow:'visible' }}>
-              <circle className="orbit-ring" cx={CX} cy={CY} r={INNER_R}/>
-              <circle className="orbit-ring" cx={CX} cy={CY} r={OUTER_R}/>
-              
-              {TECH.map(t => {
-                const a = (t.angle - 90) * Math.PI / 180;
-                const r = t.ring === 0 ? INNER_R : OUTER_R;
-                const nx = CX + r * Math.cos(a);
-                const ny = CY + r * Math.sin(a);
-                const isActive = hoveredNode === t.id;
-                
-                return (
-                  <g key={t.id}>
-                    <line x1={CX} y1={CY} x2={nx} y2={ny} className={`wire-line ${isActive ? 'active' : ''}`}/>
-                  </g>
-                );
-              })}
-            </svg>
+            
 
             {/* Central Hub */}
             <div 
@@ -274,10 +249,10 @@ export default function TechStack() {
                   <motion.div
                     className="tnode-inner"
                     animate={{
-                      scale: isHovered ? 1.15 : 1,
-                      y: isHovered ? -6 : 0,
-                      backgroundColor: isHovered ? (isNight ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)') : 'var(--bg-surface)',
-                      boxShadow: isHovered ? '0 10px 25px rgba(0,0,0,0.15)' : 'var(--shadow-sm)'
+                      scale: isHovered ? 1.3 : 1,
+                      y: isHovered ? -12 : 0,
+                      backgroundColor: isHovered ? (isNight ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,1)') : 'var(--bg-surface)',
+                      boxShadow: isHovered ? '0 20px 40px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.05)'
                     }}
                     transition={{ duration: 0.2 }}
                   >
