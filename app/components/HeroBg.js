@@ -1,6 +1,8 @@
 'use client';
 import { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
+import { Stars, Sparkles } from '@react-three/drei';
+import * as THREE from 'three';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
@@ -125,6 +127,138 @@ function Cubes({ isNight }) {
   );
 }
 
+
+function InteractiveSpace({ scrollYProgress }) {
+  const groupRef = useRef();
+  const mouse = useRef({ x: 0, y: 0 });
+  const targetMouse = useRef({ x: 0, y: 0 });
+  
+  // Shooting stars
+  const shootingStars = useMemo(() => {
+    return Array.from({ length: 12 }).map(() => ({
+      x: (Math.random() - 0.5) * 400,
+      y: (Math.random() - 0.5) * 300,
+      z: (Math.random() - 0.5) * 200 - 100,
+      length: Math.random() * 30 + 15,
+      speed: Math.random() * 6 + 4,
+      active: false,
+      wait: Math.random() * 200
+    }));
+  }, []);
+  
+  const shootingStarRef = useRef();
+  const linesMat = useMemo(() => new THREE.LineBasicMaterial({ 
+    color: new THREE.Color('#c084fc'), 
+    transparent: true, 
+    opacity: 0.8,
+    blending: THREE.AdditiveBlending 
+  }), []);
+
+  // Nebula/Galaxy Stardust (points)
+  const stardustCount = 6000;
+  const [stardustPositions, stardustColors] = useMemo(() => {
+    const positions = new Float32Array(stardustCount * 3);
+    const colors = new Float32Array(stardustCount * 3);
+    const colorInside = new THREE.Color('#c084fc');
+    const colorOutside = new THREE.Color('#38bdf8');
+    
+    for (let i = 0; i < stardustCount; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = Math.pow(Math.random(), 1.3) * 200;
+      const x = Math.cos(angle) * radius;
+      const y = (Math.random() - 0.5) * (40 - radius * 0.1);
+      const z = Math.sin(angle) * radius;
+      
+      positions[i*3] = x;
+      positions[i*3+1] = y;
+      positions[i*3+2] = z;
+      
+      const mixedColor = colorInside.clone().lerp(colorOutside, radius / 200);
+      colors[i*3] = mixedColor.r;
+      colors[i*3+1] = mixedColor.g;
+      colors[i*3+2] = mixedColor.b;
+    }
+    return [positions, colors];
+  }, []);
+
+  useEffect(() => {
+    const onMove = (e) => {
+      targetMouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+      targetMouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    };
+    window.addEventListener('mousemove', onMove, { passive: true });
+    return () => window.removeEventListener('mousemove', onMove);
+  }, []);
+
+  useFrame((state, delta) => {
+    // Parallax
+    mouse.current.x = THREE.MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.05);
+    mouse.current.y = THREE.MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.05);
+    
+    if (groupRef.current) {
+      groupRef.current.rotation.x = mouse.current.y * 0.1;
+      groupRef.current.rotation.y = mouse.current.x * 0.15;
+      groupRef.current.rotation.z -= delta * 0.02; // Slow galactic spin
+      
+      // Fly forward on scroll!
+      const scroll = scrollYProgress ? scrollYProgress.get() : 0;
+      groupRef.current.position.z = scroll * 150; // Fly through stars
+    }
+    
+    // Update shooting stars
+    const positions = [];
+    shootingStars.forEach(star => {
+      if (!star.active) {
+        star.wait--;
+        if (star.wait <= 0) {
+          star.active = true;
+          star.x = (Math.random() - 0.5) * 400 + 200; // start from right
+          star.y = (Math.random() - 0.5) * 300 + 150; // top right
+          star.z = (Math.random() - 0.5) * 200 - 100;
+          star.speed = Math.random() * 5 + 4;
+          star.wait = Math.random() * 200 + 50;
+        }
+      } else {
+        star.x -= star.speed;
+        star.y -= star.speed * 0.6;
+        if (star.x < -300 || star.y < -200) {
+          star.active = false;
+        } else {
+          positions.push(
+            star.x, star.y, star.z,
+            star.x + star.length, star.y + star.length * 0.6, star.z
+          );
+        }
+      }
+    });
+    
+    if (shootingStarRef.current) {
+      const posArray = new Float32Array(positions);
+      shootingStarRef.current.geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    }
+  });
+
+  return (
+    <group ref={groupRef}>
+      <Stars radius={100} depth={100} count={9000} factor={6} saturation={1} fade speed={2} />
+      <Sparkles count={800} scale={200} size={6} color="#a855f7" speed={0.4} opacity={0.5} />
+      <Sparkles count={400} scale={150} size={8} color="#38bdf8" speed={0.6} opacity={0.3} />
+      
+      <points>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" count={stardustCount} array={stardustPositions} itemSize={3} />
+          <bufferAttribute attach="attributes-color" count={stardustCount} array={stardustColors} itemSize={3} />
+        </bufferGeometry>
+        <pointsMaterial size={1.5} vertexColors transparent opacity={0.6} sizeAttenuation blending={THREE.AdditiveBlending} depthWrite={false} />
+      </points>
+      
+      <lineSegments ref={shootingStarRef} material={linesMat}>
+        <bufferGeometry />
+      </lineSegments>
+    </group>
+  );
+}
+
 export default function HeroBg() {
   const [isNight, setIsNight] = useState(true);
   const { scrollYProgress } = useScroll();
@@ -148,7 +282,7 @@ export default function HeroBg() {
         <directionalLight position={[15, -20, 30]} intensity={isNight ? 1.0 : 0.8} color="#ffffff" />
         <directionalLight position={[-15, 20, 20]} intensity={isNight ? 0.4 : 0.4} color={isNight ? '#fcd34d' : '#f3e8ff'} />
         
-        <Cubes isNight={isNight} />
+        {isNight ? <InteractiveSpace scrollYProgress={scrollYProgress} /> : <Cubes isNight={false} />}
       </Canvas>
 
       <motion.div 
@@ -167,21 +301,21 @@ export default function HeroBg() {
         <div style={{
           position: 'absolute', top: '-10%', left: '-10%',
           width: '80vw', height: '80vw',
-          background: isNight ? 'radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(216, 180, 254, 0.35) 0%, transparent 60%)',
+          background: isNight ? 'radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(216, 180, 254, 0.35) 0%, transparent 60%)',
           filter: 'blur(90px)',
           animation: 'floatOrb 20s ease-in-out infinite alternate',
         }} />
         <div style={{
           position: 'absolute', bottom: '-20%', right: '-10%',
           width: '70vw', height: '70vw',
-          background: isNight ? 'radial-gradient(circle, rgba(4, 120, 87, 0.2) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(192, 132, 252, 0.25) 0%, transparent 60%)',
+          background: isNight ? 'radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(192, 132, 252, 0.25) 0%, transparent 60%)',
           filter: 'blur(100px)',
           animation: 'floatOrb 15s ease-in-out infinite alternate-reverse',
         }} />
         <div style={{
           position: 'absolute', top: '30%', left: '30%', transform: 'translateX(-50%)',
           width: '100vw', height: '60vw',
-          background: isNight ? 'radial-gradient(ellipse, rgba(52, 211, 153, 0.1) 0%, transparent 50%)' : 'radial-gradient(ellipse, rgba(233, 213, 255, 0.7) 0%, transparent 50%)',
+          background: isNight ? 'radial-gradient(ellipse, rgba(192, 132, 252, 0.05) 0%, transparent 50%)' : 'radial-gradient(ellipse, rgba(233, 213, 255, 0.7) 0%, transparent 50%)',
           filter: 'blur(120px)',
           animation: 'floatOrb 25s linear infinite alternate',
         }} />
