@@ -69,7 +69,7 @@ function AppleGlassCard({ children, className = "", style = {}, noPadding = fals
       >
         <SpotlightCard className="apple-glass-card" style={{ flex: 1, margin: 0, padding: noPadding ? 0 : '32px' }}>
           {withRipple && (
-            <div style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.1, mixBlendMode: 'overlay', pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.25, mixBlendMode: 'overlay', pointerEvents: 'none' }}>
               <RippleDistortion 
                 src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop"
                 grayscale={true}
