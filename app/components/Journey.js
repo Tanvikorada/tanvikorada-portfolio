@@ -42,8 +42,8 @@ const EDUCATION = [
     title: 'Intermediate',
     org: 'Tirumala Junior College',
     period: '2022 - 2024',
-    desc: 'Maths, Physics, and Chemistry focus. Secured 977/1000 in Boards. Built foundational analytical logic.',
-    tags: ['MPC', '97.7%']
+    desc: 'Maths, Physics, and Chemistry focus. Secured 952/1000 in Boards. Built foundational analytical logic.',
+    tags: ['MPC', '95.2%']
   },
   {
     id: 'ravindra',
@@ -189,30 +189,17 @@ export default function Journey() {
           position: relative;
           z-index: 2;
           display: flex;
-          flex-direction: row;
-          gap: 48px;
-          align-items: flex-start;
-        }
-
-        @media (max-width: 900px) {
-          .water-card-content {
-            flex-direction: column;
-            gap: 16px;
-          }
-          .water-card {
-            padding: 30px;
-            border-radius: 32px;
-          }
+          flex-direction: column; /* Vertical stacking for grid */
+          gap: 16px;
         }
 
         .water-card-period {
-          flex: 0 0 180px;
           font-family: var(--font-mono);
-          font-size: 1rem;
+          font-size: 0.95rem;
           color: var(--text-muted);
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          padding-top: 8px;
+          margin-bottom: 4px;
         }
 
         .water-card-body {
@@ -220,7 +207,7 @@ export default function Journey() {
         }
 
         .water-card-title {
-          font-size: 1.8rem;
+          font-size: 1.6rem;
           font-weight: 800;
           color: var(--text-heading);
           margin-bottom: 0.25rem;
@@ -229,33 +216,33 @@ export default function Journey() {
         }
 
         .water-card-org {
-          font-size: 1.2rem;
+          font-size: 1.1rem;
           color: var(--primary);
-          margin-bottom: 1.25rem;
+          margin-bottom: 1rem;
           font-weight: 600;
         }
 
         .water-card-desc {
           color: var(--text-body);
-          font-size: 1.15rem;
+          font-size: 1.05rem;
           line-height: 1.6;
-          margin-bottom: 1.5rem;
-          max-width: 650px;
+          margin-bottom: 1.25rem;
+          max-width: 100%;
         }
 
         .water-card-tags {
           display: flex;
           flex-wrap: wrap;
-          gap: 12px;
+          gap: 10px;
         }
 
         .water-tag {
           background: rgba(255, 255, 255, 0.5);
           border: 1px solid rgba(255, 255, 255, 0.7);
           color: var(--text-heading);
-          padding: 8px 18px;
+          padding: 6px 14px;
           border-radius: 30px;
-          font-size: 0.9rem;
+          font-size: 0.85rem;
           font-weight: 600;
           font-family: var(--font-mono);
           backdrop-filter: blur(10px);
@@ -277,48 +264,54 @@ export default function Journey() {
         }
       `}</style>
 
-      <div style={{ maxWidth: '1000px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
         
-        {EXPERIENCE.length > 0 && (
-          <div style={{ marginBottom: '8rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '60px' }}>
+          
+          {/* Left Column: Experience */}
+          {EXPERIENCE.length > 0 && (
+            <div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                style={{ marginBottom: '3rem', paddingLeft: '1rem' }}
+              >
+                <h2 className="water-section-title">Experience.</h2>
+                <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', maxWidth: '500px' }}>
+                  Building scalable web applications, AI pipelines, and production-ready systems.
+                </p>
+              </motion.div>
+
+              <div>
+                {EXPERIENCE.map((item, index) => (
+                  <WaterCard key={item.id} item={item} index={index} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Right Column: Education */}
+          <div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               style={{ marginBottom: '3rem', paddingLeft: '1rem' }}
             >
-              <h2 className="water-section-title">Experience.</h2>
+              <h2 className="water-section-title">Education.</h2>
               <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', maxWidth: '500px' }}>
-                Building scalable web applications, AI pipelines, and production-ready systems.
+                Academic foundations in computer science and distributed architecture.
               </p>
             </motion.div>
 
             <div>
-              {EXPERIENCE.map((item, index) => (
+              {EDUCATION.map((item, index) => (
                 <WaterCard key={item.id} item={item} index={index} />
               ))}
             </div>
           </div>
-        )}
-
-        <div style={{ marginBottom: '4rem' }}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            style={{ marginBottom: '3rem', paddingLeft: '1rem' }}
-          >
-            <h2 className="water-section-title">Education.</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', maxWidth: '500px' }}>
-              Academic foundations in computer science and distributed architecture.
-            </p>
-          </motion.div>
-
-          <div>
-            {EDUCATION.map((item, index) => (
-              <WaterCard key={item.id} item={item} index={index} />
-            ))}
-          </div>
+          
         </div>
 
       </div>
