@@ -151,29 +151,29 @@ export default function HeroBg() {
       <motion.div 
         style={{
           position: 'absolute', inset: 0,
-          background: isNight ? '#030408' : '#fafafa',
+          background: isNight ? '#020617' : '#f0f9ff',
           opacity: overlayOpacity,
           overflow: 'hidden'
         }}
       >
         <div style={{
-          position: 'absolute', top: '10%', left: '-10%',
-          width: '70vw', height: '70vw',
-          background: isNight ? 'radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 60%)',
+          position: 'absolute', top: '-10%', left: '-10%',
+          width: '80vw', height: '80vw',
+          background: isNight ? 'radial-gradient(circle, rgba(2, 119, 189, 0.25) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(2, 119, 189, 0.5) 0%, transparent 60%)',
           filter: 'blur(90px)',
           animation: 'floatOrb 20s ease-in-out infinite alternate',
         }} />
         <div style={{
           position: 'absolute', bottom: '-20%', right: '-10%',
-          width: '60vw', height: '60vw',
-          background: isNight ? 'radial-gradient(circle, rgba(96, 165, 250, 0.1) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(125, 211, 252, 0.25) 0%, transparent 60%)',
+          width: '70vw', height: '70vw',
+          background: isNight ? 'radial-gradient(circle, rgba(29, 78, 216, 0.2) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(37, 99, 235, 0.4) 0%, transparent 60%)',
           filter: 'blur(100px)',
           animation: 'floatOrb 15s ease-in-out infinite alternate-reverse',
         }} />
         <div style={{
-          position: 'absolute', top: '40%', left: '50%', transform: 'translateX(-50%)',
-          width: '80vw', height: '50vw',
-          background: isNight ? 'radial-gradient(circle, rgba(147, 51, 234, 0.08) 0%, transparent 50%)' : 'radial-gradient(circle, rgba(224, 242, 254, 0.4) 0%, transparent 50%)',
+          position: 'absolute', top: '30%', left: '30%',
+          width: '100vw', height: '60vw',
+          background: isNight ? 'radial-gradient(ellipse, rgba(14, 165, 233, 0.2) 0%, transparent 50%)' : 'radial-gradient(ellipse, rgba(224, 242, 254, 0.8) 0%, transparent 50%)',
           filter: 'blur(120px)',
           animation: 'floatOrb 25s linear infinite alternate',
         }} />

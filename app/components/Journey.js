@@ -86,37 +86,63 @@ export default function Journey() {
         }
 
         /* Fluid Citrus Glass Card */
-        .fluid-glass-card {
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(224, 242, 254, 0.2));
-          backdrop-filter: blur(40px) saturate(200%);
-          -webkit-backdrop-filter: blur(40px) saturate(200%);
-          border: 1px solid rgba(255, 255, 255, 0.9);
-          box-shadow: 0 16px 40px rgba(56, 189, 248, 0.08), inset 0 1px 2px rgba(255, 255, 255, 1), inset 0 -1px 2px rgba(255, 255, 255, 0.4);
-          border-radius: 32px;
-          padding: 40px;
-          position: relative;
-          overflow: hidden;
-          transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-          --primary-glow: rgba(255, 255, 255, 0.6);
-        }
+        .fluid-glass-card { 
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.0) 100%);
+  backdrop-filter: blur(60px) saturate(200%);
+  -webkit-backdrop-filter: blur(60px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top-color: rgba(255, 255, 255, 0.8);
+  border-left-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 40px 80px rgba(0, 0, 0, 0.15),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.9),
+    inset 10px 10px 40px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 40px;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --primary-glow: rgba(255, 255, 255, 0.3);
+ }
 
-        :global(.night) .fluid-glass-card {
-          background: linear-gradient(135deg, rgba(20, 20, 25, 0.6), rgba(30, 20, 20, 0.4));
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(56, 189, 248, 0.06), inset 0 1px 2px rgba(255, 255, 255, 0.2);
-          --primary-glow: rgba(255, 255, 255, 0.1);
-        }
+        :global(.night) .fluid-glass-card { 
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.0) 100%);
+  backdrop-filter: blur(60px) saturate(200%);
+  -webkit-backdrop-filter: blur(60px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top-color: rgba(255, 255, 255, 0.8);
+  border-left-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 40px 80px rgba(0, 0, 0, 0.15),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.9),
+    inset 10px 10px 40px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 40px;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --primary-glow: rgba(255, 255, 255, 0.3);
+ }
 
-        .fluid-glass-card:hover {
-          transform: translateY(-8px) scale(1.01);
-          box-shadow: 0 30px 60px rgba(56, 189, 248, 0.12), inset 0 1px 2px rgba(255, 255, 255, 1);
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(240, 249, 255, 0.4));
-        }
+        .fluid-glass-card:hover { 
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 
+    0 50px 100px rgba(2, 119, 189, 0.2),
+    inset 2px 2px 4px rgba(255, 255, 255, 1),
+    inset 10px 10px 40px rgba(255, 255, 255, 0.3),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%); }
 
-        :global(.night) .fluid-glass-card:hover {
-          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 12px 30px rgba(56, 189, 248, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.3);
-          background: linear-gradient(135deg, rgba(30, 30, 40, 0.7), rgba(45, 30, 25, 0.5));
-        }
+        :global(.night) .fluid-glass-card:hover { 
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 
+    0 50px 100px rgba(2, 119, 189, 0.2),
+    inset 2px 2px 4px rgba(255, 255, 255, 1),
+    inset 10px 10px 40px rgba(255, 255, 255, 0.3),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%); }
 
         .item-content-wrapper {
           display: flex;
@@ -217,10 +243,25 @@ export default function Journey() {
             flex-direction: column;
             gap: 16px;
           }
-          .fluid-glass-card {
-            padding: 32px 24px;
-            border-radius: 24px;
-          }
+          .fluid-glass-card { 
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.0) 100%);
+  backdrop-filter: blur(60px) saturate(200%);
+  -webkit-backdrop-filter: blur(60px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top-color: rgba(255, 255, 255, 0.8);
+  border-left-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 40px 80px rgba(0, 0, 0, 0.15),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.9),
+    inset 10px 10px 40px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 40px;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --primary-glow: rgba(255, 255, 255, 0.3);
+ }
           .item-period {
             padding-top: 0;
             width: 100%;
