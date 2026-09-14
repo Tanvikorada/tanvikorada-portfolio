@@ -1,6 +1,6 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
 const BOT_SVG = (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -19,6 +19,119 @@ const QUICK_QUESTIONS = [
   "Are you open to work?",
   "What's your CGPA?"
 ];
+
+
+function InteractiveRobotButton({ isOpen, onClick }) {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      // Normalize mouse position to range [-1, 1] across the screen
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
+      const y = (e.clientY / window.innerHeight) * 2 - 1;
+      mouseX.set(x);
+      mouseY.set(y);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  // Spring physics for the eyes tracking the mouse
+  const springConfig = { damping: 25, stiffness: 300, mass: 0.5 };
+  const smoothX = useSpring(mouseX, springConfig);
+  const smoothY = useSpring(mouseY, springConfig);
+
+  // Map normalized mouse to pixel movement for eyes
+  const eyeLookX = useTransform(smoothX, [-1, 1], [-5, 5]);
+  const eyeLookY = useTransform(smoothY, [-1, 1], [-5, 5]);
+
+  return (
+    <motion.button
+      onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        position: 'fixed',
+        bottom: '32px',
+        right: '32px',
+        width: '64px',
+        height: '64px',
+        borderRadius: '50%',
+        background: 'var(--text-heading)',
+        color: 'var(--bg-true)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.15), inset 0 2px 4px rgba(255,255,255,0.2)',
+        cursor: 'pointer',
+        zIndex: 9999,
+        border: 'none',
+        outline: 'none',
+      }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+    >
+      <div style={{ position: 'relative', width: '32px', height: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        
+        {/* Left Eye */}
+        <motion.div
+          animate={{
+            height: isOpen ? '4px' : isHovered ? '20px' : '12px',
+            width: isOpen ? '16px' : isHovered ? '8px' : '8px',
+            borderRadius: isOpen ? '2px' : '4px',
+            rotate: isOpen ? 15 : 0
+          }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          style={{
+            background: 'var(--bg-solid)',
+            x: eyeLookX,
+            y: eyeLookY
+          }}
+        />
+
+        {/* Right Eye */}
+        <motion.div
+          animate={{
+            height: isOpen ? '4px' : isHovered ? '20px' : '12px',
+            width: isOpen ? '16px' : isHovered ? '8px' : '8px',
+            borderRadius: isOpen ? '2px' : '4px',
+            rotate: isOpen ? -15 : 0
+          }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          style={{
+            background: 'var(--bg-solid)',
+            x: eyeLookX,
+            y: eyeLookY
+          }}
+        />
+
+      </div>
+      
+      {/* Floating Sparkle / Antenna Indicator */}
+      <motion.div
+        animate={{
+          scale: isHovered ? 1 : 0,
+          opacity: isHovered ? 1 : 0,
+          y: isHovered ? -15 : 0,
+          rotate: isHovered ? 45 : 0
+        }}
+        style={{
+          position: 'absolute',
+          top: '-8px',
+          right: '4px',
+          width: '12px',
+          height: '12px',
+          borderRadius: '2px',
+          background: 'var(--primary)',
+          boxShadow: '0 0 10px var(--primary)'
+        }}
+      />
+    </motion.button>
+  );
+}
+
 
 export default function RagBot() {
   const [isOpen, setIsOpen] = useState(false);
