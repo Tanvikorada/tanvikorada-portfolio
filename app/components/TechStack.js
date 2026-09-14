@@ -1,60 +1,82 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { motion, useInView } from 'framer-motion';
 
-const INNER_R = 190;
-const OUTER_R = 340;
-const W = 800, H = 800, CX = 400, CY = 400;
-
-// Nodes positioned on a flat circle (they will be spun by the parent stage)
-const TECH = [
-  { id: 'react',    ring: 0, angle: 0,   name: 'React',      label: 'Component Architecture' },
-  { id: 'python',   ring: 0, angle: 90,  name: 'Python',     label: 'AI & Data Engine' },
-  { id: 'nodejs',   ring: 0, angle: 180, name: 'Node.js',    label: 'Event-Driven Backend' },
-  { id: 'openai',   ring: 0, angle: 270, name: 'OpenAI',     label: 'LLM Pipelines & RAG' },
-  { id: 'postgres', ring: 1, angle: 45,  name: 'PostgreSQL', label: 'Relational DB & Supabase' },
-  { id: 'docker',   ring: 1, angle: 135, name: 'Docker',     label: 'Containers & DevOps' },
-  { id: 'ts',       ring: 1, angle: 225, name: 'TypeScript', label: 'Type-Safe Full Stack' },
-  { id: 'nextjs',   ring: 1, angle: 315, name: 'Next.js',    label: 'React Framework' },
-];
-
-const TILT = 60; // 60 degrees tilt
+// --- Custom useFrame Hook ---
+function useFrame(callback) {
+  const requestRef = useRef();
+  const previousTimeRef = useRef();
+  const animate = time => {
+    if (previousTimeRef.current != undefined) {
+      const deltaTime = time - previousTimeRef.current;
+      callback(time, deltaTime);
+    }
+    previousTimeRef.current = time;
+    requestRef.current = requestAnimationFrame(animate);
+  };
+  useEffect(() => {
+    requestRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(requestRef.current);
+  }, [callback]);
+}
 
 export default function TechStack() {
-  const [rotAngle, setRotAngle] = useState(0);
   const [hoveredNode, setHoveredNode] = useState(null);
   const [isStageHovered, setIsStageHovered] = useState(false);
-  const [isNight, setIsNight] = useState(true);
+  const [isNight, setIsNight] = useState(false);
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { once: false, amount: 0.3 });
+
+  // Fast spin velocity ref
+  const vel = useRef(0);
+  const rot = useRef(0);
+  const [rotAngle, setRotAngle] = useState(0);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const isDay = localStorage.getItem('theme') === 'day' || !document.body.classList.contains('night');
-      setIsNight(!isDay);
+    setIsNight(document.body.classList.contains('night'));
+    const obs = new MutationObserver(() => {
+      setIsNight(document.body.classList.contains('night'));
+    });
+    obs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => obs.disconnect();
+  }, []);
 
-      const observer = new MutationObserver(() => {
-        setIsNight(document.body.classList.contains('night'));
-      });
-      observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-      return () => observer.disconnect();
+  // Trigger fast spin when entering view
+  useEffect(() => {
+    if (isInView) {
+      vel.current = 6.0; // Fast initial spin!
     }
-  }, []);
+  }, [isInView]);
 
-  const isPausedRef = useRef(false);
-  isPausedRef.current = hoveredNode !== null || isStageHovered;
+  useFrame((time, delta) => {
+    if (!isStageHovered) {
+      // Smoothly decay down to idle speed 0.15
+      vel.current += (0.15 - vel.current) * 0.05;
+    } else {
+      // Pause completely on hover
+      vel.current += (0.0 - vel.current) * 0.1;
+    }
+    rot.current += vel.current;
+    setRotAngle(rot.current);
+  });
 
-  useEffect(() => {
-    let animId;
-    const loop = () => {
-      if (!isPausedRef.current) {
-        setRotAngle(prev => (prev + 0.15) % 360);
-      }
-      animId = requestAnimationFrame(loop);
-    };
-    animId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(animId);
-  }, []);
+  const TECH = [
+    { id: 'react', name: 'React', label: 'UI Framework', angle: 0, ring: 1, color: '#00d8ff' },
+    { id: 'python', name: 'Python', label: 'AI / Backend', angle: 45, ring: 0, color: '#4b8bbe' },
+    { id: 'nodejs', name: 'Node.js', label: 'Runtime', angle: 90, ring: 1, color: '#539e43' },
+    { id: 'openai', name: 'OpenAI API', label: 'LLMs', angle: 135, ring: 0, color: '#10a37f' },
+    { id: 'postgres', name: 'PostgreSQL', label: 'Database', angle: 180, ring: 1, color: '#336791' },
+    { id: 'docker', name: 'Docker', label: 'DevOps', angle: 225, ring: 0, color: '#2496ed' },
+    { id: 'ts', name: 'TypeScript', label: 'Type Safety', angle: 270, ring: 1, color: '#3178c6' },
+    { id: 'nextjs', name: 'Next.js', label: 'React Framework', angle: 315, ring: 0, color: '#000000' },
+  ];
 
-  // Logos using Devicon (for real colored logos)
+  const CX = 400, CY = 400;
+  const INNER_R = 180;
+  const OUTER_R = 320;
+  const TILT = 75; // More 3D!
+  const W = 800, H = 800;
+
   function ReactLogo() { return <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg" width="34" height="34" alt="React" />; }
   function PythonLogo() { return <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" width="34" height="34" alt="Python" />; }
   function NodeLogo() { return <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg" width="34" height="34" alt="Node.js" />; }
@@ -63,20 +85,20 @@ export default function TechStack() {
   function TSLogo() { return <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" width="30" height="30" alt="TypeScript" style={{ borderRadius: 4 }} />; }
   function NextLogo() { 
     return isNight ? 
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-line.svg" style={{ filter: 'invert(1)' }} width="34" height="34" alt="Next.js" /> :
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg" width="34" height="34" alt="Next.js" />;
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-line.svg" style={{ filter: 'invert(1)' }} width="34" height="34" alt="Next.js" /> :
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg" width="34" height="34" alt="Next.js" />;
   }
   function OpenAILogo() {
     return (
-      <svg viewBox="0 0 24 24" width="28" height="28" fill="var(--text-heading)">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
         <path d="M22.28 9.82a5.99 5.99 0 0 0-.52-4.91 6.05 6.05 0 0 0-6.51-2.9A6.07 6.07 0 0 0 4.98 4.18a5.99 5.99 0 0 0-4 2.9 6.05 6.05 0 0 0 .74 7.1 5.98 5.98 0 0 0 .51 4.91 6.05 6.05 0 0 0 6.52 2.9A5.99 5.99 0 0 0 13.26 24a6.06 6.06 0 0 0 5.77-4.21 5.99 5.99 0 0 0 4-2.9 6.06 6.06 0 0 0-.75-7.07zM13.26 22.43a4.48 4.48 0 0 1-2.88-1.04l.14-.08 4.78-2.76a.8.8 0 0 0 .39-.68V11.2l2.02 1.17a.07.07 0 0 1 .04.05v5.58a4.5 4.5 0 0 1-4.49 4.43zM3.6 18.3a4.47 4.47 0 0 1-.54-3.01l.14.08 4.78 2.76a.77.77 0 0 0 .78 0l5.84-3.37v2.33a.08.08 0 0 1-.03.06L9.74 19.95A4.5 4.5 0 0 1 3.6 18.3zm-1.22-9.77a4.49 4.49 0 0 1 2.34-1.97v5.68a.78.78 0 0 0 .39.68l5.84 3.37-2.02 1.17a.07.07 0 0 1-.07 0L4.02 14.68a4.5 4.5 0 0 1-1.64-6.14zm14.8 3.66-5.84-3.37 2.02-1.17a.07.07 0 0 1 .07 0l4.84 2.78a4.5 4.5 0 0 1-.68 8.11v-5.67a.79.79 0 0 0-.41-.68zm2.43-3.65-4.78-2.76a.77.77 0 0 0-.78 0L8.2 9.16V6.83a.08.08 0 0 1 .03-.06l4.84-2.79a4.5 4.5 0 0 1 6.15 1.65 4.49 4.49 0 0 1 .53 3.01zm-9.39-1.9 2.02-1.17a.07.07 0 0 1 .07 0l4.84 2.78a4.5 4.5 0 0 1-1.64 6.14 4.49 4.49 0 0 1-2.34 1.97V11.23a.78.78 0 0 0-.39-.68L8.2 7.18z"/>
       </svg>
     );
   }
   function CenterCoreLogo() {
     return isNight ? 
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-line.svg" style={{ filter: 'invert(1)' }} width="50" height="50" alt="Core" /> :
-      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg" width="50" height="50" alt="Core" />;
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-line.svg" style={{ filter: 'invert(1)' }} width="50" height="50" alt="Core" /> :
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg" width="50" height="50" alt="Core" />;
   }
 
   const LOGO_MAP = {
@@ -86,13 +108,13 @@ export default function TechStack() {
   };
 
   return (
-    <section id="tech-stack" style={{ padding: '16vh 4vw', position: 'relative', overflow: 'hidden', background: 'var(--bg-base)' }}>
+    <section ref={sectionRef} id="tech-stack" style={{ padding: '16vh 4vw', position: 'relative', overflow: 'hidden', background: 'var(--bg-base)' }}>
       <style>{`
         .scene {
           position: relative;
           width: 100%;
           height: 700px;
-          perspective: 1200px;
+          perspective: 800px; /* Stronger 3D perspective */
           display: flex;
           align-items: center;
           justify-content: center;
@@ -106,42 +128,27 @@ export default function TechStack() {
           transform-style: preserve-3d;
         }
 
-        .orbit-ring {
-          fill: none;
-          stroke: var(--border-mid);
-          stroke-width: 1.5;
-          stroke-dasharray: 4 6;
-        }
-
-        .wire-line {
-          stroke: var(--border-mid);
-          stroke-width: 1.5;
-          stroke-dasharray: 4 4;
-          opacity: 0.5;
-          transition: all 0.3s;
-        }
-
-        .wire-line.active {
-          stroke: var(--primary);
-          stroke-width: 2.5;
-          stroke-dasharray: none;
-          opacity: 1;
-        }
-
         .tnode {
           position: absolute;
-          width: 68px; height: 68px;
+          width: 80px; height: 80px;
           display: flex; align-items: center; justify-content: center;
           cursor: pointer;
         }
 
-        .tnode-inner { width: 100%; height: 100%; border-radius: 16px; background: var(--bg-surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+        .tnode-inner { 
+          width: 100%; height: 100%; 
+          border-radius: 50%; 
+          background: transparent; 
+          border: 1px solid var(--border-mid); 
+          display: flex; align-items: center; justify-content: center; 
+          transition: all 0.3s;
+        }
 
         .chip-wrap {
           position: absolute;
           left: 50%; top: 50%;
           width: 120px; height: 120px;
-          border-radius: 28px;
+          border-radius: 50%;
           background: var(--bg-card);
           border: 1px solid var(--border);
           display: flex; align-items: center; justify-content: center;
@@ -151,7 +158,7 @@ export default function TechStack() {
         
         .chip-inner {
           width: 90px; height: 90px;
-          border-radius: 20px;
+          border-radius: 50%;
           background: var(--bg-surface);
           border: 1px solid var(--border-mid);
           display: flex; align-items: center; justify-content: center;
@@ -174,7 +181,7 @@ export default function TechStack() {
         }
 
         @media(max-width:768px){
-          .scene { height: 400px !important; perspective: 1000px; transform: scale(0.85); }
+          .scene { height: 400px !important; perspective: 600px; transform: scale(0.85); }
         }
       `}</style>
 
@@ -183,7 +190,6 @@ export default function TechStack() {
 
       <div style={{ maxWidth:'1200px', margin:'0 auto', position:'relative', zIndex:2 }}>
 
-        {/* Section Header */}
         <div style={{ textAlign:'center', marginBottom:'4rem' }}>
           <motion.div initial={{opacity:0,y:15}} whileInView={{opacity:1,y:0}} viewport={{once:true}}
             style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'var(--bg-surface)', border:'1px solid var(--border-mid)', padding:'6px 20px', borderRadius:'100px', marginBottom:'20px' }}>
@@ -202,7 +208,6 @@ export default function TechStack() {
           </motion.p>
         </div>
 
-        {/* 3D Wheel Scene */}
         <div className="scene">
           <div 
             className="stage"
@@ -210,9 +215,6 @@ export default function TechStack() {
             onMouseLeave={() => setIsStageHovered(false)}
             style={{ transform: `rotateX(${TILT}deg) rotateZ(${rotAngle}deg)` }}
           >
-            
-
-            {/* Central Hub */}
             <div 
               className="chip-wrap"
               style={{ 
@@ -222,7 +224,6 @@ export default function TechStack() {
               <div className="chip-inner"><CenterCoreLogo/></div>
             </div>
 
-            {/* Satellite Nodes */}
             {TECH.map(t => {
               const a = (t.angle - 90) * Math.PI / 180;
               const r = t.ring === 0 ? INNER_R : OUTER_R;
@@ -234,6 +235,10 @@ export default function TechStack() {
               
               const Logo = LOGO_MAP[t.id];
               const isHovered = hoveredNode === t.id;
+              
+              const isNextDark = isNight && t.id === 'nextjs';
+              const hexColor = isNextDark ? '#ffffff' : t.color;
+              const filterOnHover = isNextDark ? 'brightness(0)' : 'brightness(0) invert(1)';
               
               return (
                 <div
@@ -249,14 +254,22 @@ export default function TechStack() {
                   <motion.div
                     className="tnode-inner"
                     animate={{
-                      scale: isHovered ? 1.3 : 1,
-                      y: isHovered ? -12 : 0,
-                      backgroundColor: isHovered ? (isNight ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,1)') : 'var(--bg-surface)',
-                      boxShadow: isHovered ? '0 20px 40px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.05)'
+                      scale: isHovered ? 1.15 : 1,
+                      y: isHovered ? -8 : 0,
+                      backgroundColor: isHovered ? hexColor : 'transparent',
+                      borderColor: isHovered ? hexColor : 'var(--border-mid)',
+                      boxShadow: isHovered ? `0 15px 35px ${hexColor}88` : '0 4px 12px rgba(0,0,0,0)'
                     }}
                     transition={{ duration: 0.2 }}
                   >
-                    <Logo/>
+                    <div style={{
+                       filter: isHovered ? filterOnHover : 'grayscale(100%) opacity(0.5)',
+                       transition: 'all 0.3s',
+                       display: 'flex',
+                       color: 'var(--text-heading)'
+                    }}>
+                       <Logo/>
+                    </div>
                   </motion.div>
                   
                   {isHovered && (
@@ -268,10 +281,8 @@ export default function TechStack() {
                 </div>
               );
             })}
-
           </div>
         </div>
-
       </div>
     </section>
   );
