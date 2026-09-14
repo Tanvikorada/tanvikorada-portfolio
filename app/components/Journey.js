@@ -72,7 +72,7 @@ function WaterCard({ item, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10%" }}
       transition={{ duration: 0.6, delay: index * 0.1, ease: [0.21, 0.47, 0.32, 0.98] }}
-      className="water-card group"
+      className="water-card group" style={{ minHeight: "360px", display: "flex", flexDirection: "column" }}
       onMouseMove={handleMouseMove}
     >
       <motion.div

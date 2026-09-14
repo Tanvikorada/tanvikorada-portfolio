@@ -291,7 +291,7 @@ export default function RagBot() {
           z-index: 9998;
           overflow: hidden;
         }
-        :global(.dark) .ai-window {
+        :global(.night) .ai-window {
           background: rgba(20, 20, 20, 0.98);
           border: 1px solid rgba(255,255,255,0.08);
         }
@@ -302,7 +302,7 @@ export default function RagBot() {
           align-items: center;
           gap: 12px;
         }
-        :global(.dark) .ai-header {
+        :global(.night) .ai-header {
           border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .ai-avatar {
@@ -373,7 +373,7 @@ export default function RagBot() {
           padding: 16px;
           border-top: 1px solid rgba(0,0,0,0.05);
         }
-        :global(.dark) .ai-input-area {
+        :global(.night) .ai-input-area {
           border-top: 1px solid rgba(255,255,255,0.05);
         }
         .ai-input-wrapper {

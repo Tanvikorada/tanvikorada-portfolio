@@ -207,14 +207,14 @@ export default function TechStack() {
                     width: '56px', height: '56px',
                     marginLeft: '-28px', marginTop: '-28px',
                     // Project 2D coordinates and scale manually
-                    transform: `translate3d(${pt.x}px, ${pt.y}px, 0) scale(${isHovered ? 1.5 : pt.scale})`,
+                    transform: `translate3d(${pt.x}px, ${pt.y}px, 0) scale(${isHovered ? 2.0 : pt.scale})`,
                     opacity: pt.opacity,
                     zIndex: isHovered ? 9999 : pt.zIndex,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: isHovered ? pt.color : 'var(--bg-surface)',
+                    background: isHovered ? ((pt.color === '#000000' || pt.color === '#181717') && isNight ? '#333333' : pt.color) : 'var(--bg-surface)',
                     border: isHovered ? `1px solid ${pt.color}` : '1px solid var(--border-mid)',
                     borderRadius: '50%',
-                    boxShadow: isHovered ? `0 10px 25px ${pt.color}80` : 'inset 0 1px 3px rgba(255,255,255,0.05)',
+                    boxShadow: isHovered ? `0 15px 40px ${pt.color}aa, 0 0 0 4px rgba(255,255,255,0.15)` : 'inset 0 1px 3px rgba(255,255,255,0.05)',
                     transition: 'border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.1s linear',
                     cursor: 'default' // Changed to default as requested (no clicking away)
                   }}
