@@ -1,16 +1,16 @@
 'use client';
 import { motion } from 'framer-motion';
 import SpotlightCard from './ui/SpotlightCard';
+import RippleDistortion from './ui/RippleDistortion';
 
 const CERTS = [
-  { name: 'Python', org: 'DataCamp', color: '#38bdf8' },
-  { name: 'AWS Cloud', org: 'DataCamp', color: '#f97316' },
-  { name: 'MongoDB', org: 'MongoDB', color: '#22c55e' },
-  { name: 'Prompt Eng.', org: 'Future Interns', color: '#c084fc' },
-  { name: 'Machine Learning', org: 'CodSoft', color: '#facc15' },
-  { name: 'Web Dev', org: 'Prodigy', color: '#60a5fa' },
+  { name: 'Python Programming', org: 'DataCamp', color: '#38bdf8' },
+  { name: 'AWS Cloud Fundamentals', org: 'DataCamp', color: '#f97316' },
+  { name: 'MongoDB Overview', org: 'MongoDB (official)', color: '#22c55e' },
+  { name: 'Prompt Engineering', org: 'Future Interns', color: '#c084fc' },
+  { name: 'Web Development', org: 'Prodigy InfoTech', color: '#60a5fa' },
+  { name: 'Photography Winner', org: 'SRMIST', color: '#facc15' },
 ];
-
 
 function AnimatedTrophy() {
   return (
@@ -189,11 +189,29 @@ export default function Certs() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '24px', marginBottom: '24px' }}>
           
           {/* Hackathon */}
-          <SpotlightCard className="cert-glass-card" style={{ padding: '40px' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
-              <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'color-mix(in srgb, #facc15 15%, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', flexShrink: 0, border: '1px solid rgba(250, 204, 21, 0.2)' }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#facc15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
-              </div>
+          <SpotlightCard className="cert-glass-card" style={{ padding: '40px', position: 'relative', overflow: 'hidden' }}>
+            {/* Background WebGL Ripple */}
+            <div style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.15, pointerEvents: 'none', mixBlendMode: 'overlay' }}>
+              <RippleDistortion 
+                src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop"
+                grayscale={true}
+                swirl={1.5}
+                strength={0.4}
+                alignY={0.5}
+                trigger="hover"
+                tint="#facc15"
+                tintAmount={0.5}
+              />
+            </div>
+            
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', position: 'relative', zIndex: 1 }}>
+              <motion.div 
+                animate={{ boxShadow: ['0 0 0px rgba(250,204,21,0)', '0 0 20px rgba(250,204,21,0.3)', '0 0 0px rgba(250,204,21,0)'] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'color-mix(in srgb, #facc15 15%, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', flexShrink: 0, border: '1px solid rgba(250, 204, 21, 0.4)' }}
+              >
+                <AnimatedTrophy />
+              </motion.div>
               <div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600 }}>Hackathon</div>
                 <h3 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-heading)', marginBottom: '8px', lineHeight: 1.3 }}>OpenAI x Outskill AI Builders</h3>
@@ -203,11 +221,29 @@ export default function Certs() {
           </SpotlightCard>
 
           {/* Publication */}
-          <SpotlightCard className="cert-glass-card" style={{ padding: '40px' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px' }}>
-              <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'color-mix(in srgb, #38bdf8 15%, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', flexShrink: 0, border: '1px solid rgba(56, 189, 248, 0.2)' }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12h10"/><path d="M9 4v16"/><path d="m3 9 3 3-3 3"/></svg>
-              </div>
+          <SpotlightCard className="cert-glass-card" style={{ padding: '40px', position: 'relative', overflow: 'hidden' }}>
+            {/* Background WebGL Ripple */}
+            <div style={{ position: 'absolute', inset: 0, zIndex: 0, opacity: 0.15, pointerEvents: 'none', mixBlendMode: 'overlay' }}>
+              <RippleDistortion 
+                src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop"
+                grayscale={true}
+                swirl={1.5}
+                strength={0.4}
+                alignY={0.5}
+                trigger="hover"
+                tint="#38bdf8"
+                tintAmount={0.5}
+              />
+            </div>
+            
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', position: 'relative', zIndex: 1 }}>
+              <motion.div 
+                animate={{ boxShadow: ['0 0 0px rgba(56,189,248,0)', '0 0 20px rgba(56,189,248,0.3)', '0 0 0px rgba(56,189,248,0)'] }}
+                transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
+                style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'color-mix(in srgb, #38bdf8 15%, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px', flexShrink: 0, border: '1px solid rgba(56, 189, 248, 0.4)' }}
+              >
+                <AnimatedPublication />
+              </motion.div>
               <div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 600 }}>Publication</div>
                 <h3 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-heading)', marginBottom: '8px', lineHeight: 1.3 }}>Research Publication (Zenodo)</h3>
