@@ -301,6 +301,7 @@ export default function About() {
         .apple-stats { grid-column: span 2; grid-row: span 1; justify-content: center; }
         
         .apple-skills { grid-column: span 2; grid-row: span 2; }
+          .apple-activity { grid-column: span 2; grid-row: span 2; }
         .apple-clubs { grid-column: span 4; grid-row: span 2; display: flex; flex-direction: column; justify-content: space-between; }
 
         .apple-label {
@@ -456,8 +457,10 @@ export default function About() {
           {/* Live Activity */}
           <AppleGlassCard className="apple-activity" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
             <p className="apple-label">Live Updates</p>
-            <div style={{ flex: 1, position: 'relative', marginTop: '12px', minHeight: '300px' }}>
-              <LiveActivityList />
+            <div style={{ flex: 1, position: 'relative', marginTop: '12px', minHeight: '260px' }}>
+              <div style={{ position: 'absolute', inset: 0, overflowY: 'hidden', paddingRight: '4px' }}>
+                <LiveActivityList />
+              </div>
               {/* Fade out bottom */}
               <div style={{
                 position: 'absolute', bottom: 0, left: 0, right: 0, height: '80px',
