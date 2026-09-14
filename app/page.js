@@ -35,7 +35,7 @@ export default function Home() {
 
         <TechStack />
 
-        <div style={{ position: "relative", pointerEvents: "auto", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", background: "color-mix(in srgb, var(--bg-base) 80%, transparent)", }}>
+        <div style={{ position: "relative", pointerEvents: "auto", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)", background: "color-mix(in srgb, var(--bg-base) 10%, transparent)", }}>
 
           <section style={{ position: 'relative', zIndex: 30 }}>
             <ScrollExpand
