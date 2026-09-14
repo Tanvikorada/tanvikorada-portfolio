@@ -11,6 +11,56 @@ const CERTS = [
   { name: 'Web Dev', org: 'Prodigy', color: '#60a5fa' },
 ];
 
+
+function AnimatedTrophy() {
+  return (
+    <motion.svg 
+      width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#facc15" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+      animate={{ y: [0, -4, 0], rotate: [0, -5, 5, 0] }}
+      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+    >
+      <motion.circle cx="12" cy="8" r="6" 
+        animate={{ scale: [1, 1.1, 1], strokeWidth: [1.5, 2, 1.5] }} 
+        transition={{ duration: 2, repeat: Infinity }}
+      />
+      <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+      <motion.path d="M18 4l1 1 1-1-1-1z" fill="#facc15" stroke="none" 
+        animate={{ opacity: [0, 1, 0], scale: [0, 1.5, 0], x: [0, 5, 10], y: [0, -5, -10] }} 
+        transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+      />
+      <motion.path d="M6 3l1 1 1-1-1-1z" fill="#facc15" stroke="none" 
+        animate={{ opacity: [0, 1, 0], scale: [0, 1.5, 0], x: [0, -5, -10], y: [0, -5, -10] }} 
+        transition={{ duration: 2, repeat: Infinity, delay: 1.5 }}
+      />
+    </motion.svg>
+  );
+}
+
+function AnimatedPublication() {
+  return (
+    <motion.svg 
+      width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+      animate={{ y: [0, -4, 0] }}
+      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+    >
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <motion.line x1="16" y1="13" x2="8" y2="13" 
+        animate={{ pathLength: [0, 1, 1, 0], opacity: [0, 1, 1, 0] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+      />
+      <motion.line x1="16" y1="17" x2="8" y2="17" 
+        animate={{ pathLength: [0, 1, 1, 0], opacity: [0, 1, 1, 0] }}
+        transition={{ duration: 3, repeat: Infinity, delay: 0.5, ease: "linear" }}
+      />
+      <motion.line x1="10" y1="9" x2="8" y2="9" 
+        animate={{ pathLength: [0, 1, 1, 0], opacity: [0, 1, 1, 0] }}
+        transition={{ duration: 3, repeat: Infinity, delay: 1, ease: "linear" }}
+      />
+    </motion.svg>
+  );
+}
+
 function AnimatedFolderIcon({ color }) {
   return (
     <div className="folder-icon-wrapper" style={{ width: '28px', height: '24px', position: 'relative' }}>
