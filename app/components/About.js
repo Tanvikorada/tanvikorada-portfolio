@@ -95,7 +95,7 @@ function mapGithubEvent(event, index) {
 
   return {
     id: event.id || index,
-    uniqueId: event.id || `${index}-${Date.now()}`,
+    uniqueId: event.id ? `${event.id}-${index}` : `${index}-${Date.now() + Math.random()}`,
     name,
     description,
     time: getTimeAgo(event.created_at),
@@ -130,7 +130,7 @@ function LiveActivityList() {
       
       // Fallback
       setEventPool(FALLBACK_UPDATES);
-      setItems([{ ...FALLBACK_UPDATES[0], uniqueId: Date.now() }]);
+      setItems([{ ...FALLBACK_UPDATES[0], uniqueId: Date.now() + Math.random() + Math.random() }]);
       setIndex(1);
     }
     

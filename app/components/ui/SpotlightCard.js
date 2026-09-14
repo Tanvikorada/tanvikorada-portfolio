@@ -2,7 +2,7 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
-export default function SpotlightCard({ children, className = '', style = {}, ...props }) {
+export default function SpotlightCard({ children, className = '', style = {}, spotlightColor = 'rgba(255,255,255,0.1)', ...props }) {
   const divRef = useRef(null);
   const [isFocused, setIsFocused] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -60,7 +60,7 @@ export default function SpotlightCard({ children, className = '', style = {}, ..
           inset: 0,
           opacity,
           transition: 'opacity 0.3s',
-          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(255,255,255,0.1), transparent 40%)`,
+          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 40%)`,
           zIndex: 10,
           borderRadius: 'inherit'
         }}
