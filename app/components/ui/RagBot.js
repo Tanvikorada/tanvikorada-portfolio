@@ -103,7 +103,7 @@ export default function RagBot() {
           height: 56px;
           border-radius: 50%;
           background: var(--text-heading);
-          color: var(--bg-base);
+          color: var(--bg-true);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -153,7 +153,7 @@ export default function RagBot() {
           height: 32px;
           border-radius: 8px;
           background: var(--text-heading);
-          color: var(--bg-base);
+          color: var(--bg-true);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -188,7 +188,7 @@ export default function RagBot() {
         }
         .ai-msg.user .ai-bubble {
           background: var(--text-heading);
-          color: var(--bg-base);
+          color: var(--bg-true);
           border-top-right-radius: 4px;
         }
         .quick-questions {
@@ -239,7 +239,7 @@ export default function RagBot() {
           height: 36px;
           border-radius: 50%;
           background: var(--text-heading);
-          color: var(--bg-base);
+          color: var(--bg-true);
           border: none;
           display: flex;
           align-items: center;
@@ -340,3 +340,4 @@ export default function RagBot() {
     </>
   );
 }
+
