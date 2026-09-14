@@ -1,124 +1,11 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
-
-// Raw SVGs to replace lucide-react to prevent local dev server crashes if npm install wasn't run
-const HomeIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;
-const BriefcaseIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>;
-const UserIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
-const GamepadIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="2"/></svg>;
-const FileTextIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>;
-
-// Theme toggler component with morphing animation
-const AnimatedThemeIcon = ({ isNight }) => {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      style={{ overflow: 'visible' }}
-    >
-      <mask id="theme-mask">
-        <rect x="0" y="0" width="100%" height="100%" fill="white" />
-        <motion.circle
-          initial={false}
-          animate={{ cx: isNight ? 15 : 24, cy: isNight ? 9 : 4, r: 8 }}
-          transition={{ type: "spring", stiffness: 200, damping: 20 }}
-          fill="black"
-        />
-      </mask>
-      <motion.g
-        initial={false}
-        animate={{ rotate: isNight ? -90 : 0 }}
-        transition={{ type: "spring", stiffness: 200, damping: 20 }}
-      >
-        <motion.circle
-          cx="12"
-          cy="12"
-          mask="url(#theme-mask)"
-          fill="currentColor"
-          initial={false}
-          animate={{
-            r: isNight ? 8 : 5,
-            fillOpacity: isNight ? 0.6 : 0.8
-          }}
-          transition={{ type: "spring", stiffness: 200, damping: 20 }}
-        />
-        <motion.g
-          stroke="currentColor"
-          initial={false}
-          animate={{
-            scale: isNight ? 0 : 1,
-            opacity: isNight ? 0 : 1
-          }}
-          transition={{ type: "spring", stiffness: 200, damping: 20 }}
-        >
-          <line x1="12" y1="1" x2="12" y2="3" />
-          <line x1="12" y1="21" x2="12" y2="23" />
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-          <line x1="1" y1="12" x2="3" y2="12" />
-          <line x1="21" y1="12" x2="23" y2="12" />
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </motion.g>
-      </motion.g>
-    </svg>
-  );
-};
-
-// --- DOCK ITEM (Magnifying effect) ---
-function DockIcon({ mouseX, onClick, icon, label, scrolled }) {
-  const ref = useRef(null);
-
-  // Using getBoundingClientRect() which is relative to the viewport.
-  // mouseX is set to e.clientX (also relative to viewport).
-  const distance = useTransform(mouseX, (val) => {
-    const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
-    return val - bounds.x - bounds.width / 2;
-  });
-
-  const baseWidth = scrolled ? 44 : 52; 
-  const hoverWidth = scrolled ? 72 : 84;
-
-  const widthSync = useTransform(distance, [-150, 0, 150], [baseWidth, hoverWidth, baseWidth]);
-  const width = useSpring(widthSync, { mass: 0.1, stiffness: 150, damping: 12 });
-
-  return (
-    <div style={{ position: 'relative' }} className="dock-icon-wrapper">
-      <motion.button
-        ref={ref}
-        onClick={onClick}
-        style={{ width, height: width }}
-        className="dock-icon-btn"
-        aria-label={label}
-        whileTap={{ scale: 0.9 }}
-      >
-        <motion.div style={{ 
-          scale: useTransform(width, [baseWidth, hoverWidth], [1, 1.35]),
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          color: 'var(--text-heading)'
-        }}>
-          {icon}
-        </motion.div>
-      </motion.button>
-      
-      <div className="dock-tooltip">
-        {label}
-      </div>
-    </div>
-  );
-}
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
+import Link from 'next/link';
 
 export default function Nav() {
-  const [isNight, setIsNight] = useState(true);
+  const [isNight, setIsNight] = useState(true); // SSR is dark by default
   const [scrolled, setScrolled] = useState(false);
-  const mouseX = useMotionValue(Infinity);
 
   useEffect(() => {
     const stored = localStorage.getItem('theme');
@@ -129,11 +16,8 @@ export default function Nav() {
       setIsNight(true);
       document.body.classList.add('night');
     }
-
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    handleScroll();
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    handleScroll(); // init
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -146,188 +30,98 @@ export default function Nav() {
   };
 
   const scrollTo = (id) => {
-    if (id === 'top') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-    }
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <>
-      <style>{`
-        .nav-wrapper {
-          position: fixed;
-          top: 0;
-          left: 50%;
-          z-index: 1000;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          border: 1px solid transparent;
-          transition: padding 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
-                      width 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
-                      border-radius 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                      background 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                      top 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                      box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+    <motion.header 
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+      style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
+        display: 'flex', justifyContent: 'center', pointerEvents: 'none'
+      }}
+    >
+      <LayoutGroup>
+        <motion.nav 
+          layout // Enables extremely smooth automatic interpolations between size and position
+          className="nav-pill"
+          initial={false}
+          animate={{
+            width: scrolled ? 'auto' : '100%',
+            padding: scrolled ? '8px 12px' : '20px 8vw',
+            borderRadius: scrolled ? '100px' : '0px',
+            backgroundColor: scrolled ? 'var(--nav-bg)' : 'var(--bg-glass)', // Glass effect on first page!
+            borderColor: scrolled ? 'var(--border-mid)' : 'transparent',
+            borderBottomColor: scrolled ? 'var(--border-mid)' : 'var(--border)',
+            boxShadow: scrolled ? 'var(--shadow-md)' : 'none',
+            marginTop: scrolled ? '20px' : '0px',
+            gap: scrolled ? '8px' : '6vw',
+            backdropFilter: scrolled ? 'blur(24px) saturate(200%)' : 'blur(16px)',
+          }}
+          transition={{ layout: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }}
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            pointerEvents: 'auto',
+            borderStyle: 'solid',
+            borderWidth: '1px',
+            WebkitBackdropFilter: scrolled ? 'blur(24px) saturate(200%)' : 'blur(16px)'
+          }}
+        >
+          {/* Logo */}
+          <motion.div layout>
+            <Link href="/" className="nav-logo">
+              <span className="nav-logo-dot" />
+              <span style={{ fontWeight: 800, letterSpacing: '-0.5px' }}>Tanvi</span>
+            </Link>
+          </motion.div>
 
-        .dock-container {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          transition: margin 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+          <motion.span layout className="nav-divider" />
 
-        .dock-icon-wrapper {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          position: relative;
-        }
+          {/* Links */}
+          <motion.div layout style={{ display: 'flex', gap: '8px' }}>
+            <button className="nav-link" onClick={() => scrollTo('work')}>Work</button>
+            <button className="nav-link" onClick={() => scrollTo('about')}>About</button>
+            <button className="nav-link" onClick={() => scrollTo('playground')}>Playground</button>
+          </motion.div>
 
-        .dock-icon-wrapper:hover .dock-tooltip {
-          opacity: 1;
-          transform: translateY(0) translateX(-50%);
-        }
+          <motion.div layout className="nav-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <motion.span layout className="nav-divider" />
 
-        .dock-icon-btn {
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: rgba(0, 0, 0, 0.03);
-          border: 1px solid rgba(0, 0, 0, 0.05);
-          cursor: pointer;
-          transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-          outline: none;
-        }
-        
-        body.night .dock-icon-btn {
-          background: rgba(255, 255, 255, 0.05);
-          border-color: rgba(255, 255, 255, 0.1);
-        }
+            {/* Theme toggle */}
+            <button className="theme-btn" onClick={toggleTheme} aria-label="Toggle theme">
+              <AnimatePresence mode="wait">
+                {isNight ? (
+                  <motion.svg key="moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                    initial={{ rotate: -90, scale: 0 }} animate={{ rotate: 0, scale: 1 }} exit={{ rotate: 90, scale: 0 }} transition={{ duration: 0.2 }}>
+                    <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/>
+                  </motion.svg>
+                ) : (
+                  <motion.svg key="sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                    initial={{ rotate: -90, scale: 0 }} animate={{ rotate: 0, scale: 1 }} exit={{ rotate: 90, scale: 0 }} transition={{ duration: 0.2 }}>
+                    <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </motion.svg>
+                )}
+              </AnimatePresence>
+            </button>
 
-        .dock-icon-btn:hover {
-          background: var(--primary-glow, rgba(0,210,255,0.15));
-          border-color: var(--primary);
-        }
-
-        .dock-divider {
-          width: 1px;
-          height: 32px;
-          background: var(--border-mid);
-          margin: 0 4px;
-        }
-
-        /* Tooltips show BELOW the nav */
-        .dock-tooltip {
-          position: absolute;
-          top: calc(100% + 14px);
-          left: 50%;
-          transform: translateY(-10px) translateX(-50%);
-          opacity: 0;
-          pointer-events: none;
-          background: var(--text-heading);
-          color: var(--bg-solid);
-          padding: 6px 12px;
-          border-radius: 8px;
-          font-size: 13px;
-          font-weight: 700;
-          letter-spacing: 0.02em;
-          white-space: nowrap;
-          box-shadow: var(--shadow-md);
-          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
-        .dock-tooltip::after {
-          content: '';
-          position: absolute;
-          top: -4px;
-          left: 50%;
-          transform: translateX(-50%);
-          border-width: 0 4px 4px 4px;
-          border-style: solid;
-          border-color: transparent transparent var(--text-heading) transparent;
-        }
-        
-        @media (max-width: 768px) {
-          .nav-wrapper {
-            gap: 8px !important;
-          }
-          .dock-container {
-            gap: 6px;
-          }
-        }
-      `}</style>
-      
-      <motion.div 
-        className="nav-wrapper"
-        initial={{ y: -100, opacity: 0, x: '-50%' }}
-        animate={{ 
-          y: 0, 
-          opacity: 1, 
-          x: '-50%',
-          top: scrolled ? '20px' : '0px',
-          width: scrolled ? 'auto' : '100%',
-          padding: scrolled ? '10px 16px' : '24px 8vw',
-          borderRadius: scrolled ? '999px' : '0px',
-          background: scrolled ? 'var(--bg-surface)' : 'transparent',
-          borderColor: scrolled ? 'var(--border-mid)' : 'transparent',
-          boxShadow: scrolled ? 'var(--shadow-lg)' : 'none',
-          backdropFilter: scrolled ? 'blur(24px) saturate(150%)' : 'blur(0px)',
-          WebkitBackdropFilter: scrolled ? 'blur(24px) saturate(150%)' : 'blur(0px)'
-        }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        onMouseMove={(e) => mouseX.set(e.clientX)}
-        onMouseLeave={() => mouseX.set(Infinity)}
-      >
-        
-        {/* LOGO */}
-        <AnimatePresence>
-          {!scrolled && (
-            <motion.div 
-              initial={{ opacity: 0, x: -20, filter: 'blur(10px)' }}
-              animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, x: -20, filter: 'blur(10px)', position: 'absolute' }}
-              transition={{ duration: 0.3 }}
-              style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
-              onClick={() => scrollTo('top')}
+            {/* Resume */}
+            <a
+              className="resume-btn"
+              href="/resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
             >
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary), #f472b6)', boxShadow: '0 0 15px var(--primary)' }} />
-              <span style={{ fontSize: '1.5rem', fontWeight: 800, fontFamily: 'var(--font-serif)', letterSpacing: '-0.5px' }}>Tanvi</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* DOCK ICONS */}
-        <div className="dock-container" style={{ marginLeft: scrolled ? '0' : 'auto' }}>
-          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('top')} icon={<HomeIcon />} label="Home" />
-          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('work')} icon={<BriefcaseIcon />} label="Work" />
-          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('about')} icon={<UserIcon />} label="About" />
-          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('playground')} icon={<GamepadIcon />} label="Playground" />
-          
-          <div className="dock-divider" />
-          
-          <DockIcon 
-            scrolled={scrolled}
-            mouseX={mouseX} 
-            onClick={toggleTheme} 
-            icon={<AnimatedThemeIcon isNight={isNight} />} 
-            label="Theme" 
-          />
-          
-          <DockIcon 
-            scrolled={scrolled}
-            mouseX={mouseX} 
-            onClick={() => window.open('/resume.pdf', '_blank')} 
-            icon={<FileTextIcon />} 
-            label="Resume" 
-          />
-        </div>
-
-      </motion.div>
-    </>
+              View Resume 
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </motion.div>
+        </motion.nav>
+      </LayoutGroup>
+    </motion.header>
   );
 }
