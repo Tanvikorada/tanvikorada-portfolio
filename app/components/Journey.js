@@ -129,7 +129,7 @@ export default function Journey() {
         .fluid-glass-card:hover { 
   transform: translateY(-8px) scale(1.01);
   box-shadow: 
-    0 50px 100px rgba(2, 119, 189, 0.2),
+    0 50px 100px rgba(16, 185, 129, 0.15),
     inset 2px 2px 4px rgba(255, 255, 255, 1),
     inset 10px 10px 40px rgba(255, 255, 255, 0.3),
     inset -2px -2px 4px rgba(0, 0, 0, 0.05);
@@ -138,7 +138,7 @@ export default function Journey() {
         :global(.night) .fluid-glass-card:hover { 
   transform: translateY(-8px) scale(1.01);
   box-shadow: 
-    0 50px 100px rgba(2, 119, 189, 0.2),
+    0 50px 100px rgba(16, 185, 129, 0.15),
     inset 2px 2px 4px rgba(255, 255, 255, 1),
     inset 10px 10px 40px rgba(255, 255, 255, 0.3),
     inset -2px -2px 4px rgba(0, 0, 0, 0.05);
@@ -320,3 +320,4 @@ export default function Journey() {
     </section>
   );
 }
+

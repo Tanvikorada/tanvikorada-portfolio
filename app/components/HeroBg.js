@@ -17,10 +17,10 @@ function Cubes({ isNight }) {
   const tempColor = useMemo(() => new Color(), []);
   
   const cBaseLight = useMemo(() => new Color('#ffffff'), []); 
-  const cRippleLight = useMemo(() => new Color('#d8b4fe'), []); 
+  const cRippleLight = useMemo(() => new Color('#34d399'), []); 
   
   const cBaseNight = useMemo(() => new Color('#000000'), []); 
-  const cRippleNight = useMemo(() => new Color('#60a5fa'), []); 
+  const cRippleNight = useMemo(() => new Color('#10b981'), []); 
 
   const targetMouse = useRef({ x: 0, y: 0 });
   const mouse = useRef({ x: 0, y: 0 });
@@ -55,7 +55,7 @@ function Cubes({ isNight }) {
   }, [isNight, count, cBaseNight, cBaseLight, dummy, tempColor]);
 
   useFrame((state, delta) => { 
-    if (typeof window !== "undefined" && window.scrollY > window.innerHeight * 1.5) return;
+    if (typeof window !== "undefined" && window.scrollY > window.innerHeight * 10.0) return;
     mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.2);
     mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.2);
 
@@ -128,7 +128,9 @@ function Cubes({ isNight }) {
 export default function HeroBg() {
   const [isNight, setIsNight] = useState(true);
   const { scrollYProgress } = useScroll();
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.4], [0, 0.85]);
+  
+  const dimOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 0.65]);
+  const bgBlur = useTransform(scrollYProgress, [0, 0.2], ['blur(0px)', 'blur(30px)']);
 
   useEffect(() => {
     setIsNight(document.body.classList.contains('night'));
@@ -148,36 +150,43 @@ export default function HeroBg() {
         
         <Cubes isNight={isNight} />
       </Canvas>
+
       <motion.div 
         style={{
           position: 'absolute', inset: 0,
-          background: isNight ? '#020617' : '#f0f9ff',
-          opacity: overlayOpacity,
-          overflow: 'hidden'
+          backgroundColor: isNight ? '#000000' : '#ffffff',
+          opacity: dimOpacity,
+          backdropFilter: bgBlur,
+          WebkitBackdropFilter: bgBlur,
+          pointerEvents: 'none',
+          zIndex: 1
         }}
-      >
+      />
+      
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 2 }}>
         <div style={{
           position: 'absolute', top: '-10%', left: '-10%',
           width: '80vw', height: '80vw',
-          background: isNight ? 'radial-gradient(circle, rgba(2, 119, 189, 0.25) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(2, 119, 189, 0.5) 0%, transparent 60%)',
+          background: isNight ? 'radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(52, 211, 153, 0.35) 0%, transparent 60%)',
           filter: 'blur(90px)',
           animation: 'floatOrb 20s ease-in-out infinite alternate',
         }} />
         <div style={{
           position: 'absolute', bottom: '-20%', right: '-10%',
           width: '70vw', height: '70vw',
-          background: isNight ? 'radial-gradient(circle, rgba(29, 78, 216, 0.2) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(37, 99, 235, 0.4) 0%, transparent 60%)',
+          background: isNight ? 'radial-gradient(circle, rgba(4, 120, 87, 0.2) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(163, 230, 53, 0.25) 0%, transparent 60%)',
           filter: 'blur(100px)',
           animation: 'floatOrb 15s ease-in-out infinite alternate-reverse',
         }} />
         <div style={{
-          position: 'absolute', top: '30%', left: '30%',
+          position: 'absolute', top: '30%', left: '30%', transform: 'translateX(-50%)',
           width: '100vw', height: '60vw',
-          background: isNight ? 'radial-gradient(ellipse, rgba(14, 165, 233, 0.2) 0%, transparent 50%)' : 'radial-gradient(ellipse, rgba(224, 242, 254, 0.8) 0%, transparent 50%)',
+          background: isNight ? 'radial-gradient(ellipse, rgba(52, 211, 153, 0.1) 0%, transparent 50%)' : 'radial-gradient(ellipse, rgba(254, 252, 232, 0.8) 0%, transparent 50%)',
           filter: 'blur(120px)',
           animation: 'floatOrb 25s linear infinite alternate',
         }} />
-      </motion.div>
+      </div>
+      
       <style>{`
         @keyframes floatOrb {
           0% { transform: translate(0, 0) scale(1); }
