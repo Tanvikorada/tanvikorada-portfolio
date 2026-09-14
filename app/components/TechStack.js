@@ -80,7 +80,7 @@ export default function TechStack() {
   }, []);
 
   // State to hold projected 2D coordinates for rendering
-  const [renderedPoints, setRenderedPoints] = useState(points.map(() => ({ x: 0, y: 0, scale: 0, opacity: 0, zIndex: 0 })));
+  const [renderedPoints, setRenderedPoints] = useState(points.map((pt) => ({ ...pt, x: 0, y: 0, scale: 0, opacity: 0, zIndex: 0 })));
   
   // Track continuous rotation
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
