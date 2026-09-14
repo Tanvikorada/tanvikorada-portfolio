@@ -91,8 +91,7 @@ export default function Journey() {
   backdrop-filter: blur(60px) saturate(200%);
   -webkit-backdrop-filter: blur(60px) saturate(200%);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-top-color: rgba(255, 255, 255, 0.8);
-  border-left-color: rgba(255, 255, 255, 0.8);
+  border-bottom-color: rgba(226, 232, 240, 0.5); border-right-color: rgba(226, 232, 240, 0.5);
   box-shadow: 
     0 40px 80px rgba(0, 0, 0, 0.1),
     inset 2px 2px 4px rgba(255, 255, 255, 0.9),
@@ -111,8 +110,7 @@ export default function Journey() {
   backdrop-filter: blur(60px) saturate(200%);
   -webkit-backdrop-filter: blur(60px) saturate(200%);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-top-color: rgba(255, 255, 255, 0.8);
-  border-left-color: rgba(255, 255, 255, 0.8);
+  border-bottom-color: rgba(226, 232, 240, 0.5); border-right-color: rgba(226, 232, 240, 0.5);
   box-shadow: 
     0 40px 80px rgba(0, 0, 0, 0.1),
     inset 2px 2px 4px rgba(255, 255, 255, 0.9),
@@ -129,7 +127,7 @@ export default function Journey() {
         \.fluid-glass-card:hover { 
   transform: translateY(-8px) scale(1.01);
   box-shadow: 
-    0 50px 100px rgba(168, 85, 247, 0.2),
+    0 30px 60px rgba(14, 165, 233, 0.15),
     inset 2px 2px 4px rgba(255, 255, 255, 1),
     inset 10px 10px 40px rgba(255, 255, 255, 0.3),
     inset -2px -2px 4px rgba(0, 0, 0, 0.05);
@@ -138,7 +136,7 @@ export default function Journey() {
         :global(.night) \.fluid-glass-card:hover { 
   transform: translateY(-8px) scale(1.01);
   box-shadow: 
-    0 50px 100px rgba(168, 85, 247, 0.2),
+    0 30px 60px rgba(14, 165, 233, 0.15),
     inset 2px 2px 4px rgba(255, 255, 255, 1),
     inset 10px 10px 40px rgba(255, 255, 255, 0.3),
     inset -2px -2px 4px rgba(0, 0, 0, 0.05);
@@ -248,8 +246,7 @@ export default function Journey() {
   backdrop-filter: blur(60px) saturate(200%);
   -webkit-backdrop-filter: blur(60px) saturate(200%);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-top-color: rgba(255, 255, 255, 0.8);
-  border-left-color: rgba(255, 255, 255, 0.8);
+  border-bottom-color: rgba(226, 232, 240, 0.5); border-right-color: rgba(226, 232, 240, 0.5);
   box-shadow: 
     0 40px 80px rgba(0, 0, 0, 0.1),
     inset 2px 2px 4px rgba(255, 255, 255, 0.9),
