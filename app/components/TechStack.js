@@ -263,7 +263,7 @@ export default function TechStack() {
           <motion.div initial={{opacity:0,y:15}} whileInView={{opacity:1,y:0}} viewport={{once:true}}
             style={{ display:'inline-flex', alignItems:'center', gap:'8px', background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.08)', padding:'6px 20px', borderRadius:'100px', marginBottom:'20px' }}>
             <span style={{ width:'6px', height:'6px', borderRadius:'50%', background:'#00d2ff', boxShadow:'0 0 10px #00d2ff', flexShrink:0 }} />
-            <span style={{ fontSize:'12px', fontFamily:'var(--font-mono)', letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--text-muted)' }}>Tech Architecture</span>
+            <span style={{ fontSize:'12px', fontFamily:'var(--font-mono)', letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(255,255,255,0.5)' }}>Tech Architecture</span>
           </motion.div>
           
           <motion.h2 initial={{opacity:0,y:15}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{delay:0.1}}
