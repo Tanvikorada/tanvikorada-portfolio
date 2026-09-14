@@ -1,5 +1,6 @@
 'use client';
 import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
+import RippleDistortion from './ui/RippleDistortion';
 
 const EXPERIENCE = [
   {
