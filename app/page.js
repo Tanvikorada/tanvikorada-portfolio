@@ -11,7 +11,7 @@ import ScrollExpand from './components/ui/ScrollExpand';
 import Journey from './components/Journey';
 import Certs from './components/Certs';
 import About from './components/About';
-import CursorFX from './components/CursorFX';
+import { SmoothCursor } from './components/ui/smooth-cursor';
 import Contact from './components/Contact';
 
 import Preloader from './components/Preloader';
@@ -22,7 +22,7 @@ import RagBot from './components/ui/RagBot';
 export default function Home() {
   return (
     <>
-      <CursorFX />
+      <SmoothCursor />
       <RagBot />
       <Preloader />
       <Nav />
