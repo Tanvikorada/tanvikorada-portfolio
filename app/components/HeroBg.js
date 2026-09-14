@@ -4,11 +4,10 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-// USER REQUESTED: "decrease the block size by very very little" -> Bumped GRID_W up slightly to 28.
 const GRID_W = 28; 
 const GRID_H = 18;
 const SPACING = 3.8; 
-const CUBE_SIZE = 3.8; // Seamless flat sheet at rest
+const CUBE_SIZE = 3.8; 
 
 function Cubes({ isNight }) {
   const meshRef = useRef();
@@ -55,7 +54,8 @@ function Cubes({ isNight }) {
     }
   }, [isNight, count, cBaseNight, cBaseLight, dummy, tempColor]);
 
-  useFrame((state, delta) => { if (typeof window !== "undefined" && window.scrollY > window.innerHeight * 1.5) return;
+  useFrame((state, delta) => { 
+    if (typeof window !== "undefined" && window.scrollY > window.innerHeight * 1.5) return;
     mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.2);
     mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.2);
 
@@ -65,9 +65,6 @@ function Cubes({ isNight }) {
     const t = state.clock.elapsedTime;
     const distMoved = Math.hypot(mx - lastRipplePos.current.x, my - lastRipplePos.current.y);
     
-    // USER REQUESTED: "even if i move the cursor rapidly still only the rippkes should form not jelly"
-    // FIX: Throttled ripple emission! Even if you move super fast, it only drops a ripple every 0.12 seconds.
-    // This physically prevents ripples from stacking into a massive jelly mountain.
     if (distMoved > 2.0 && t - lastRippleTime.current > 0.12) {
       ripples.current.push({ x: mx, y: my, time: 0, strength: 1.0 });
       lastRipplePos.current.x = mx;
@@ -78,7 +75,6 @@ function Cubes({ isNight }) {
 
     const dt = Math.min(delta, 0.05); 
     for (let r = 0; r < ripples.current.length; r++) {
-      // Sleek, smooth speed
       ripples.current[r].time += dt * 24.0; 
       ripples.current[r].strength *= 0.96; 
     }
@@ -87,18 +83,14 @@ function Cubes({ isNight }) {
       const ix = (i % GRID_W - GRID_W / 2) * SPACING;
       const iy = (Math.floor(i / GRID_W) - GRID_H / 2) * SPACING;
 
-      let z = 0; // Flat seamless rest state
-
+      let z = 0; 
       for (let r = 0; r < ripples.current.length; r++) {
         const rip = ripples.current[r];
         const d = Math.hypot(ix - rip.x, iy - rip.y);
         const ringDist = Math.abs(d - rip.time);
         
         if (ringDist < 10.0) { 
-          // Firm Gaussian: Shaper divisor (10.0 instead of 18.0) means the ripple is 
-          // crisp and focused, completely eliminating the fat jelly wobble.
           const wave = Math.exp(-(ringDist * ringDist) / 12.0);
-          // Height reduced to 1.8. It rises elegantly without forming a massive wall.
           z += wave * rip.strength * 1.5;
         }
       }
@@ -108,9 +100,7 @@ function Cubes({ isNight }) {
       dummy.updateMatrix();
       meshRef.current.setMatrixAt(i, dummy.matrix);
 
-      // Color intensity scales strictly with elevation
       const intensity = Math.max(0, Math.min(1, z * 0.5));
-      
       const base = isNight ? cBaseNight : cBaseLight;
       const ripple = isNight ? cRippleNight : cRippleLight;
       tempColor.copy(base).lerp(ripple, intensity);
@@ -138,7 +128,7 @@ function Cubes({ isNight }) {
 export default function HeroBg() {
   const [isNight, setIsNight] = useState(true);
   const { scrollYProgress } = useScroll();
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.4], [0, 0.4]);
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.4], [0, 0.85]);
 
   useEffect(() => {
     setIsNight(document.body.classList.contains('night'));
@@ -161,17 +151,40 @@ export default function HeroBg() {
       <motion.div 
         style={{
           position: 'absolute', inset: 0,
-          background: isNight ? '#000000' : '#ffffff',
-          opacity: overlayOpacity
+          background: isNight ? '#030408' : '#fafafa',
+          opacity: overlayOpacity,
+          overflow: 'hidden'
         }}
-      />
+      >
+        <div style={{
+          position: 'absolute', top: '10%', left: '-10%',
+          width: '70vw', height: '70vw',
+          background: isNight ? 'radial-gradient(circle, rgba(255, 120, 50, 0.15) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(255, 130, 50, 0.25) 0%, transparent 60%)',
+          filter: 'blur(90px)',
+          animation: 'floatOrb 20s ease-in-out infinite alternate',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '-20%', right: '-10%',
+          width: '60vw', height: '60vw',
+          background: isNight ? 'radial-gradient(circle, rgba(255, 200, 50, 0.12) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(255, 180, 60, 0.2) 0%, transparent 60%)',
+          filter: 'blur(100px)',
+          animation: 'floatOrb 15s ease-in-out infinite alternate-reverse',
+        }} />
+        <div style={{
+          position: 'absolute', top: '40%', left: '50%', transform: 'translateX(-50%)',
+          width: '80vw', height: '50vw',
+          background: isNight ? 'radial-gradient(circle, rgba(147, 51, 234, 0.08) 0%, transparent 50%)' : 'radial-gradient(circle, rgba(100, 200, 255, 0.15) 0%, transparent 50%)',
+          filter: 'blur(120px)',
+          animation: 'floatOrb 25s linear infinite alternate',
+        }} />
+      </motion.div>
+      <style>{`
+        @keyframes floatOrb {
+          0% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(30px, -40px) scale(1.05); }
+          100% { transform: translate(-30px, 40px) scale(0.95); }
+        }
+      `}</style>
     </div>
   );
 }
-
-
-
-
-
-
-
