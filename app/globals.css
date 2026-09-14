@@ -520,27 +520,27 @@ body.night .tech-stack-section { background: transparent; }
   grid-template-columns: 1fr 1fr;
   border-radius: 24px;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 240, 220, 0.2));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(224, 242, 254, 0.2));
   backdrop-filter: blur(40px) saturate(200%);
   -webkit-backdrop-filter: blur(40px) saturate(200%);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 16px 40px rgba(255, 140, 60, 0.08), inset 0 1px 2px rgba(255, 255, 255, 1);
+  box-shadow: 0 16px 40px rgba(56, 189, 248, 0.08), inset 0 1px 2px rgba(255, 255, 255, 1);
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: auto;
 }
 .project-card:hover {
   transform: translateY(-8px) scale(1.02) !important;
-  box-shadow: 0 30px 60px rgba(255, 140, 60, 0.12), inset 0 1px 2px rgba(255, 255, 255, 1);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 245, 230, 0.4));
+  box-shadow: 0 30px 60px rgba(56, 189, 248, 0.12), inset 0 1px 2px rgba(255, 255, 255, 1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(240, 249, 255, 0.4));
   border-color: rgba(255, 255, 255, 1);
 }
 body.night .project-card {
   background: linear-gradient(135deg, rgba(20, 20, 25, 0.6), rgba(30, 20, 20, 0.4));
   border-color: rgba(255,255,255,0.15);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 8px 24px rgba(255, 140, 60, 0.06), inset 0 1px 2px rgba(255,255,255,0.2);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 8px 24px rgba(56, 189, 248, 0.06), inset 0 1px 2px rgba(255,255,255,0.2);
 }
 body.night .project-card:hover {
-  box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 12px 30px rgba(255, 140, 60, 0.15), inset 0 1px 2px rgba(255,255,255,0.3);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 12px 30px rgba(56, 189, 248, 0.15), inset 0 1px 2px rgba(255,255,255,0.3);
   background: linear-gradient(135deg, rgba(30, 30, 40, 0.7), rgba(45, 30, 25, 0.5));
   border-color: rgba(255,255,255,0.3);
 }
@@ -656,11 +656,11 @@ body.night .project-tag {
 }
 .more-project-card {
   width: 100%; height: 100%;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 240, 220, 0.2));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(224, 242, 254, 0.2));
   backdrop-filter: blur(40px) saturate(200%);
   -webkit-backdrop-filter: blur(40px) saturate(200%);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 12px 30px rgba(255, 140, 60, 0.06), inset 0 1px 2px rgba(255, 255, 255, 1);
+  box-shadow: 0 12px 30px rgba(56, 189, 248, 0.06), inset 0 1px 2px rgba(255, 255, 255, 1);
   border-radius: 20px;
   padding: 32px;
   display: flex;
@@ -672,17 +672,17 @@ body.night .project-tag {
 body.night .more-project-card {
   background: linear-gradient(135deg, rgba(20, 20, 25, 0.6), rgba(30, 20, 20, 0.4));
   border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 4px 12px rgba(255, 140, 60, 0.04), inset 0 1px 2px rgba(255,255,255,0.15);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4), 0 4px 12px rgba(56, 189, 248, 0.04), inset 0 1px 2px rgba(255,255,255,0.15);
 }
 .more-project-card:hover {
   transform: translateY(-6px);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 245, 230, 0.4));
-  box-shadow: 0 20px 40px rgba(255, 140, 60, 0.1), inset 0 1px 2px rgba(255, 255, 255, 1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(240, 249, 255, 0.4));
+  box-shadow: 0 20px 40px rgba(56, 189, 248, 0.1), inset 0 1px 2px rgba(255, 255, 255, 1);
   border-color: #fff;
 }
 body.night .more-project-card:hover {
   background: linear-gradient(135deg, rgba(30, 30, 40, 0.7), rgba(45, 30, 25, 0.5));
-  box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 8px 20px rgba(255, 140, 60, 0.1), inset 0 1px 2px rgba(255,255,255,0.3);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 8px 20px rgba(56, 189, 248, 0.1), inset 0 1px 2px rgba(255,255,255,0.3);
   border-color: rgba(255,255,255,0.3);
 }
 .card-glare {
@@ -799,11 +799,11 @@ body.night .card-glare {
   margin-top: 60px;
 }
 .bento-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 240, 220, 0.2));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(224, 242, 254, 0.2));
   backdrop-filter: blur(40px) saturate(200%);
   -webkit-backdrop-filter: blur(40px) saturate(200%);
   border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 16px 40px rgba(255, 140, 60, 0.08), inset 0 1px 2px rgba(255, 255, 255, 1), inset 0 -1px 2px rgba(255, 255, 255, 0.4);
+  box-shadow: 0 16px 40px rgba(56, 189, 248, 0.08), inset 0 1px 2px rgba(255, 255, 255, 1), inset 0 -1px 2px rgba(255, 255, 255, 0.4);
   border-radius: 32px;
   padding: 36px;
   display: flex;
@@ -815,15 +815,15 @@ body.night .card-glare {
 body.night .bento-card {
   background: linear-gradient(135deg, rgba(20, 20, 25, 0.6), rgba(30, 20, 20, 0.4));
   border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(255, 140, 60, 0.06), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(56, 189, 248, 0.06), inset 0 1px 2px rgba(255, 255, 255, 0.2);
 }
 .bento-card:hover {
   transform: translateY(-8px) scale(1.01);
-  box-shadow: 0 30px 60px rgba(255, 140, 60, 0.12), inset 0 1px 2px rgba(255, 255, 255, 1);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 245, 230, 0.4));
+  box-shadow: 0 30px 60px rgba(56, 189, 248, 0.12), inset 0 1px 2px rgba(255, 255, 255, 1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(240, 249, 255, 0.4));
 }
 body.night .bento-card:hover {
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 12px 30px rgba(255, 140, 60, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 12px 30px rgba(56, 189, 248, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.3);
   background: linear-gradient(135deg, rgba(30, 30, 40, 0.7), rgba(45, 30, 25, 0.5));
 }
 .bento-card::before {
@@ -832,14 +832,14 @@ body.night .bento-card:hover {
   top: 0; left: 0; right: 0; bottom: 0;
   border-radius: inherit;
   padding: 2px;
-  background: linear-gradient(135deg, rgba(255,180,120,0.6) 0%, rgba(255,255,255,0.1) 40%, rgba(255,210,120,0.6) 100%);
+  background: linear-gradient(135deg, rgba(125, 211, 252,0.6) 0%, rgba(255,255,255,0.1) 40%, rgba(186, 230, 253,0.6) 100%);
   background-size: 200% 200%;
   animation: fluidShine 8s ease-in-out infinite alternate;
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
 }
 body.night .bento-card::before {
-  background: linear-gradient(135deg, rgba(255,140,60,0.3) 0%, rgba(255,255,255,0.02) 50%, rgba(147,51,234,0.4) 100%);
+  background: linear-gradient(135deg, rgba(56, 189, 248,0.3) 0%, rgba(255,255,255,0.02) 50%, rgba(147,51,234,0.4) 100%);
   background-size: 200% 200%;
 }
 .bento-photo { grid-column: span 4; }

@@ -20,7 +20,7 @@ function Cubes({ isNight }) {
   const cRippleLight = useMemo(() => new Color('#d8b4fe'), []); 
   
   const cBaseNight = useMemo(() => new Color('#000000'), []); 
-  const cRippleNight = useMemo(() => new Color('#fcd34d'), []); 
+  const cRippleNight = useMemo(() => new Color('#60a5fa'), []); 
 
   const targetMouse = useRef({ x: 0, y: 0 });
   const mouse = useRef({ x: 0, y: 0 });
@@ -159,21 +159,21 @@ export default function HeroBg() {
         <div style={{
           position: 'absolute', top: '10%', left: '-10%',
           width: '70vw', height: '70vw',
-          background: isNight ? 'radial-gradient(circle, rgba(255, 120, 50, 0.15) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(255, 130, 50, 0.25) 0%, transparent 60%)',
+          background: isNight ? 'radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 60%)',
           filter: 'blur(90px)',
           animation: 'floatOrb 20s ease-in-out infinite alternate',
         }} />
         <div style={{
           position: 'absolute', bottom: '-20%', right: '-10%',
           width: '60vw', height: '60vw',
-          background: isNight ? 'radial-gradient(circle, rgba(255, 200, 50, 0.12) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(255, 180, 60, 0.2) 0%, transparent 60%)',
+          background: isNight ? 'radial-gradient(circle, rgba(96, 165, 250, 0.1) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(125, 211, 252, 0.25) 0%, transparent 60%)',
           filter: 'blur(100px)',
           animation: 'floatOrb 15s ease-in-out infinite alternate-reverse',
         }} />
         <div style={{
           position: 'absolute', top: '40%', left: '50%', transform: 'translateX(-50%)',
           width: '80vw', height: '50vw',
-          background: isNight ? 'radial-gradient(circle, rgba(147, 51, 234, 0.08) 0%, transparent 50%)' : 'radial-gradient(circle, rgba(100, 200, 255, 0.15) 0%, transparent 50%)',
+          background: isNight ? 'radial-gradient(circle, rgba(147, 51, 234, 0.08) 0%, transparent 50%)' : 'radial-gradient(circle, rgba(224, 242, 254, 0.4) 0%, transparent 50%)',
           filter: 'blur(120px)',
           animation: 'floatOrb 25s linear infinite alternate',
         }} />
