@@ -148,23 +148,7 @@ export default function CursorFX() {
   return (
     <>
       <style>{`
-        .smooth-cursor {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          background: rgba(14, 165, 233, 0.05);
-          border: 1px solid var(--primary);
-          box-shadow: 0 0 15px var(--primary-glow);
-          pointer-events: none;
-          z-index: 99999;
-          transform-origin: center;
-          backdrop-filter: blur(2px);
-          -webkit-backdrop-filter: blur(2px);
-          /* mix-blend-mode: difference; */
-        }
+        .smooth-cursor { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99999; font-size: 28px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
         /* Hide default cursor to just show the trail dot */
         body {
           cursor: none;
@@ -174,15 +158,8 @@ export default function CursorFX() {
           cursor: pointer;
         }
       `}</style>
-      <motion.div 
-        className="smooth-cursor"
-        style={{
-          x: smoothX,
-          y: smoothY,
-          translateX: '-50%',
-          translateY: '-50%'
-        }} 
-      />
+      <motion.div className="smooth-cursor" style={{ x: smoothX, y: smoothY, translateX: '-20%', translateY: '-20%' }}>🚀</motion.div>
     </>
   );
 }
+

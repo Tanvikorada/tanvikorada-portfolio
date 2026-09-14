@@ -1,7 +1,13 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion';
-import { Home, Briefcase, User, Gamepad2, FileText } from 'lucide-react';
+
+// Raw SVGs to replace lucide-react to prevent local dev server crashes if npm install wasn't run
+const HomeIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;
+const BriefcaseIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>;
+const UserIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
+const GamepadIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="2"/></svg>;
+const FileTextIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>;
 
 // Theme toggler component with morphing animation
 const AnimatedThemeIcon = ({ isNight }) => {
@@ -65,7 +71,6 @@ const AnimatedThemeIcon = ({ isNight }) => {
     </svg>
   );
 };
-
 
 // --- DOCK ITEM (Magnifying effect) ---
 function DockIcon({ mouseX, onClick, icon, label, scrolled }) {
@@ -275,7 +280,6 @@ export default function Nav() {
           WebkitBackdropFilter: scrolled ? 'blur(24px) saturate(150%)' : 'blur(0px)'
         }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        // CRITICAL FIX: use clientX so it works identically regardless of scroll position!
         onMouseMove={(e) => mouseX.set(e.clientX)}
         onMouseLeave={() => mouseX.set(Infinity)}
       >
@@ -299,10 +303,10 @@ export default function Nav() {
 
         {/* DOCK ICONS */}
         <div className="dock-container" style={{ marginLeft: scrolled ? '0' : 'auto' }}>
-          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('top')} icon={<Home strokeWidth={2.5} size={24} />} label="Home" />
-          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('work')} icon={<Briefcase strokeWidth={2.5} size={24} />} label="Work" />
-          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('about')} icon={<User strokeWidth={2.5} size={24} />} label="About" />
-          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('playground')} icon={<Gamepad2 strokeWidth={2.5} size={24} />} label="Playground" />
+          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('top')} icon={<HomeIcon />} label="Home" />
+          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('work')} icon={<BriefcaseIcon />} label="Work" />
+          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('about')} icon={<UserIcon />} label="About" />
+          <DockIcon scrolled={scrolled} mouseX={mouseX} onClick={() => scrollTo('playground')} icon={<GamepadIcon />} label="Playground" />
           
           <div className="dock-divider" />
           
@@ -318,7 +322,7 @@ export default function Nav() {
             scrolled={scrolled}
             mouseX={mouseX} 
             onClick={() => window.open('/resume.pdf', '_blank')} 
-            icon={<FileText strokeWidth={2.5} size={24} />} 
+            icon={<FileTextIcon />} 
             label="Resume" 
           />
         </div>
