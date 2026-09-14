@@ -94,7 +94,7 @@ export default function Journey() {
   border-top-color: rgba(255, 255, 255, 0.8);
   border-left-color: rgba(255, 255, 255, 0.8);
   box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.15),
+    0 40px 80px rgba(0, 0, 0, 0.1),
     inset 2px 2px 4px rgba(255, 255, 255, 0.9),
     inset 10px 10px 40px rgba(255, 255, 255, 0.2),
     inset -2px -2px 4px rgba(0, 0, 0, 0.05);
@@ -103,7 +103,7 @@ export default function Journey() {
   position: relative;
   overflow: hidden;
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  --primary-glow: rgba(255, 255, 255, 0.3);
+  --primary-glow: rgba(168, 85, 247, 0.4);
  }
 
         :global(.night) \.fluid-glass-card { 
@@ -114,7 +114,7 @@ export default function Journey() {
   border-top-color: rgba(255, 255, 255, 0.8);
   border-left-color: rgba(255, 255, 255, 0.8);
   box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.15),
+    0 40px 80px rgba(0, 0, 0, 0.1),
     inset 2px 2px 4px rgba(255, 255, 255, 0.9),
     inset 10px 10px 40px rgba(255, 255, 255, 0.2),
     inset -2px -2px 4px rgba(0, 0, 0, 0.05);
@@ -123,13 +123,13 @@ export default function Journey() {
   position: relative;
   overflow: hidden;
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  --primary-glow: rgba(255, 255, 255, 0.3);
+  --primary-glow: rgba(168, 85, 247, 0.4);
  }
 
         \.fluid-glass-card:hover { 
   transform: translateY(-8px) scale(1.01);
   box-shadow: 
-    0 50px 100px rgba(16, 185, 129, 0.15),
+    0 50px 100px rgba(168, 85, 247, 0.2),
     inset 2px 2px 4px rgba(255, 255, 255, 1),
     inset 10px 10px 40px rgba(255, 255, 255, 0.3),
     inset -2px -2px 4px rgba(0, 0, 0, 0.05);
@@ -138,7 +138,7 @@ export default function Journey() {
         :global(.night) \.fluid-glass-card:hover { 
   transform: translateY(-8px) scale(1.01);
   box-shadow: 
-    0 50px 100px rgba(16, 185, 129, 0.15),
+    0 50px 100px rgba(168, 85, 247, 0.2),
     inset 2px 2px 4px rgba(255, 255, 255, 1),
     inset 10px 10px 40px rgba(255, 255, 255, 0.3),
     inset -2px -2px 4px rgba(0, 0, 0, 0.05);
@@ -251,7 +251,7 @@ export default function Journey() {
   border-top-color: rgba(255, 255, 255, 0.8);
   border-left-color: rgba(255, 255, 255, 0.8);
   box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.15),
+    0 40px 80px rgba(0, 0, 0, 0.1),
     inset 2px 2px 4px rgba(255, 255, 255, 0.9),
     inset 10px 10px 40px rgba(255, 255, 255, 0.2),
     inset -2px -2px 4px rgba(0, 0, 0, 0.05);
@@ -260,7 +260,7 @@ export default function Journey() {
   position: relative;
   overflow: hidden;
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  --primary-glow: rgba(255, 255, 255, 0.3);
+  --primary-glow: rgba(168, 85, 247, 0.4);
  }
           .item-period {
             padding-top: 0;

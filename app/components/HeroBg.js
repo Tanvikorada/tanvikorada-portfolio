@@ -17,7 +17,7 @@ function Cubes({ isNight }) {
   const tempColor = useMemo(() => new Color(), []);
   
   const cBaseLight = useMemo(() => new Color('#ffffff'), []); 
-  const cRippleLight = useMemo(() => new Color('#34d399'), []); 
+  const cRippleLight = useMemo(() => new Color('#d8b4fe'), []); 
   
   const cBaseNight = useMemo(() => new Color('#000000'), []); 
   const cRippleNight = useMemo(() => new Color('#10b981'), []); 
@@ -55,7 +55,7 @@ function Cubes({ isNight }) {
   }, [isNight, count, cBaseNight, cBaseLight, dummy, tempColor]);
 
   useFrame((state, delta) => { 
-    if (typeof window !== "undefined" && window.scrollY > window.innerHeight * 10.0) return;
+    // Always run background effect
     mouse.current.x = MathUtils.lerp(mouse.current.x, targetMouse.current.x, 0.2);
     mouse.current.y = MathUtils.lerp(mouse.current.y, targetMouse.current.y, 0.2);
 
@@ -129,8 +129,8 @@ export default function HeroBg() {
   const [isNight, setIsNight] = useState(true);
   const { scrollYProgress } = useScroll();
   
-  const dimOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 0.65]);
-  const bgBlur = useTransform(scrollYProgress, [0, 0.2], ['blur(0px)', 'blur(30px)']);
+  const dimOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 0.75]);
+  const bgBlur = useTransform(scrollYProgress, [0, 0.2], ['blur(0px)', 'blur(10px)']);
 
   useEffect(() => {
     setIsNight(document.body.classList.contains('night'));
@@ -163,30 +163,29 @@ export default function HeroBg() {
         }}
       />
       
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 2 }}>
+            <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 2 }}>
         <div style={{
           position: 'absolute', top: '-10%', left: '-10%',
           width: '80vw', height: '80vw',
-          background: isNight ? 'radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(52, 211, 153, 0.35) 0%, transparent 60%)',
+          background: isNight ? 'radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(216, 180, 254, 0.35) 0%, transparent 60%)',
           filter: 'blur(90px)',
           animation: 'floatOrb 20s ease-in-out infinite alternate',
         }} />
         <div style={{
           position: 'absolute', bottom: '-20%', right: '-10%',
           width: '70vw', height: '70vw',
-          background: isNight ? 'radial-gradient(circle, rgba(4, 120, 87, 0.2) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(163, 230, 53, 0.25) 0%, transparent 60%)',
+          background: isNight ? 'radial-gradient(circle, rgba(4, 120, 87, 0.2) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(192, 132, 252, 0.25) 0%, transparent 60%)',
           filter: 'blur(100px)',
           animation: 'floatOrb 15s ease-in-out infinite alternate-reverse',
         }} />
         <div style={{
           position: 'absolute', top: '30%', left: '30%', transform: 'translateX(-50%)',
           width: '100vw', height: '60vw',
-          background: isNight ? 'radial-gradient(ellipse, rgba(52, 211, 153, 0.1) 0%, transparent 50%)' : 'radial-gradient(ellipse, rgba(254, 252, 232, 0.8) 0%, transparent 50%)',
+          background: isNight ? 'radial-gradient(ellipse, rgba(52, 211, 153, 0.1) 0%, transparent 50%)' : 'radial-gradient(ellipse, rgba(233, 213, 255, 0.7) 0%, transparent 50%)',
           filter: 'blur(120px)',
           animation: 'floatOrb 25s linear infinite alternate',
         }} />
       </div>
-      
       <style>{`
         @keyframes floatOrb {
           0% { transform: translate(0, 0) scale(1); }
@@ -197,3 +196,4 @@ export default function HeroBg() {
     </div>
   );
 }
+
