@@ -273,7 +273,21 @@ export default function HeroBg() {
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, pointerEvents: 'none' }}>
-      <Canvas gl={{ alpha: false, antialias: false, powerPreference: "high-performance" }} dpr={[1, 1.5]} camera={{ position: [0, 0, 55], fov: 42 }} style={{ width: "100vw", height: "100vh" }}>
+      {isNight && (
+          <div style={{ position: 'absolute', inset: 0, backgroundColor: '#030014', zIndex: -2 }} />
+        )}
+        {isNight && (
+          <video 
+            autoPlay 
+            muted 
+            loop 
+            playsInline
+            style={{ position: 'absolute', top: '-340px', left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: -1, transform: 'rotate(180deg)', opacity: 0.8 }}
+          >
+            <source src="/videos/blackhole.webm" type="video/webm" />
+          </video>
+        )}
+        <Canvas gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }} dpr={[1, 1.5]} camera={{ position: [0, 0, 55], fov: 42 }} style={{ width: "100vw", height: "100vh" }}>
         <ambientLight intensity={isNight ? 0.7 : 2.5} />
         <directionalLight position={[15, -20, 30]} intensity={isNight ? 1.0 : 0.8} color="#ffffff" />
         <directionalLight position={[-15, 20, 20]} intensity={isNight ? 0.4 : 0.4} color={isNight ? '#fcd34d' : '#f3e8ff'} />
