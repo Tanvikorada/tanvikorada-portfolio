@@ -1,4 +1,3 @@
-
 'use client';
 import { AnimatedThemeToggler } from './ui/AnimatedThemeToggler';
 import { useState, useEffect } from 'react';
@@ -92,30 +91,16 @@ export default function Nav() {
 
           {/* Links */}
           <motion.div layout style={{ display: 'flex', gap: '8px' }}>
-            <button className="nav-link" onClick={() => scrollTo('work')}>Work</button><AnimatedThemeToggler 
-                className="theme-btn" 
-                variant="star"
-                theme={isNight ? 'night' : 'day'}
-                onThemeChange={(t) => {
-                  const night = t === 'night';
-                  setIsNight(night);
-                  localStorage.setItem('theme', night ? 'night' : 'day');
-                }}
-              /><button className="theme-btn" onClick={toggleTheme} aria-label="Toggle theme">
-              <AnimatePresence mode="wait">
-                {isNight ? (
-                  <motion.svg key="moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                    initial={{ rotate: -90, scale: 0 }} animate={{ rotate: 0, scale: 1 }} exit={{ rotate: 90, scale: 0 }} transition={{ duration: 0.2 }}>
-                    <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/>
-                  </motion.svg>
-                ) : (
-                  <motion.svg key="sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                    initial={{ rotate: -90, scale: 0 }} animate={{ rotate: 0, scale: 1 }} exit={{ rotate: 90, scale: 0 }} transition={{ duration: 0.2 }}>
-                    <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
-                  </motion.svg>
-                )}
-              </AnimatePresence>
-            </button>
+            <button className="nav-link" onClick={() => scrollTo('work')}>Work</button>
+            <button className="nav-link" onClick={() => scrollTo('about')}>About</button>
+            <button className="nav-link" onClick={() => scrollTo('playground')}>Playground</button>
+          </motion.div>
+
+          <motion.div layout className="nav-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <motion.span layout className="nav-divider" />
+
+            {/* Theme toggle */}
+            <AnimatedThemeToggler className="theme-btn" variant="circle" theme={isNight ? "night" : "day"} onThemeChange={(t) => { const n = t === "night"; setIsNight(n); localStorage.setItem("theme", n ? "night" : "day"); }} />
 
             {/* Resume */}
             <a
