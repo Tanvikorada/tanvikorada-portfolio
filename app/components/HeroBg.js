@@ -283,7 +283,7 @@ export default function HeroBg() {
             muted 
             loop 
             playsInline
-            style={{ position: 'absolute', top: '-340px', left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: -1, transform: 'rotate(180deg)', opacity: 0.8 }}
+            style={{ position: 'absolute', top: '-30vh', left: 0, width: '100%', height: '130vh', objectFit: 'cover', zIndex: -1, transform: 'rotate(180deg)', opacity: 0.9 }}
           >
             <source src="/videos/blackhole.webm" type="video/webm" />
           </video>
