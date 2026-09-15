@@ -70,8 +70,8 @@ export default function Hero() {
             loop 
             playsInline
             style={{ 
-              position: 'absolute', top: '-50vh', left: 0, width: '100%', height: '150vh', 
-              objectFit: 'cover', zIndex: 0, opacity: 1, 
+              position: 'absolute', top: '-340px', left: 0, width: '100%', height: '100%', 
+              objectFit: 'cover', zIndex: 0, opacity: 0.8, 
               mixBlendMode: 'screen', pointerEvents: 'none',
               transform: 'rotate(180deg)'
             }}
