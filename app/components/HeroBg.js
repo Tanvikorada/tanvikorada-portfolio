@@ -258,7 +258,8 @@ function InteractiveSpace({ scrollYProgress }) {
 
 export default function HeroBg() {
   const [isNight, setIsNight] = useState(true);
-  const { scrollYProgress } = useScroll();
+  const { scrollYProgress, scrollY } = useScroll();
+  const blackholeY = useTransform(scrollY, [0, 1000], [0, -1000]);
   
   const dimOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 0.75]);
   const bgBlur = useTransform(scrollYProgress, [0, 0.2], ['blur(0px)', 'blur(10px)']);
@@ -278,15 +279,15 @@ export default function HeroBg() {
           <div style={{ position: 'absolute', inset: 0, backgroundColor: '#030014', zIndex: -2 }} />
         )}
         {isNight && (
-          <video 
+          <motion.video 
             autoPlay 
             muted 
             loop 
             playsInline
-            style={{ position: 'absolute', top: '-30vh', left: 0, width: '100%', height: '130vh', objectFit: 'cover', zIndex: -1, transform: 'rotate(180deg)', opacity: 0.9 }}
+            style={{ position: 'absolute', top: '-30vh', left: 0, width: '100%', height: '130vh', objectFit: 'cover', zIndex: -1, rotate: 180, opacity: 0.9, y: blackholeY }}
           >
             <source src="/videos/blackhole.webm" type="video/webm" />
-          </video>
+          </motion.video>
         )}
         <Canvas gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }} dpr={[1, 1.5]} camera={{ position: [0, 0, 55], fov: 42 }} style={{ width: "100vw", height: "100vh" }}>
         <ambientLight intensity={isNight ? 0.7 : 2.5} />
