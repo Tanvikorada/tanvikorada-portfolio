@@ -47,13 +47,38 @@ function WordRoller() {
 }
 
 export default function Hero() {
+  const [isNight, setIsNight] = useState(true);
+  useEffect(() => {
+    setIsNight(document.body.classList.contains('night'));
+    const observer = new MutationObserver(() => {
+      setIsNight(document.body.classList.contains('night'));
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
   const { scrollY } = useScroll();
   const yBg = useTransform(scrollY, [0, 1000], [0, 300]);
   const opacityText = useTransform(scrollY, [0, 400], [1, 0]);
   const yText = useTransform(scrollY, [0, 400], [0, 100]);
 
   return (
-    <section id="hero" className="hero" style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
+          <section id="hero" className="hero" style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
+        {isNight && (
+          <video 
+            autoPlay 
+            muted 
+            loop 
+            playsInline
+            style={{ 
+              position: 'absolute', top: '-50vh', left: 0, width: '100%', height: '150vh', 
+              objectFit: 'cover', zIndex: 0, opacity: 1, 
+              mixBlendMode: 'screen', pointerEvents: 'none',
+              transform: 'rotate(180deg)'
+            }}
+          >
+            <source src="/videos/blackhole.webm" type="video/webm" />
+          </video>
+        )}
       <motion.div 
         className="hero-content" 
         style={{ opacity: opacityText, y: yText, zIndex: 10, position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 8vw' }}
