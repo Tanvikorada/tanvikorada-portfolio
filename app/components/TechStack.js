@@ -192,23 +192,20 @@ export default function TechStack() {
             {renderedPoints.map((pt, i) => {
               const isHovered = hoveredIndex === i;
               
-              // Base logic for coloring
-              // Using CDN based on isNight flag, but filtering to grayscale unless hovered
-              let iconUrl;
-              if (isHovered) {
-                // If hovered, fetch the colored version directly or use the brand color
-                iconUrl = `https://cdn.simpleicons.org/${pt.slug}/white`; // Solid colored bubble requires a white icon for contrast
-              } else {
-                // Not hovered: white if night mode, black if day mode
-                iconUrl = isNight 
-                  ? `https://cdn.simpleicons.org/${pt.slug}/white`
-                  : `https://cdn.simpleicons.org/${pt.slug}/black`;
-              }
+              // The user wants full colored brand icons!
+                let iconUrl = `https://cdn.simpleicons.org/${pt.slug}`;
+                
+                // If it's a black logo (Next.js, GitHub, Vercel), it will be invisible in dark mode. 
+                // So we MUST make those white in dark mode.
+                const isBlackLogo = (pt.slug === 'nextdotjs' || pt.slug === 'github' || pt.slug === 'vercel');
+                if (isBlackLogo) {
+                    iconUrl = isNight ? `https://cdn.simpleicons.org/${pt.slug}/white` : `https://cdn.simpleicons.org/${pt.slug}/black`;
+                }
 
-              // Special handling for Github/Nextjs in dark mode since they are inherently black
-              if (isHovered && isNight && (pt.slug === 'nextdotjs' || pt.slug === 'github')) {
-                iconUrl = `https://cdn.simpleicons.org/${pt.slug}/white`;
-              }
+                // If hovered, we change the background to the brand color, so the icon itself needs to be white to contrast!
+                if (isHovered && !isBlackLogo) {
+                    iconUrl = `https://cdn.simpleicons.org/${pt.slug}/white`;
+                }
 
               return (
                 <div 
