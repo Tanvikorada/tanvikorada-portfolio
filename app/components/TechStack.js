@@ -192,8 +192,8 @@ export default function TechStack() {
             {renderedPoints.map((pt, i) => {
               const isHovered = hoveredIndex === i;
               
-              // The user wants full colored brand icons!
-                let iconUrl = `https://cdn.simpleicons.org/${pt.slug}`;
+              // The user wants full colored brand icons! We explicitly pass the hex color to the CDN to guarantee it renders in color!
+                let iconUrl = `https://cdn.simpleicons.org/${pt.slug}/${pt.color.replace('#', '')}`;
                 
                 // If it's a black logo (Next.js, GitHub, Vercel), it will be invisible in dark mode. 
                 // So we MUST make those white in dark mode.
