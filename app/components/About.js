@@ -285,51 +285,53 @@ export default function About() {
       <motion.div animate={{ x: ['5%', '-5%', '5%'], y: ['10%', '-5%', '10%'] }} transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }} style={{ position: 'absolute', bottom: '10%', right: '0%', width: '50vw', height: '50vw', background: 'radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 60%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none' }} />
 
       <style>{`
-        .apple-bento-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          grid-auto-rows: minmax(140px, auto);
-          gap: 24px;
-          max-width: 1240px;
-          margin: 0 auto;
-          position: relative;
-          z-index: 2;
-          padding: 0 5vw;
-        }
-
-        
-          .apple-photo { grid-column: span 1; grid-row: span 2; }
-          .apple-bio { grid-column: span 2; grid-row: span 2; display: flex; flex-direction: column; justify-content: center; }
-          .apple-map { grid-column: span 1; grid-row: span 2; }
-          .apple-status { grid-column: span 2; grid-row: span 1; display: flex; flex-direction: column; justify-content: center; }
-          .apple-stats { grid-column: span 2; grid-row: span 1; display: flex; flex-direction: column; justify-content: center; }
-          .apple-skills { grid-column: span 2; grid-row: span 2; }
-          .apple-activity { grid-column: span 2; grid-row: span 2; }
-          .apple-clubs { grid-column: span 4; grid-row: span 1; display: flex; flex-direction: column; justify-content: center; }
-
+                  .apple-bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: minmax(140px, auto);
+            gap: 24px;
+            max-width: 1240px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            padding: 0 5vw;
+          }
+  
+          
+          .apple-photo { grid-column: 1 / 2 !important; grid-row: 1 / 3 !important; }
+          .apple-bio { grid-column: 2 / 4 !important; grid-row: 1 / 2 !important; display: flex; flex-direction: column; justify-content: center; }
+          .apple-status { grid-column: 2 / 4 !important; grid-row: 2 / 3 !important; display: flex; flex-direction: column; justify-content: center; }
+          .apple-map { grid-column: 4 / 5 !important; grid-row: 1 / 3 !important; }
+          
+          .apple-stats { grid-column: 1 / 3 !important; grid-row: 3 / 4 !important; display: flex; flex-direction: column; justify-content: center; }
+          .apple-clubs { grid-column: 3 / 5 !important; grid-row: 3 / 4 !important; display: flex; flex-direction: column; justify-content: center; }
+          
+          .apple-skills { grid-column: 1 / 3 !important; grid-row: 4 / 5 !important; }
+          .apple-activity { grid-column: 3 / 5 !important; grid-row: 4 / 5 !important; }
+  
           @media (max-width: 1024px) {
-          .apple-bento-grid {
-            grid-template-columns: repeat(2, 1fr);
+            .apple-bento-grid {
+              grid-template-columns: repeat(2, 1fr) !important;
+            }
+            .apple-photo { grid-column: 1 / 2 !important; grid-row: 1 / 3 !important; }
+            .apple-map { grid-column: 2 / 3 !important; grid-row: 1 / 3 !important; }
+            .apple-bio { grid-column: 1 / 3 !important; grid-row: 3 / 4 !important; }
+            .apple-status { grid-column: 1 / 3 !important; grid-row: 4 / 5 !important; }
+            .apple-stats { grid-column: 1 / 3 !important; grid-row: 5 / 6 !important; }
+            .apple-clubs { grid-column: 1 / 3 !important; grid-row: 6 / 7 !important; }
+            .apple-skills { grid-column: 1 / 3 !important; grid-row: 7 / 8 !important; }
+            .apple-activity { grid-column: 1 / 3 !important; grid-row: 8 / 9 !important; }
           }
-          .apple-photo { grid-column: span 1 !important; grid-row: span 2 !important; }
-          .apple-map { grid-column: span 1 !important; grid-row: span 2 !important; }
-          .apple-bio { grid-column: span 2 !important; grid-row: span 2 !important; }
-          .apple-stats { grid-column: span 2 !important; }
-          .apple-skills { grid-column: span 2 !important; }
-          .apple-status { grid-column: span 2 !important; }
-          .apple-activity { grid-column: span 2; grid-row: span 2; }
-          .apple-clubs { grid-column: span 2 !important; }
-        }
-
-        @media (max-width: 600px) {
-          .apple-bento-grid {
-            grid-template-columns: 1fr;
+  
+          @media (max-width: 600px) {
+            .apple-bento-grid {
+              grid-template-columns: 1fr !important;
+            }
+            .apple-bento-grid > div {
+              grid-column: 1 / -1 !important;
+              grid-row: auto !important;
+            }
           }
-          .apple-bento-grid > div {
-            grid-column: span 1 !important;
-            grid-row: auto !important;
-          }
-        }
 
         .apple-glass-card {
           background: linear-gradient(135deg, color-mix(in srgb, var(--bg-glass) 70%, rgba(255,255,255,0.1)), color-mix(in srgb, var(--bg-glass) 90%, rgba(0,0,0,0.05)));
