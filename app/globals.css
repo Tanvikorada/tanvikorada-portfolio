@@ -1123,7 +1123,7 @@ body.night .skill-pill {
     opacity: 1;
   }
   100% {
-    transform: rotate(var(--angle)) translateX(-500px);
+    transform: rotate(var(--angle)) translateX(-2500px);
     opacity: 0;
   }
 }

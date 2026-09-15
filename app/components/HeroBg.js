@@ -297,9 +297,9 @@ export default function HeroBg() {
           backdropFilter: bgBlur,
           WebkitBackdropFilter: bgBlur,
           pointerEvents: 'none',
-          zIndex: 1
-        }}
-      />
+          zIndex: 1 }}
+        />
+        {isNight && <Meteors number={40} />}
       
             <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 2 }}>
         <div style={{
