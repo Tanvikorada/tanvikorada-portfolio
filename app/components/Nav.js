@@ -1,4 +1,6 @@
+
 'use client';
+import { AnimatedThemeToggler } from './ui/AnimatedThemeToggler';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import Link from 'next/link';
@@ -90,16 +92,16 @@ export default function Nav() {
 
           {/* Links */}
           <motion.div layout style={{ display: 'flex', gap: '8px' }}>
-            <button className="nav-link" onClick={() => scrollTo('work')}>Work</button>
-            <button className="nav-link" onClick={() => scrollTo('about')}>About</button>
-            <button className="nav-link" onClick={() => scrollTo('playground')}>Playground</button>
-          </motion.div>
-
-          <motion.div layout className="nav-right" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <motion.span layout className="nav-divider" />
-
-            {/* Theme toggle */}
-            <button className="theme-btn" onClick={toggleTheme} aria-label="Toggle theme">
+            <button className="nav-link" onClick={() => scrollTo('work')}>Work</button><AnimatedThemeToggler 
+                className="theme-btn" 
+                variant="star"
+                theme={isNight ? 'night' : 'day'}
+                onThemeChange={(t) => {
+                  const night = t === 'night';
+                  setIsNight(night);
+                  localStorage.setItem('theme', night ? 'night' : 'day');
+                }}
+              /><button className="theme-btn" onClick={toggleTheme} aria-label="Toggle theme">
               <AnimatePresence mode="wait">
                 {isNight ? (
                   <motion.svg key="moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"

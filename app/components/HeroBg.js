@@ -1,11 +1,13 @@
 'use client';
 import { useRef, useMemo, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import Meteors from './ui/Meteors';
+import { Meteors } from './ui/Meteors';
 import { Stars, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 import { Object3D, MathUtils, Color } from 'three';
 import { motion, useScroll, useTransform } from 'framer-motion';
+
+
 
 const GRID_W = 28; 
 const GRID_H = 18;
