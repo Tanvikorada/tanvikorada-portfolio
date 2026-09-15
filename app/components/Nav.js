@@ -24,9 +24,16 @@ export default function Nav() {
 
   const toggleTheme = () => {
     const next = !isNight;
-    setIsNight(next);
-    document.body.classList.toggle('night', next);
-    localStorage.setItem('theme', next ? 'night' : 'day');
+    const applyTheme = () => {
+      setIsNight(next);
+      document.body.classList.toggle('night', next);
+      localStorage.setItem('theme', next ? 'night' : 'day');
+    };
+    if (document.startViewTransition) {
+      document.startViewTransition(applyTheme);
+    } else {
+      applyTheme();
+    }
   };
 
   const scrollTo = (id) => {
