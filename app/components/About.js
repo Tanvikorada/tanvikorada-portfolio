@@ -422,7 +422,7 @@ export default function About() {
         </AppleGlassCard>
 
         {/* 2. Bio */}
-        <AppleGlassCard className="apple-bio" style={{ gridColumn: 'span 2' }} withRipple={true}>
+        <AppleGlassCard className="apple-bio"  withRipple={true}>
           <p className="apple-label">Who I Am</p>
           <h3 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-heading)', marginBottom: '16px', fontFamily: 'var(--font-serif)', letterSpacing: '-0.02em' }}>
             <KineticText text="Korada Tanvi" />
@@ -469,7 +469,7 @@ export default function About() {
         </AppleGlassCard>
 
         {/* 5. Stats / Numbers */}
-        <AppleGlassCard className="apple-stats" withRipple={true} style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', flexWrap: 'wrap', gap: '24px' }}>
+        <AppleGlassCard className="apple-stats" withRipple={true} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', flexWrap: 'wrap', gap: '24px' }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)', letterSpacing: '-0.03em' }}>9.27</div>
             <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', fontWeight: 600 }}>CGPA</div>
@@ -487,7 +487,7 @@ export default function About() {
         </AppleGlassCard>
 
         {/* 6. Technical Arsenal */}
-        <AppleGlassCard className="apple-skills" style={{ gridColumn: 'span 2' }} withRipple={true}>
+        <AppleGlassCard className="apple-skills"  withRipple={true}>
           <p className="apple-label"><KineticText text="Technical Arsenal" /></p>
           <div style={{ marginBottom: '20px' }}>
             <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px', fontWeight: 600 }}>AI & GenAI</div>
@@ -518,7 +518,7 @@ export default function About() {
         </AppleGlassCard>
 
         {/* 7. Fun / Roles */}
-        <AppleGlassCard className="apple-clubs" style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px' }} withRipple={true}>
+        <AppleGlassCard className="apple-clubs" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '24px' }} withRipple={true}>
           <div>
             <p className="apple-label">Extracurriculars</p>
             <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-heading)', fontFamily: 'var(--font-serif)' }}>Clubs & Roles</h3>
