@@ -259,7 +259,7 @@ function InteractiveSpace({ scrollYProgress }) {
 export default function HeroBg() {
   const [isNight, setIsNight] = useState(true);
   const { scrollYProgress, scrollY } = useScroll();
-  const blackholeY = useTransform(scrollY, [0, 1000], [0, -1000]);
+  const blackholeY = useTransform(scrollY, [0, 1000], [0, -1000], { clamp: false });
   
   const dimOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 0.75]);
   const bgBlur = useTransform(scrollYProgress, [0, 0.2], ['blur(0px)', 'blur(10px)']);
