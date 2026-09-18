@@ -5,7 +5,8 @@ import { Meteors } from './ui/Meteors';
 import { Stars, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 import { Object3D, MathUtils, Color } from 'three';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useMotionValueEvent } from 'framer-motion';
+import SpaceAudio from './SpaceAudio';
 
 
 
@@ -157,7 +158,22 @@ function InteractiveSpace({ scrollYProgress }) {
     blending: THREE.AdditiveBlending 
   }), []);
 
-  // Nebula/Galaxy Stardust (points)
+      const asteroidCount = 45;
+    const asteroidRef = useRef();
+    const asteroidDummy = useMemo(() => new THREE.Object3D(), []);
+    const asteroidsData = useMemo(() => {
+      return Array.from({ length: asteroidCount }).map(() => ({
+        x: (Math.random() - 0.5) * 400,
+        y: (Math.random() - 0.5) * 400,
+        z: (Math.random() - 0.5) * 150 + 150, // Placed deep into the screen
+        rx: Math.random() * Math.PI,
+        ry: Math.random() * Math.PI,
+        scale: Math.random() * 2 + 0.5,
+        speed: Math.random() * 0.005 + 0.001
+      }));
+    }, []);
+
+    // Nebula/Galaxy Stardust (points)
   const stardustCount = 6000;
   const [stardustPositions, stardustColors] = useMemo(() => {
     const positions = new Float32Array(stardustCount * 3);
@@ -208,7 +224,20 @@ function InteractiveSpace({ scrollYProgress }) {
       groupRef.current.position.z = scroll * 150; // Fly through stars
     }
     
-    // Update shooting stars
+          if (asteroidRef.current) {
+        asteroidsData.forEach((ast, i) => {
+          ast.rx += ast.speed;
+          ast.ry += ast.speed;
+          asteroidDummy.position.set(ast.x, ast.y, ast.z);
+          asteroidDummy.rotation.set(ast.rx, ast.ry, 0);
+          asteroidDummy.scale.setScalar(ast.scale);
+          asteroidDummy.updateMatrix();
+          asteroidRef.current.setMatrixAt(i, asteroidDummy.matrix);
+        });
+        asteroidRef.current.instanceMatrix.needsUpdate = true;
+      }
+
+      // Update shooting stars
     const positions = [];
     shootingStars.forEach(star => {
       if (!star.active) {
@@ -250,6 +279,11 @@ function InteractiveSpace({ scrollYProgress }) {
         {/* Layer 3: Close large bright stars */}
         <Stars radius={50} depth={50} count={500} factor={8} saturation={1} color="#38bdf8" fade speed={2} />
         
+        <instancedMesh ref={asteroidRef} args={[null, null, asteroidCount]}>
+          <dodecahedronGeometry args={[1, 0]} />
+          <meshStandardMaterial color="#555555" roughness={0.9} metalness={0.2} />
+        </instancedMesh>
+
         {/* Shooting stars */}
         <lineSegments ref={shootingStarRef} material={linesMat}>
           <bufferGeometry />
@@ -260,11 +294,16 @@ function InteractiveSpace({ scrollYProgress }) {
 
 export default function HeroBg() {
   const [isNight, setIsNight] = useState(true);
-  const { scrollYProgress } = useScroll();
-  
-  
-  const dimOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 0.75]);
-  const bgBlur = useTransform(scrollYProgress, [0, 0.2], ['blur(0px)', 'blur(10px)']);
+    const { scrollYProgress } = useScroll();
+    
+    const dimOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 0.75]);
+    const lightBgBlur = useTransform(scrollYProgress, [0.15, 0.3], ['blur(0px)', 'blur(12px)']);
+    const darkEffectsOpacity = useTransform(scrollYProgress, [0.35, 0.45], [0, 1]);
+    const [isDeepSpace, setIsDeepSpace] = useState(false);
+
+    useMotionValueEvent(scrollYProgress, "change", (latest) => {
+        setIsDeepSpace(latest > 0.35);
+    });
 
   useEffect(() => {
     setIsNight(document.body.classList.contains('night'));
@@ -289,17 +328,23 @@ export default function HeroBg() {
         {isNight ? <InteractiveSpace scrollYProgress={scrollYProgress} /> : <Cubes isNight={false} />}
       </Canvas>
 
-      <motion.div 
+            <motion.div 
         style={{
           position: 'absolute', inset: 0,
           backgroundColor: isNight ? '#000000' : '#ffffff',
           opacity: dimOpacity,
-          backdropFilter: bgBlur,
-          WebkitBackdropFilter: bgBlur,
+          backdropFilter: isNight ? 'none' : lightBgBlur,
+          WebkitBackdropFilter: isNight ? 'none' : lightBgBlur,
           pointerEvents: 'none',
-          zIndex: 1 }}
-        />
-        {isNight && <Meteors number={40} />}
+          zIndex: 1
+        }}
+      />
+      {isNight && (
+        <motion.div style={{ opacity: darkEffectsOpacity, zIndex: 1, position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+          <Meteors number={40} />
+        </motion.div>
+      )}
+      <SpaceAudio isActive={isNight && isDeepSpace} />
       
             <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 2 }}>
         <div style={{
