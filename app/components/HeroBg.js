@@ -143,7 +143,7 @@ function InteractiveSpace({ scrollYProgress }) {
       x: (Math.random() - 0.5) * 400,
       y: (Math.random() - 0.5) * 300,
       z: (Math.random() - 0.5) * 200 - 100,
-      length: Math.random() * 30 + 15,
+      length: Math.random() * 80 + 40,
       speed: Math.random() * 6 + 4,
       active: false,
       wait: Math.random() * 200
