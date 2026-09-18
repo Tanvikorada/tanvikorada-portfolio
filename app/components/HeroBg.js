@@ -299,7 +299,19 @@ export default function HeroBg() {
     const dimOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 0.75]);
     const lightBgBlur = useTransform(scrollYProgress, [0.15, 0.3], ['blur(0px)', 'blur(12px)']);
     const darkEffectsOpacity = useTransform(scrollYProgress, [0.35, 0.45], [0, 1]);
-    const [isDeepSpace, setIsDeepSpace] = useState(false);
+      const [isDeepSpace, setIsDeepSpace] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+
+  useEffect(() => {
+    const storedMute = localStorage.getItem('soundMuted');
+    if (storedMute === 'false') setIsMuted(false);
+
+    const onMuteChange = () => {
+      setIsMuted(localStorage.getItem('soundMuted') === 'true');
+    };
+    window.addEventListener('soundMutedChange', onMuteChange);
+    return () => window.removeEventListener('soundMutedChange', onMuteChange);
+  }, []);
 
     useMotionValueEvent(scrollYProgress, "change", (latest) => {
         setIsDeepSpace(latest > 0.35);
@@ -357,7 +369,7 @@ export default function HeroBg() {
           <Meteors number={40} />
         </motion.div>
       )}
-      <SpaceAudio isActive={isNight && isDeepSpace} />
+      <SpaceAudio isActive={isNight && isDeepSpace && !isMuted} />
       
             <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 2 }}>
         <div style={{
