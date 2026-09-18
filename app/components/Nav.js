@@ -1,12 +1,14 @@
 'use client';
 import { AnimatedThemeToggler } from './ui/AnimatedThemeToggler';
 import { useState, useEffect } from 'react';
+import { Volume2, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import Link from 'next/link';
 
 export default function Nav() {
   const [isNight, setIsNight] = useState(true); // SSR is dark by default
-  const [scrolled, setScrolled] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
     const stored = localStorage.getItem('theme');
@@ -35,6 +37,14 @@ export default function Nav() {
     } else {
       applyTheme();
     }
+  };
+
+  
+  const toggleSound = () => {
+    const next = !isMuted;
+    setIsMuted(next);
+    localStorage.setItem('soundMuted', next);
+    window.dispatchEvent(new Event('soundMutedChange'));
   };
 
   const scrollTo = (id) => {
@@ -100,7 +110,11 @@ export default function Nav() {
             <motion.span layout className="nav-divider" />
 
             {/* Theme toggle */}
-            <AnimatedThemeToggler className="theme-btn" variant="circle" theme={isNight ? "night" : "day"} onThemeChange={(t) => { const n = t === "night"; setIsNight(n); localStorage.setItem("theme", n ? "night" : "day"); }} />
+                        <AnimatedThemeToggler className="theme-btn" variant="circle" theme={isNight ? "night" : "day"} onThemeChange={(t) => { const n = t === "night"; setIsNight(n); localStorage.setItem("theme", n ? "night" : "day"); }} />
+            
+            <button onClick={toggleSound} className="theme-btn" style={{ marginLeft: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-label="Toggle Sound">
+              {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+            </button>
 
             {/* Resume */}
             <a
