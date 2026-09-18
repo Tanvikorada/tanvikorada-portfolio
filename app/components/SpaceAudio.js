@@ -4,13 +4,12 @@ import { useEffect, useRef } from 'react';
 export default function SpaceAudio({ isActive }) {
   const audioCtxRef = useRef(null);
   const gainNodeRef = useRef(null);
-  const nodesRef = useRef([]);
 
   useEffect(() => {
-    // If not active, fade out
     if (!isActive) {
       if (gainNodeRef.current && audioCtxRef.current) {
-        gainNodeRef.current.gain.setTargetAtTime(0, audioCtxRef.current.currentTime, 1);
+        gainNodeRef.current.gain.cancelScheduledValues(audioCtxRef.current.currentTime);
+        gainNodeRef.current.gain.linearRampToValueAtTime(0, audioCtxRef.current.currentTime + 1.5);
       }
       return;
     }
@@ -26,63 +25,73 @@ export default function SpaceAudio({ isActive }) {
         masterGain.connect(ctx.destination);
         gainNodeRef.current = masterGain;
 
-        // 1. Deep Space Drone (Low Sine)
-        const drone = ctx.createOscillator();
-        drone.type = 'sine';
-        drone.frequency.value = 45; // Very low sub-bass
+        // 1. Deep Rumble (Pink/White noise through Lowpass)
+        const bufferSize = ctx.sampleRate * 2;
+        const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1; // White noise
+        }
+        const noiseSrc = ctx.createBufferSource();
+        noiseSrc.buffer = noiseBuffer;
+        noiseSrc.loop = true;
 
-        // 2. Mid Rumble (Triangle)
-        const rumble = ctx.createOscillator();
-        rumble.type = 'triangle';
-        rumble.frequency.value = 65;
+        const noiseFilter = ctx.createBiquadFilter();
+        noiseFilter.type = 'lowpass';
+        noiseFilter.frequency.value = 80; // Very low rumble
+        noiseFilter.Q.value = 1;
 
-        // 3. Eerie Harmonics (Sine with LFO)
-        const harmonic = ctx.createOscillator();
-        harmonic.type = 'sine';
-        harmonic.frequency.value = 150;
-        
-        const harmonicLfo = ctx.createOscillator();
-        harmonicLfo.type = 'sine';
-        harmonicLfo.frequency.value = 0.1; // Slow sweep
-        const harmonicLfoGain = ctx.createGain();
-        harmonicLfoGain.gain.value = 20;
-        harmonicLfo.connect(harmonicLfoGain);
-        harmonicLfoGain.connect(harmonic.frequency);
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.value = 4.0; // Boost rumble
 
-        // Lowpass filter for the mix to muffle it (sounds like deep space)
-        const filter = ctx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.value = 300; // Muffled
+        noiseSrc.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(masterGain);
+        noisfUrc.start();
 
-        const filterLfo = ctx.createOscillator();
-        filterLfo.type = 'sine';
-        filterLfo.frequency.value = 0.05; // Very slow filter sweep
-        const filterLfoGain = ctx.createGain();
-        filterLfoGain.gain.value = 150;
-        filterLfo.connect(filterLfoGain);
-        filterLfoGain.connect(filter.frequency);
+        // 2. Eerie Space Drone (Oscillators)
+        const createDrone = (freq, vol) => {
+          const osc = ctx.createOscillator();
+          osc.type = 'sawtooth';
+          osc.frequency.value = freq;
 
-        drone.connect(filter);
-        rumble.connect(filter);
-        harmonic.connect(filter);
-        filter.connect(masterGain);
+          const filter = ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.value = freq * 1.5;
 
-        drone.start();
-        rumble.start();
-        harmonic.start();
-        harmonicLfo.start();
-        filterLfo.start();
+          const lfo = ctx.createOscillator();
+          lfo.type = 'sine';
+          lfo.frequency.value = 0.05 + Math.random() * 0.05; // Slow sweep
+          const lfoGain = ctx.createGain();
+          lfoGain.gain.value = freq * 0.5;
+          lfo.connect(lfoGain);
+          lfoGain.connect(filter.frequency);
 
-        nodesRef.current = [drone, rumble, harmonic, harmonicLfo, filterLfo];
+          const gain = ctx.createGain();
+          gain.gain.value = vol;
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(masterGain);
+
+          osc.start();
+          lfo.start();
+        };
+
+        createDrone(55.0, 0.4); // Low A
+        createDrone(82.4, 0.3); // Low E
+        createDrone(110.0, 0.2); // A
       }
 
       if (audioCtxRef.current.state === 'suspended') {
         audioCtxRef.current.resume();
       }
       
-      // Fade in gracefully
+      // Fast fade in (1.5 second)
       if (gainNodeRef.current && audioCtxRef.current) {
-        gainNodeRef.current.gain.setTargetAtTime(0.5, audioCtxRef.current.currentTime, 2);
+        gainNodeRef.current.gain.cancelScheduledValues(audioCtxRef.current.currentTime);
+        gainNodeRef.current.gain.setValueAtTime(gainNodeRef.current.gain.value, audioCtxRef.current.currentTime);
+        gainNodeRef.current.gain.linearRampToValueAtTime(0.7, audioCtxRef.current.currentTime + 1.5);
       }
     };
 
@@ -90,12 +99,11 @@ export default function SpaceAudio({ isActive }) {
       if (isActive) initAudio();
     };
 
-    // Browsers block autoplay until interaction.
     window.addEventListener('click', handleInteraction);
     window.addEventListener('scroll', handleInteraction, { once: true });
     window.addEventListener('mousemove', handleInteraction, { once: true });
+    window.addEventListener('touchstart', handleInteraction, { once: true });
 
-    // Try initializing right away (might work if user already interacted)
     try {
       initAudio();
     } catch (e) {}
@@ -104,6 +112,7 @@ export default function SpaceAudio({ isActive }) {
       window.removeEventListener('click', handleInteraction);
       window.removeEventListener('scroll', handleInteraction);
       window.removeEventListener('mousemove', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
     };
   }, [isActive]);
 

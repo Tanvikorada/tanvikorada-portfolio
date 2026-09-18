@@ -165,7 +165,7 @@ function InteractiveSpace({ scrollYProgress }) {
       return Array.from({ length: asteroidCount }).map(() => ({
         x: (Math.random() - 0.5) * 400,
         y: (Math.random() - 0.5) * 400,
-        z: (Math.random() - 0.5) * 150 + 150, // Placed deep into the screen
+        z: (Math.random() - 0.5) * 200 - 100, // Placed deep into the screen
         rx: Math.random() * Math.PI,
         ry: Math.random() * Math.PI,
         scale: Math.random() * 2 + 0.5,
@@ -281,7 +281,7 @@ function InteractiveSpace({ scrollYProgress }) {
         
         <instancedMesh ref={asteroidRef} args={[null, null, asteroidCount]}>
           <dodecahedronGeometry args={[1, 0]} />
-          <meshStandardMaterial color="#555555" roughness={0.9} metalness={0.2} />
+          <meshStandardMaterial color="#aaaaaa" roughness={1} metalness={0.5} />
         </instancedMesh>
 
         {/* Shooting stars */}
@@ -328,17 +328,30 @@ export default function HeroBg() {
         {isNight ? <InteractiveSpace scrollYProgress={scrollYProgress} /> : <Cubes isNight={false} />}
       </Canvas>
 
-            <motion.div 
-        style={{
-          position: 'absolute', inset: 0,
-          backgroundColor: isNight ? '#000000' : '#ffffff',
-          opacity: dimOpacity,
-          backdropFilter: isNight ? 'none' : lightBgBlur,
-          WebkitBackdropFilter: isNight ? 'none' : lightBgBlur,
-          pointerEvents: 'none',
-          zIndex: 1
-        }}
-      />
+            {isNight && (
+        <motion.div 
+          style={{
+            position: 'absolute', inset: 0,
+            backgroundColor: '#000000',
+            opacity: dimOpacity,
+            pointerEvents: 'none',
+            zIndex: 1
+          }}
+        />
+      )}
+      {!isNight && (
+        <motion.div 
+          style={{
+            position: 'absolute', inset: 0,
+            backgroundColor: '#ffffff',
+            opacity: dimOpacity,
+            backdropFilter: lightBgBlur,
+            WebkitBackdropFilter: lightBgBlur,
+            pointerEvents: 'none',
+            zIndex: 1
+          }}
+        />
+      )}
       {isNight && (
         <motion.div style={{ opacity: darkEffectsOpacity, zIndex: 1, position: 'absolute', inset: 0, pointerEvents: 'none' }}>
           <Meteors number={40} />
